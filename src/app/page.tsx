@@ -272,8 +272,8 @@ function PhotoShoot({ capturedImages, setCapturedImages }: PhotoShootProps) {
             <button
               onClick={() => {
                 if (!filterDisabled) {
-                  id === "mirror" && toggleMirrorMode();
-                  id === "reset" && resetFilters();
+                  if (id === "mirror") toggleMirrorMode();
+                  if (id === "reset") resetFilters();
                 }
               }}
               disabled={filterDisabled}
