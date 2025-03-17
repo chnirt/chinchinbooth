@@ -14,26 +14,27 @@ import {
   Camera,
 } from "lucide-react";
 
-// Function to create a composite image from an array of images based on the chosen layout (4 or 8)
+// Hàm tạo ảnh composite từ mảng images với layout (4 hoặc 8) và màu frame
 async function exportCompositeImage(
   layoutType: number,
-  images: string[]
+  images: string[],
+  frameColor: string
 ): Promise<string> {
   return new Promise((resolve, reject) => {
-    const cellWidth = 600; // Width of each cell (adjustable)
-    const cellHeight = 400; // Height of each cell
-    const gap = 10; // Gap between images
-
+    const cellWidth = 600; // Chiều rộng của ảnh
+    const cellHeight = 400; // Chiều cao của ảnh
+    const gap = 10; // Khoảng cách giữa các ảnh
+    const borderThickness = 10; // Độ dày của khung
     const canvas = document.createElement("canvas");
 
     if (layoutType === 4) {
-      // Vertical layout for 4 images
-      canvas.width = cellWidth;
-      canvas.height = cellHeight * 4 + gap * (4 - 1);
+      // Layout dọc cho 4 ảnh
+      canvas.width = cellWidth + 2 * borderThickness;
+      canvas.height = (cellHeight + 2 * borderThickness) * 4 + gap * (4 - 1);
     } else if (layoutType === 8) {
-      // Layout for 8 images (2 columns x 4 rows)
-      canvas.width = cellWidth * 2 + gap;
-      canvas.height = cellHeight * 4 + gap * (4 - 1);
+      // Layout 2 cột x 4 hàng cho 8 ảnh
+      canvas.width = (cellWidth + 2 * borderThickness) * 2 + gap;
+      canvas.height = (cellHeight + 2 * borderThickness) * 4 + gap * (4 - 1);
     } else {
       reject("Unsupported layout type. Only supports 4 or 8.");
       return;
@@ -45,13 +46,13 @@ async function exportCompositeImage(
       return;
     }
 
-    // Load all images ensuring they are fully loaded
+    // Load tất cả ảnh (đảm bảo crossOrigin nếu cần)
     Promise.all(
       images.map(
         (src) =>
           new Promise<HTMLImageElement>((res, rej) => {
             const img = new Image();
-            img.crossOrigin = "anonymous"; // Allow cross-origin images
+            img.crossOrigin = "anonymous";
             img.onload = () => res(img);
             img.onerror = rej;
             img.src = src;
@@ -60,20 +61,48 @@ async function exportCompositeImage(
     )
       .then((loadedImages) => {
         if (layoutType === 4) {
-          // Draw 4 images in a vertical layout
           for (let i = 0; i < 4; i++) {
             const x = 0;
-            const y = i * (cellHeight + gap);
-            ctx.drawImage(loadedImages[i], x, y, cellWidth, cellHeight);
+            const y = i * (cellHeight + 2 * borderThickness + gap);
+            // Vẽ khung với màu được chọn
+            ctx.fillStyle = frameColor;
+            ctx.fillRect(
+              x,
+              y,
+              cellWidth + 2 * borderThickness,
+              cellHeight + 2 * borderThickness
+            );
+            // Vẽ ảnh bên trong khung
+            ctx.drawImage(
+              loadedImages[i],
+              x + borderThickness,
+              y + borderThickness,
+              cellWidth,
+              cellHeight
+            );
           }
         } else if (layoutType === 8) {
-          // Draw 8 images in a 2-column x 4-row grid
           for (let i = 0; i < 8; i++) {
             const col = i % 2;
             const row = Math.floor(i / 2);
-            const x = col * (cellWidth + gap);
-            const y = row * (cellHeight + gap);
-            ctx.drawImage(loadedImages[i], x, y, cellWidth, cellHeight);
+            const x = col * (cellWidth + 2 * borderThickness + gap);
+            const y = row * (cellHeight + 2 * borderThickness + gap);
+            // Vẽ khung với màu được chọn
+            ctx.fillStyle = frameColor;
+            ctx.fillRect(
+              x,
+              y,
+              cellWidth + 2 * borderThickness,
+              cellHeight + 2 * borderThickness
+            );
+            // Vẽ ảnh bên trong khung
+            ctx.drawImage(
+              loadedImages[i],
+              x + borderThickness,
+              y + borderThickness,
+              cellWidth,
+              cellHeight
+            );
           }
         }
         resolve(canvas.toDataURL("image/png"));
@@ -351,7 +380,7 @@ function PhotoShoot({ capturedImages, setCapturedImages }: PhotoShootProps) {
           <RefreshCw className="w-5 h-5" />
         </button>
       </div>
-      {/* Captured images */}
+      {/* Preview captured images */}
       <div className="flex flex-wrap gap-4">
         {capturedImages.map((img, index) => (
           <div key={index} className="w-48 aspect-[4/3] border">
@@ -416,7 +445,7 @@ function PhotoShoot({ capturedImages, setCapturedImages }: PhotoShootProps) {
 
 interface LayoutSelectionProps {
   capturedImages: string[];
-  previewRef: React.RefObject<HTMLDivElement>;
+  previewRef: React.RefObject<HTMLDivElement | null>;
   layoutType: number;
   selectedIndices: number[];
   setSelectedIndices: React.Dispatch<React.SetStateAction<number[]>>;
@@ -585,6 +614,8 @@ export default function PhotoBoothApp() {
   const [layoutType, setLayoutType] = useState<number>(4);
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
   const previewRef = useRef<HTMLDivElement>(null);
+  // Thêm state cho frame color (mặc định là pastel pink)
+  const [frameColor, setFrameColor] = useState<string>("#FFB3BA");
 
   // Download composite image using the selected images from layout preview
   const downloadComposite = async () => {
@@ -598,7 +629,8 @@ export default function PhotoBoothApp() {
     try {
       const compositeDataUrl = await exportCompositeImage(
         layoutType,
-        selectedImages
+        selectedImages,
+        frameColor
       );
       const link = document.createElement("a");
       link.href = compositeDataUrl;
@@ -637,7 +669,7 @@ export default function PhotoBoothApp() {
       window.addEventListener("keydown", handleKeyDown);
       return () => window.removeEventListener("keydown", handleKeyDown);
     }
-  }, [step, capturedImages, layoutType]);
+  }, [step, capturedImages, layoutType, frameColor]);
 
   return (
     <div>
@@ -658,7 +690,22 @@ export default function PhotoBoothApp() {
           setLayoutType={setLayoutType}
         />
       )}
-      <div className="flex justify-center my-4">
+      <div className="flex flex-col items-center my-4">
+        {/* Hiển thị color picker để chọn frame color */}
+        {step === "layout" && (
+          <div className="flex flex-col items-center mb-4">
+            <label htmlFor="frameColor" className="text-gray-600 font-medium">
+              Frame Color:
+            </label>
+            <input
+              type="color"
+              id="frameColor"
+              value={frameColor}
+              onChange={(e) => setFrameColor(e.target.value)}
+              className="mt-2"
+            />
+          </div>
+        )}
         {step === "shoot" ? (
           capturedImages.length >= MAX_CAPTURE && (
             <button
@@ -666,7 +713,7 @@ export default function PhotoBoothApp() {
               disabled={capturedImages.length < MAX_CAPTURE}
               className="px-4 py-2 rounded-full bg-gray-800 text-white border border-transparent disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Let's Proceed
+              Let&apos;s Proceed
             </button>
           )
         ) : (
