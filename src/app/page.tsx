@@ -1,7 +1,10 @@
 "use client";
 
-import React, { useState, useRef, useEffect } from "react";
+import type React from "react";
+
+import { useState, useRef, useEffect } from "react";
 import html2canvas from "html2canvas-pro";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   FlipHorizontal,
   Sun,
@@ -13,7 +16,19 @@ import {
   RefreshCw,
   Undo2,
   Camera,
+  Download,
+  ArrowLeft,
+  ArrowRight,
 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 
 const MAX_CAPTURE = 10;
 
@@ -31,61 +46,26 @@ interface Control {
   name: string;
   icon: React.ComponentType<{ className: string; title?: string }>;
   action: string;
-  slider?: boolean;
 }
 
 const controls: Control[] = [
-  { id: "mirror", name: "Mirror Mode", icon: FlipHorizontal, action: "mirror" },
-  {
-    id: "brightness",
-    name: "Brightness",
-    icon: Sun,
-    action: "brightness",
-    slider: true,
-  },
-  {
-    id: "contrast",
-    name: "Contrast",
-    icon: Contrast,
-    action: "contrast",
-    slider: true,
-  },
-  {
-    id: "grayscale",
-    name: "Grayscale",
-    icon: ImageOff,
-    action: "filter",
-    slider: true,
-  },
-  {
-    id: "sepia",
-    name: "Sepia",
-    icon: Sparkles,
-    action: "filter",
-    slider: true,
-  },
-  {
-    id: "saturate",
-    name: "Saturation",
-    icon: Wand,
-    action: "filter",
-    slider: true,
-  },
-  {
-    id: "blur",
-    name: "Soft Focus",
-    icon: Glasses,
-    action: "filter",
-    slider: true,
-  },
-  { id: "reset", name: "Reset Filter", icon: RefreshCw, action: "reset" },
+  { id: "mirror", name: "Mirror", icon: FlipHorizontal, action: "mirror" },
+  { id: "brightness", name: "Brightness", icon: Sun, action: "brightness" },
+  { id: "contrast", name: "Contrast", icon: Contrast, action: "contrast" },
+  { id: "grayscale", name: "B&W", icon: ImageOff, action: "filter" },
+  { id: "sepia", name: "Sepia", icon: Sparkles, action: "filter" },
+  { id: "saturate", name: "Saturation", icon: Wand, action: "filter" },
+  { id: "blur", name: "Soft Focus", icon: Glasses, action: "filter" },
+  { id: "reset", name: "Reset", icon: RefreshCw, action: "reset" },
 ];
 
 function Navbar() {
   return (
-    <nav className="w-full p-4 bg-white border-b flex justify-center">
-      <h1 className="text-2xl font-bold text-gray-800">@chinchinbooth</h1>
-    </nav>
+    <div className="w-full p-3 bg-gray-50 border-b flex justify-center items-center">
+      <h1 className="text-xl font-bold text-gray-800 tracking-tight">
+        @chinchinbooth
+      </h1>
+    </div>
   );
 }
 
@@ -94,17 +74,44 @@ interface StepProgressProps {
 }
 
 function StepProgress({ currentStep }: StepProgressProps) {
-  const circleClass = (step: number) =>
-    `w-6 h-6 rounded-full flex items-center justify-center text-sm ${
-      currentStep === step
-        ? "bg-gray-800 text-white"
-        : "bg-gray-200 text-gray-600"
-    }`;
   return (
-    <div className="flex justify-center items-center space-x-2 my-4">
-      <div className={circleClass(1)}>1</div>
-      <span className="text-gray-600">—</span>
-      <div className={circleClass(2)}>2</div>
+    <div className="flex justify-center items-center space-x-4 my-4">
+      <motion.div
+        className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300 ${
+          currentStep === 1
+            ? "bg-gray-800 text-white shadow-md"
+            : "bg-gray-200 text-gray-600"
+        }`}
+        initial={{ scale: 0.8 }}
+        animate={{
+          scale: currentStep === 1 ? 1.1 : 1,
+        }}
+        transition={{ duration: 0.3 }}
+      >
+        1
+      </motion.div>
+      <div className="w-12 h-0.5 bg-gray-300 relative">
+        <motion.div
+          className="absolute inset-0 bg-gray-800"
+          initial={{ width: "0%" }}
+          animate={{ width: currentStep === 2 ? "100%" : "0%" }}
+          transition={{ duration: 0.5 }}
+        />
+      </div>
+      <motion.div
+        className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300 ${
+          currentStep === 2
+            ? "bg-gray-800 text-white shadow-md"
+            : "bg-gray-200 text-gray-600"
+        }`}
+        initial={{ scale: 0.8 }}
+        animate={{
+          scale: currentStep === 2 ? 1.1 : 1,
+        }}
+        transition={{ duration: 0.3 }}
+      >
+        2
+      </motion.div>
     </div>
   );
 }
@@ -117,10 +124,14 @@ interface PhotoShootProps {
 function PhotoShoot({ capturedImages, setCapturedImages }: PhotoShootProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const capturedImagesRef = useRef<HTMLDivElement>(null);
+  const cameraContainerRef = useRef<HTMLDivElement>(null);
   const [filters, setFilters] = useState(defaultFilters);
   const [isMirrored, setIsMirrored] = useState(true);
   const [isCameraStarted, setIsCameraStarted] = useState(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
+  const [activeFilters, setActiveFilters] = useState<string[]>(["mirror"]);
+  const [isCapturing, setIsCapturing] = useState(false);
   const filterDisabled = !isCameraStarted;
 
   useEffect(() => {
@@ -153,12 +164,20 @@ function PhotoShoot({ capturedImages, setCapturedImages }: PhotoShootProps) {
       !isCameraStarted ||
       !videoRef.current ||
       !canvasRef.current ||
-      capturedImages.length >= MAX_CAPTURE
+      capturedImages.length >= MAX_CAPTURE ||
+      isCapturing
     )
       return;
+
+    setIsCapturing(true);
+
     const canvas = canvasRef.current;
     const ctx = canvas.getContext("2d");
-    if (!ctx) return;
+    if (!ctx) {
+      setIsCapturing(false);
+      return;
+    }
+
     const { videoWidth: width, videoHeight: height } = videoRef.current;
     canvas.width = width;
     canvas.height = height;
@@ -166,17 +185,113 @@ function PhotoShoot({ capturedImages, setCapturedImages }: PhotoShootProps) {
     ctx.filter = `brightness(${filters.brightness}%) contrast(${filters.contrast}%) grayscale(${filters.grayscale}%) sepia(${filters.sepia}%) saturate(${filters.saturate}%) blur(${filters.blur}px)`;
     ctx.setTransform(isMirrored ? -1 : 1, 0, 0, 1, isMirrored ? width : 0, 0);
     ctx.drawImage(videoRef.current, 0, 0, width, height);
-    setCapturedImages((prev) => [...prev, canvas.toDataURL("image/png")]);
+
+    // Flash effect
+    const videoContainer = videoRef.current.parentElement;
+    if (videoContainer) {
+      videoContainer.classList.add("flash");
+      setTimeout(() => {
+        videoContainer.classList.remove("flash");
+        setCapturedImages((prev) => [...prev, canvas.toDataURL("image/png")]);
+        setIsCapturing(false);
+      }, 300);
+    } else {
+      setCapturedImages((prev) => [...prev, canvas.toDataURL("image/png")]);
+      setIsCapturing(false);
+    }
   };
 
-  const undoCapture = () =>
-    capturedImages.length && setCapturedImages((prev) => prev.slice(0, -1));
+  const undoCapture = () => {
+    if (capturedImages.length) {
+      setCapturedImages((prev) => prev.slice(0, -1));
+    }
+  };
+
   const resetCaptures = () => setCapturedImages([]);
-  const resetFilters = () => setFilters(defaultFilters);
-  const updateFilter = (id: string, value: string) =>
-    setFilters((prev) => ({ ...prev, [id]: Number(value) }));
-  const toggleMirrorMode = () =>
-    !filterDisabled && setIsMirrored((prev) => !prev);
+
+  const resetFilters = () => {
+    setFilters(defaultFilters);
+    setActiveFilters(["mirror"]);
+  };
+
+  const toggleFilter = (id: string) => {
+    if (!filterDisabled) {
+      if (id === "mirror") {
+        setIsMirrored((prev) => !prev);
+        setActiveFilters((prev) =>
+          prev.includes("mirror")
+            ? prev.filter((f) => f !== "mirror")
+            : [...prev, "mirror"]
+        );
+      } else if (id === "grayscale") {
+        setFilters((prev) => ({
+          ...prev,
+          grayscale: prev.grayscale === 0 ? 100 : 0,
+          sepia: 0, // Turn off sepia when grayscale is enabled
+        }));
+        setActiveFilters((prev) => {
+          const newFilters = prev.filter(
+            (f) => f !== "sepia" && f !== "grayscale"
+          );
+          return prev.includes("grayscale")
+            ? newFilters
+            : [...newFilters, "grayscale"];
+        });
+      } else if (id === "sepia") {
+        setFilters((prev) => ({
+          ...prev,
+          sepia: prev.sepia === 0 ? 100 : 0,
+          grayscale: 0, // Turn off grayscale when sepia is enabled
+        }));
+        setActiveFilters((prev) => {
+          const newFilters = prev.filter(
+            (f) => f !== "sepia" && f !== "grayscale"
+          );
+          return prev.includes("sepia") ? newFilters : [...newFilters, "sepia"];
+        });
+      } else if (id === "brightness") {
+        setFilters((prev) => ({
+          ...prev,
+          brightness: prev.brightness === 100 ? 130 : 100,
+        }));
+        setActiveFilters((prev) =>
+          prev.includes("brightness")
+            ? prev.filter((f) => f !== "brightness")
+            : [...prev, "brightness"]
+        );
+      } else if (id === "contrast") {
+        setFilters((prev) => ({
+          ...prev,
+          contrast: prev.contrast === 100 ? 130 : 100,
+        }));
+        setActiveFilters((prev) =>
+          prev.includes("contrast")
+            ? prev.filter((f) => f !== "contrast")
+            : [...prev, "contrast"]
+        );
+      } else if (id === "saturate") {
+        setFilters((prev) => ({
+          ...prev,
+          saturate: prev.saturate === 100 ? 150 : 100,
+        }));
+        setActiveFilters((prev) =>
+          prev.includes("saturate")
+            ? prev.filter((f) => f !== "saturate")
+            : [...prev, "saturate"]
+        );
+      } else if (id === "blur") {
+        setFilters((prev) => ({
+          ...prev,
+          blur: prev.blur === 0 ? 2 : 0,
+        }));
+        setActiveFilters((prev) =>
+          prev.includes("blur")
+            ? prev.filter((f) => f !== "blur")
+            : [...prev, "blur"]
+        );
+      }
+    }
+  };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -200,111 +315,151 @@ function PhotoShoot({ capturedImages, setCapturedImages }: PhotoShootProps) {
     };
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [capturedImages, isCameraStarted, filters, isMirrored]);
+  }, [capturedImages, isCameraStarted, filters, isMirrored, isCapturing]);
 
   return (
-    <div className="flex flex-col items-center space-y-6 p-4">
-      <div className="inline-flex items-center rounded-md bg-gray-100 text-gray-800 text-xs font-medium px-2 py-1">
-        {capturedImages.length}/{MAX_CAPTURE}
+    <div className="flex flex-col items-center space-y-4 p-3 max-w-xl mx-auto select-none">
+      <div className="flex items-center justify-between w-full">
+        <Badge variant="outline" className="px-3 py-1.5 text-xs font-medium">
+          {capturedImages.length}/{MAX_CAPTURE}
+        </Badge>
+
+        <div className="text-xs text-gray-500">
+          Space: Capture | Delete: Undo | Esc: Reset
+        </div>
       </div>
+
       {cameraError ? (
-        <div className="text-red-500 font-bold">{cameraError}</div>
+        <div className="text-red-500 font-bold p-4 bg-red-50 rounded-lg text-center">
+          {cameraError}
+        </div>
       ) : (
-        <video
-          ref={videoRef}
-          autoPlay
-          playsInline
-          className="w-80 h-60 border object-cover"
-          style={{
-            transform: isMirrored ? "scaleX(-1)" : "scaleX(1)",
-            filter: `brightness(${filters.brightness}%) contrast(${filters.contrast}%) grayscale(${filters.grayscale}%) sepia(${filters.sepia}%) saturate(${filters.saturate}%) blur(${filters.blur}px)`,
-          }}
-        />
-      )}
-      <canvas ref={canvasRef} className="hidden" />
-      <div className="flex gap-6">
-        <button
-          onClick={captureImage}
-          disabled={!isCameraStarted || capturedImages.length >= MAX_CAPTURE}
-          title="Capture Image (Space/Enter)"
-          className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-300 text-gray-600 bg-transparent disabled:opacity-50"
+        <div
+          ref={cameraContainerRef}
+          className="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-black"
         >
-          <Camera className="w-5 h-5" />
-        </button>
-        <button
+          <video
+            ref={videoRef}
+            autoPlay
+            playsInline
+            className="w-full h-full object-cover"
+            style={{
+              transform: isMirrored ? "scaleX(-1)" : "scaleX(1)",
+              filter: `brightness(${filters.brightness}%) contrast(${filters.contrast}%) grayscale(${filters.grayscale}%) sepia(${filters.sepia}%) saturate(${filters.saturate}%) blur(${filters.blur}px)`,
+            }}
+          />
+          <div className="absolute inset-0 pointer-events-none flash-overlay"></div>
+        </div>
+      )}
+
+      <canvas ref={canvasRef} className="hidden" />
+
+      <div className="flex justify-center items-center gap-4 w-full">
+        <Button
           onClick={undoCapture}
           disabled={!capturedImages.length}
-          title="Undo Capture (Delete/Backspace)"
-          className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-300 text-gray-600 bg-transparent disabled:opacity-50"
+          className="w-12 h-12 rounded-full p-0 flex items-center justify-center bg-white"
+          variant="outline"
         >
           <Undo2 className="w-5 h-5" />
-        </button>
-        <button
+        </Button>
+
+        <Button
+          onClick={captureImage}
+          disabled={
+            !isCameraStarted ||
+            capturedImages.length >= MAX_CAPTURE ||
+            isCapturing
+          }
+          className="w-16 h-16 rounded-full p-0 flex items-center justify-center shadow-md hover:shadow-lg transition-all"
+          variant="default"
+        >
+          <Camera className="w-7 h-7" />
+        </Button>
+
+        <Button
           onClick={resetCaptures}
           disabled={!capturedImages.length}
-          title="Reset Captures (Escape)"
-          className="w-10 h-10 flex items-center justify-center rounded-full border border-gray-300 text-gray-600 bg-transparent disabled:opacity-50"
+          className="w-12 h-12 rounded-full p-0 flex items-center justify-center bg-white"
+          variant="outline"
         >
           <RefreshCw className="w-5 h-5" />
-        </button>
+        </Button>
       </div>
-      <div className="flex flex-wrap gap-4">
-        {capturedImages.map((img, index) => (
-          <div key={index} className="w-48 aspect-[4/3] border">
-            <img
-              src={img}
-              alt={`Captured ${index}`}
-              className="w-full h-full object-cover"
-            />
-          </div>
-        ))}
+
+      <div className="w-full">
+        <div className="flex flex-wrap justify-center gap-3">
+          {controls
+            .filter((c) => c.id !== "reset")
+            .map(({ id, name, icon: Icon }) => (
+              <TooltipProvider key={id}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      onClick={() => toggleFilter(id)}
+                      disabled={filterDisabled}
+                      variant={
+                        activeFilters.includes(id) ? "default" : "outline"
+                      }
+                      className="w-10 h-10 rounded-full p-0"
+                      size="icon"
+                    >
+                      <Icon className="w-4 h-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>{name}</p>
+                  </TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
+            ))}
+
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  onClick={resetFilters}
+                  variant="outline"
+                  size="icon"
+                  className="w-10 h-10 rounded-full"
+                  disabled={filterDisabled}
+                >
+                  <RefreshCw className="w-4 h-4" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>Reset Filters</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </div>
       </div>
-      <div className="mt-4 text-sm text-gray-600">
-        <p>
-          <strong>Space/Enter:</strong> Capture |{" "}
-          <strong>Delete/Backspace:</strong> Undo | <strong>Escape:</strong>{" "}
-          Reset
-        </p>
-      </div>
-      <div className="flex flex-wrap gap-6 mt-6">
-        {controls.map(({ id, name, icon: Icon, slider }) => (
-          <div key={id} className="flex flex-col items-center">
-            <button
-              onClick={() => {
-                if (!filterDisabled) {
-                  if (id === "mirror") toggleMirrorMode();
-                  if (id === "reset") resetFilters();
-                }
-              }}
-              disabled={filterDisabled}
-              title={name}
-              className={`w-10 h-10 flex items-center justify-center rounded-full border border-gray-300 bg-transparent ${
-                filterDisabled ? "text-gray-400" : "text-gray-600"
-              } disabled:opacity-50`}
+
+      {capturedImages.length > 0 && (
+        <div
+          ref={capturedImagesRef}
+          className="w-full flex gap-2 overflow-x-auto pb-2 snap-x custom-scrollbar hide-scrollbar"
+          style={{
+            height: cameraContainerRef.current
+              ? cameraContainerRef.current.clientHeight / 2
+              : "auto",
+          }}
+        >
+          {capturedImages.map((img, index) => (
+            <div
+              key={index}
+              className="flex-shrink-0 rounded-lg overflow-hidden shadow-sm snap-center border border-gray-200 aspect-[4/3]"
+              style={{ height: "100%" }}
             >
-              <Icon className="w-5 h-5" />
-            </button>
-            {slider && (
-              <input
-                type="range"
-                disabled={filterDisabled}
-                min={id === "blur" ? 0 : 0}
-                max={id === "blur" ? 10 : 200}
-                value={(filters as Record<string, number>)[id]}
-                onChange={(e) => updateFilter(id, e.target.value)}
-                className="mt-2 w-32 h-2 bg-gray-200 rounded-full appearance-none accent-gray-600 disabled:opacity-50"
+              <img
+                src={img || "/placeholder.svg"}
+                alt={`Captured ${index}`}
+                className="w-full h-full object-cover"
               />
-            )}
-            <span
-              className={`mt-1 text-sm font-medium ${
-                filterDisabled ? "text-gray-400" : "text-gray-600"
-              }`}
-            >
-              {name}
-            </span>
-          </div>
-        ))}
-      </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
@@ -326,7 +481,7 @@ function LayoutSelection({
   setSelectedIndices,
   setLayoutType,
 }: LayoutSelectionProps) {
-  // Use a trendy, updated color palette for the photo booth
+  // Photo booth inspired color palette
   const [frameColor, setFrameColor] = useState<string>("#FFFFFF");
   const palette = [
     "#FFFFFF", // White
@@ -360,151 +515,241 @@ function LayoutSelection({
     const cellContent =
       selectedIndices[idx] !== undefined ? (
         <img
-          src={capturedImages[selectedIndices[idx]]}
+          src={capturedImages[selectedIndices[idx]] || "/placeholder.svg"}
           alt={`Slot ${idx}`}
           className="w-full h-full object-cover"
         />
       ) : (
-        <span className="text-gray-400">Empty</span>
+        <div className="flex flex-col items-center justify-center text-gray-400">
+          <span className="text-xs">Empty</span>
+        </div>
       );
+
     const baseClass =
-      "w-64 h-48 flex items-center justify-center transition-transform duration-200";
-    const emptyClass = "border-dashed border-gray-300 bg-gray-50";
+      "w-full aspect-[4/3] flex items-center justify-center transition-all duration-200 overflow-hidden";
+    const emptyClass = "border-dashed border border-gray-300 bg-gray-50";
+
     return (
-      <div
+      <motion.div
         key={idx}
         className={`${baseClass} ${
-          selectedIndices[idx] !== undefined ? "border-gray-500" : emptyClass
+          selectedIndices[idx] !== undefined ? "" : emptyClass
         }`}
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: idx * 0.05 }}
       >
         {cellContent}
-      </div>
+      </motion.div>
     );
   };
 
   const renderPreview = () => {
     if (layoutType === 4) {
       return (
-        <div className="rounded-lg border border-gray-300 overflow-hidden">
+        <motion.div
+          className="rounded-md border border-gray-300 overflow-hidden shadow-md max-w-3xs mx-auto"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+        >
           <div
             ref={previewRef}
-            className="flex flex-col gap-4 p-4"
+            className="flex flex-col gap-4 px-4 pt-4 pb-20"
             style={{ backgroundColor: frameColor }}
           >
-            {Array.from({ length: 4 }, (_, idx) => renderCell(idx))}
+            <div className="grid grid-cols-1 gap-2">
+              {Array.from({ length: 4 }, (_, idx) => renderCell(idx))}
+            </div>
           </div>
-        </div>
+        </motion.div>
       );
     }
     return (
-      <div
-        ref={previewRef}
-        className="grid grid-cols-2 gap-2"
-        style={{ backgroundColor: frameColor }}
+      <motion.div
+        className="rounded-md border border-gray-300 overflow-hidden shadow-md"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
       >
-        {Array.from({ length: 8 }, (_, idx) => renderCell(idx))}
-      </div>
+        <div
+          ref={previewRef}
+          className="px-4 pt-4 pb-20"
+          style={{ backgroundColor: frameColor }}
+        >
+          <div className="grid grid-cols-2 gap-2">
+            <div className="flex flex-col gap-2">
+              {Array.from({ length: 4 }, (_, idx) => renderCell(idx))}
+            </div>
+            <div className="flex flex-col gap-2">
+              {Array.from({ length: 4 }, (_, idx) => renderCell(idx + 4))}
+            </div>
+          </div>
+        </div>
+      </motion.div>
     );
   };
 
   return (
-    <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-      {/* Photo Selection Gallery */}
-      <div>
-        <h2 className="text-xl font-semibold mb-2">Select Photos for Layout</h2>
-        <p className="text-gray-600 mb-4">
-          {layoutType === 4
-            ? "Select exactly 4 photos for your Photo Strip Layout."
-            : "Select exactly 8 photos for your 2-Strip Layout."}
-        </p>
-        <div className="flex gap-4 mb-4">
-          <button
-            onClick={() => selectLayoutType(4)}
-            className={`px-4 py-2 rounded-full ${
-              layoutType === 4
-                ? "bg-gray-800 text-white"
-                : "bg-transparent text-gray-600 border"
-            }`}
+    <motion.div
+      className="p-3 max-w-4xl mx-auto"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5 }}
+    >
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="flex flex-col gap-6">
+          {/* Photo Selection Gallery */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.1 }}
           >
-            Photo Strip
-          </button>
-          <button
-            onClick={() => selectLayoutType(8)}
-            className={`px-4 py-2 rounded-full ${
-              layoutType === 8
-                ? "bg-gray-800 text-white"
-                : "bg-transparent text-gray-600 border"
-            }`}
-          >
-            2-Strip
-          </button>
-        </div>
-        <div className="grid grid-cols-3 gap-4">
-          {capturedImages.map((img, index) => {
-            const isSelected = selectedIndices.includes(index);
-            return (
-              <div
-                key={index}
-                onClick={() => toggleSelect(index)}
-                className={`border p-1 cursor-pointer transition-transform duration-200 ${
-                  isSelected ? "border-gray-500 scale-105" : "border-gray-300"
-                }`}
+            <h2 className="text-lg font-semibold mb-2">Select Photos</h2>
+            <div className="flex gap-3 mb-3">
+              <Button
+                onClick={() => selectLayoutType(4)}
+                variant={layoutType === 4 ? "default" : "outline"}
+                className="rounded-full text-sm px-4 py-1 h-auto"
+                size="sm"
               >
-                <img
-                  src={img}
-                  alt={`Photo ${index}`}
-                  className="w-full h-full object-cover"
-                />
-              </div>
-            );
-          })}
+                Photo Strip
+              </Button>
+              <Button
+                onClick={() => selectLayoutType(8)}
+                variant={layoutType === 8 ? "default" : "outline"}
+                className="rounded-full text-sm px-4 py-1 h-auto"
+                size="sm"
+              >
+                2-Strip
+              </Button>
+            </div>
+
+            <p className="text-gray-600 mb-2 text-xs">
+              {layoutType === 4
+                ? `Select 4 photos (${selectedIndices.length}/4)`
+                : `Select 8 photos (${selectedIndices.length}/8)`}
+            </p>
+
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 max-h-[320px] overflow-y-auto p-2 border rounded-lg hide-scrollbar">
+              <AnimatePresence>
+                {capturedImages.map((img, index) => {
+                  const isSelected = selectedIndices.includes(index);
+                  const selectionIndex = selectedIndices.indexOf(index) + 1;
+
+                  return (
+                    <motion.div
+                      key={index}
+                      onClick={() => toggleSelect(index)}
+                      className={`relative border-2 rounded-lg overflow-hidden cursor-pointer transition-all duration-200 aspect-[4/3] ${
+                        isSelected
+                          ? "border-gray-800 shadow-md z-10"
+                          : "border-gray-200 hover:border-gray-400"
+                      }`}
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      initial={{ opacity: 0, scale: 0.8 }}
+                      animate={{
+                        opacity: 1,
+                        scale: isSelected ? 1.05 : 1,
+                        borderColor: isSelected ? "#1f2937" : "#e5e7eb",
+                      }}
+                      transition={{ duration: 0.2, delay: index * 0.03 }}
+                    >
+                      <img
+                        src={img || "/placeholder.svg"}
+                        alt={`Photo ${index}`}
+                        className="w-full h-full object-cover"
+                      />
+                      {isSelected && (
+                        <motion.div
+                          className="absolute top-1 right-1 w-5 h-5 bg-gray-800 rounded-full flex items-center justify-center text-white text-xs font-bold"
+                          initial={{ scale: 0, opacity: 0 }}
+                          animate={{ scale: 1, opacity: 1 }}
+                          exit={{ scale: 0, opacity: 0 }}
+                          transition={{ duration: 0.2 }}
+                        >
+                          {selectionIndex}
+                        </motion.div>
+                      )}
+                    </motion.div>
+                  );
+                })}
+              </AnimatePresence>
+            </div>
+          </motion.div>
+
+          {/* Frame Color Controls */}
+          <motion.div
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.1 }}
+          >
+            <h2 className="text-lg font-semibold mb-2">Frame Color</h2>
+            <div className="flex flex-wrap justify-center gap-2">
+              {palette.map((color) => (
+                <motion.button
+                  key={color}
+                  onClick={() => setFrameColor(color)}
+                  style={{ backgroundColor: color }}
+                  className={`w-8 h-8 rounded-full transition-all ${
+                    frameColor === color
+                      ? "ring-2 ring-offset-1 ring-gray-500"
+                      : "border border-gray-300 hover:scale-105"
+                  }`}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.9 }}
+                  aria-label={`Select ${color} frame color`}
+                ></motion.button>
+              ))}
+            </div>
+          </motion.div>
         </div>
+
+        {/* Layout Preview */}
+        <motion.div
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <h2 className="text-lg font-semibold mb-3">Layout Preview</h2>
+          <div className="mb-4">{renderPreview()}</div>
+        </motion.div>
       </div>
-      {/* Layout Preview & Frame Color Controls */}
-      <div>
-        <h2 className="text-xl font-semibold mb-4 text-center">
-          Layout Preview
-        </h2>
-        <div className="flex justify-center mb-4">{renderPreview()}</div>
-        {/* Frame Color Controls với horizontal scroll */}
-        <div className="flex overflow-x-auto">
-          <div className="flex gap-2 flex-nowrap justify-center">
-            {palette.map((color) => (
-              <button
-                key={color}
-                onClick={() => setFrameColor(color)}
-                style={{ backgroundColor: color }}
-                className={`w-10 h-10 rounded-full border flex-shrink-0 ${
-                  frameColor === color ? "border-gray-500" : "border-gray-300"
-                }`}
-              ></button>
-            ))}
-          </div>
-        </div>
-      </div>
-    </div>
+    </motion.div>
   );
 }
 
 export default function PhotoBoothApp() {
   const [step, setStep] = useState<"shoot" | "layout">("shoot");
   const [capturedImages, setCapturedImages] = useState<string[]>([]);
-  const [layoutType, setLayoutType] = useState<number>(4);
+  const [layoutType, setLayoutType] = useState<number>(4); // Default to photo strip layout
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
   const previewRef = useRef<HTMLDivElement>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const downloadComposite = async () => {
-    if (!previewRef.current) return;
-    html2canvas(previewRef.current, {
-      allowTaint: true,
-      useCORS: true,
-      backgroundColor: null,
-    }).then((canvas) => {
+    if (!previewRef.current || isDownloading) return;
+
+    setIsDownloading(true);
+
+    try {
+      const canvas = await html2canvas(previewRef.current, {
+        allowTaint: true,
+        useCORS: true,
+        backgroundColor: null,
+        scale: 2, // Higher quality for Retina displays
+      });
+
       const link = document.createElement("a");
-      link.download = "photo_booth_composite.png";
+      link.download = "chinchinbooth_photo.png";
       link.href = canvas.toDataURL("image/png");
       link.click();
-    });
+    } catch (error) {
+      console.error("Error generating image:", error);
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   const retakePhotos = () => {
@@ -512,6 +757,10 @@ export default function PhotoBoothApp() {
     setSelectedIndices([]);
     setStep("shoot");
   };
+
+  // Require all 10 photos before proceeding
+  const canProceedToLayout = capturedImages.length === MAX_CAPTURE;
+  const canDownload = selectedIndices.length === layoutType;
 
   useEffect(() => {
     if (step === "layout") {
@@ -526,55 +775,111 @@ export default function PhotoBoothApp() {
       window.addEventListener("keydown", handleKeyDown);
       return () => window.removeEventListener("keydown", handleKeyDown);
     }
-  }, [step, capturedImages, layoutType]);
+  }, [step, capturedImages, layoutType, selectedIndices, isDownloading]);
 
   return (
-    <div>
+    <div className="min-h-screen bg-gray-50 overflow-hidden">
       <Navbar />
       <StepProgress currentStep={step === "shoot" ? 1 : 2} />
-      {step === "shoot" ? (
-        <PhotoShoot
-          capturedImages={capturedImages}
-          setCapturedImages={setCapturedImages}
-        />
-      ) : (
-        <LayoutSelection
-          capturedImages={capturedImages}
-          previewRef={previewRef}
-          layoutType={layoutType}
-          selectedIndices={selectedIndices}
-          setSelectedIndices={setSelectedIndices}
-          setLayoutType={setLayoutType}
-        />
-      )}
-      <div className="flex flex-col items-center my-4">
+
+      <AnimatePresence mode="wait">
         {step === "shoot" ? (
-          capturedImages.length >= MAX_CAPTURE && (
-            <button
-              onClick={() => setStep("layout")}
-              disabled={capturedImages.length < MAX_CAPTURE}
-              className="px-4 py-2 rounded-full bg-gray-800 text-white border border-transparent disabled:opacity-50"
-            >
-              Let&apos;s Proceed
-            </button>
-          )
+          <motion.div
+            key="shoot"
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <PhotoShoot
+              capturedImages={capturedImages}
+              setCapturedImages={setCapturedImages}
+            />
+          </motion.div>
         ) : (
-          <div className="flex gap-4">
-            <button
+          <motion.div
+            key="layout"
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: 20 }}
+            transition={{ duration: 0.3 }}
+          >
+            <LayoutSelection
+              capturedImages={capturedImages}
+              previewRef={previewRef}
+              layoutType={layoutType}
+              selectedIndices={selectedIndices}
+              setSelectedIndices={setSelectedIndices}
+              setLayoutType={setLayoutType}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <motion.div
+        className="flex justify-center my-6"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.5, duration: 0.3 }}
+      >
+        {step === "shoot" ? (
+          <AnimatePresence>
+            {canProceedToLayout && (
+              <motion.div
+                initial={{ opacity: 0, y: 10, scale: 0.9 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -10, scale: 0.9 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Button
+                  onClick={() => setStep("layout")}
+                  className="px-5 py-2 rounded-full font-medium"
+                  variant="default"
+                >
+                  Continue
+                  <ArrowRight className="w-4 h-4 ml-2 inline-block" />
+                </Button>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        ) : (
+          <div className="flex gap-3">
+            <Button
               onClick={retakePhotos}
-              className="px-4 py-2 rounded-full bg-transparent text-gray-600 border border-gray-300"
+              variant="outline"
+              className="px-4 py-2 rounded-full flex items-center justify-center"
+              size="sm"
             >
-              Retake Photos
-            </button>
-            <button
+              <ArrowLeft className="w-4 h-4 mr-1" />
+              Retake
+            </Button>
+            <Button
               onClick={downloadComposite}
-              className="px-4 py-2 rounded-full bg-gray-800 text-white border border-transparent"
+              disabled={!canDownload || isDownloading}
+              className={cn(
+                "px-4 py-2 rounded-full font-medium flex items-center justify-center",
+                !canDownload && "cursor-not-allowed"
+              )}
+              variant={canDownload && !isDownloading ? "default" : "secondary"}
+              size="sm"
             >
-              Download Composite
-            </button>
+              {isDownloading ? (
+                <>
+                  <RefreshCw className="w-4 h-4 mr-1 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                <>
+                  <Download className="w-4 h-4 mr-1" />
+                  {canDownload
+                    ? "Download"
+                    : `Select ${layoutType - selectedIndices.length} more`}
+                </>
+              )}
+            </Button>
           </div>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 }
