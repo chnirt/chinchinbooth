@@ -29,6 +29,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { Spotlight } from "@/components/ui/spotlight";
 
 const MAX_CAPTURE = 10;
 
@@ -61,11 +62,17 @@ const controls: Control[] = [
 
 function Navbar() {
   return (
-    <div className="w-full p-3 bg-gray-50 border-b flex justify-center items-center">
-      <h1 className="text-xl font-bold text-gray-800 tracking-tight">
-        @chinchinbooth
+    <motion.nav
+      className="w-full p-4 bg-gradient-to-r from-rose-100 to-teal-100 border-b flex justify-center items-center relative overflow-hidden"
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+    >
+      <Spotlight className="top-10 left-0 md:left-60 md:-top-20" fill="white" />
+      <h1 className="text-2xl font-bold text-gray-800 tracking-tight flex items-center relative z-10">
+        <span className="text-pink-500">@</span>chinchinbooth
       </h1>
-    </div>
+    </motion.nav>
   );
 }
 
@@ -75,9 +82,9 @@ interface StepProgressProps {
 
 function StepProgress({ currentStep }: StepProgressProps) {
   return (
-    <div className="flex justify-center items-center space-x-4 my-4">
+    <div className="flex justify-center items-center space-x-4 my-6">
       <motion.div
-        className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300 ${
+        className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300 ${
           currentStep === 1
             ? "bg-gray-800 text-white shadow-md"
             : "bg-gray-200 text-gray-600"
@@ -85,12 +92,14 @@ function StepProgress({ currentStep }: StepProgressProps) {
         initial={{ scale: 0.8 }}
         animate={{
           scale: currentStep === 1 ? 1.1 : 1,
+          backgroundColor: currentStep === 1 ? "#1f2937" : "#e5e7eb",
+          color: currentStep === 1 ? "#ffffff" : "#4b5563",
         }}
         transition={{ duration: 0.3 }}
       >
         1
       </motion.div>
-      <div className="w-12 h-0.5 bg-gray-300 relative">
+      <div className="w-16 h-0.5 bg-gray-300 relative">
         <motion.div
           className="absolute inset-0 bg-gray-800"
           initial={{ width: "0%" }}
@@ -99,7 +108,7 @@ function StepProgress({ currentStep }: StepProgressProps) {
         />
       </div>
       <motion.div
-        className={`w-7 h-7 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300 ${
+        className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300 ${
           currentStep === 2
             ? "bg-gray-800 text-white shadow-md"
             : "bg-gray-200 text-gray-600"
@@ -107,6 +116,8 @@ function StepProgress({ currentStep }: StepProgressProps) {
         initial={{ scale: 0.8 }}
         animate={{
           scale: currentStep === 2 ? 1.1 : 1,
+          backgroundColor: currentStep === 2 ? "#1f2937" : "#e5e7eb",
+          color: currentStep === 2 ? "#ffffff" : "#4b5563",
         }}
         transition={{ duration: 0.3 }}
       >
@@ -318,14 +329,23 @@ function PhotoShoot({ capturedImages, setCapturedImages }: PhotoShootProps) {
   }, [capturedImages, isCameraStarted, filters, isMirrored, isCapturing]);
 
   return (
-    <div className="flex flex-col items-center space-y-4 p-3 max-w-xl mx-auto select-none">
+    <motion.div
+      className="flex flex-col items-center space-y-4 p-3 max-w-xl mx-auto select-none"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ delay: 0.3 }}
+    >
       <div className="flex items-center justify-between w-full">
         <Badge variant="outline" className="px-3 py-1.5 text-xs font-medium">
-          {capturedImages.length}/{MAX_CAPTURE}
+          <span className="font-bold">{capturedImages.length}</span>
+          <span className="mx-1">/</span>
+          <span>{MAX_CAPTURE}</span>
         </Badge>
 
         <div className="text-xs text-gray-500">
-          Space: Capture | Delete: Undo | Esc: Reset
+          <span className="font-medium">Space</span>: Capture |{" "}
+          <span className="font-medium">Delete</span>: Undo |{" "}
+          <span className="font-medium">Esc</span>: Reset
         </div>
       </div>
 
@@ -441,14 +461,14 @@ function PhotoShoot({ capturedImages, setCapturedImages }: PhotoShootProps) {
           className="w-full flex gap-2 overflow-x-auto pb-2 snap-x custom-scrollbar hide-scrollbar"
           style={{
             height: cameraContainerRef.current
-              ? cameraContainerRef.current.clientHeight / 2
+              ? cameraContainerRef.current.clientHeight / 2.5
               : "auto",
           }}
         >
           {capturedImages.map((img, index) => (
             <div
               key={index}
-              className="flex-shrink-0 rounded-lg overflow-hidden shadow-sm snap-center border border-gray-200 aspect-[4/3]"
+              className="flex-shrink-0 rounded-lg overflow-hidden snap-center aspect-[4/3]"
               style={{ height: "100%" }}
             >
               <img
@@ -460,7 +480,7 @@ function PhotoShoot({ capturedImages, setCapturedImages }: PhotoShootProps) {
           ))}
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }
 
@@ -535,8 +555,8 @@ function LayoutSelection({
         className={`${baseClass} ${
           selectedIndices[idx] !== undefined ? "" : emptyClass
         }`}
-        initial={{ opacity: 0, scale: 0.9 }}
-        animate={{ opacity: 1, scale: 1 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
         transition={{ delay: idx * 0.05 }}
       >
         {cellContent}
@@ -780,7 +800,14 @@ export default function PhotoBoothApp() {
   return (
     <div className="min-h-screen bg-gray-50 overflow-hidden">
       <Navbar />
-      <StepProgress currentStep={step === "shoot" ? 1 : 2} />
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
+      >
+        <StepProgress currentStep={step === "shoot" ? 1 : 2} />
+      </motion.div>
 
       <AnimatePresence mode="wait">
         {step === "shoot" ? (
