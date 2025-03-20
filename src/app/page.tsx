@@ -18,15 +18,10 @@ import {
   Download,
   ArrowLeft,
   ArrowRight,
+  RotateCcw,
 } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import { Spotlight } from '@/components/ui/spotlight'
 
@@ -43,20 +38,19 @@ const defaultFilters = {
 
 interface Control {
   id: string
-  name: string
   icon: React.ComponentType<{ className: string; title?: string }>
   action: string
 }
 
 const controls: Control[] = [
-  { id: 'mirror', name: 'Mirror', icon: FlipHorizontal, action: 'mirror' },
-  { id: 'brightness', name: 'Brightness', icon: Sun, action: 'brightness' },
-  { id: 'contrast', name: 'Contrast', icon: Contrast, action: 'contrast' },
-  { id: 'grayscale', name: 'B&W', icon: ImageOff, action: 'filter' },
-  { id: 'sepia', name: 'Sepia', icon: Sparkles, action: 'filter' },
-  { id: 'saturate', name: 'Saturation', icon: Wand, action: 'filter' },
-  { id: 'blur', name: 'Soft Focus', icon: Glasses, action: 'filter' },
-  { id: 'reset', name: 'Reset', icon: RefreshCw, action: 'reset' },
+  { id: 'mirror', icon: FlipHorizontal, action: 'mirror' },
+  { id: 'brightness', icon: Sun, action: 'brightness' },
+  { id: 'contrast', icon: Contrast, action: 'contrast' },
+  { id: 'grayscale', icon: ImageOff, action: 'filter' },
+  { id: 'sepia', icon: Sparkles, action: 'filter' },
+  { id: 'saturate', icon: Wand, action: 'filter' },
+  { id: 'blur', icon: Glasses, action: 'filter' },
+  { id: 'reset', icon: RefreshCw, action: 'reset' },
 ]
 
 function Navbar() {
@@ -367,7 +361,8 @@ function PhotoShoot({ capturedImages, setCapturedImages }: PhotoShootProps) {
               filter: `brightness(${filters.brightness}%) contrast(${filters.contrast}%) grayscale(${filters.grayscale}%) sepia(${filters.sepia}%) saturate(${filters.saturate}%) blur(${filters.blur}px)`,
             }}
           />
-          <div className="flash-overlay pointer-events-none absolute inset-0"></div>
+          {/* Guide overlay */}
+          <div className="pointer-events-none absolute inset-4 rounded-lg border-2 border-white/30" />
         </div>
       )}
 
@@ -402,7 +397,7 @@ function PhotoShoot({ capturedImages, setCapturedImages }: PhotoShootProps) {
           className="flex h-12 w-12 items-center justify-center rounded-full bg-white p-0"
           variant="outline"
         >
-          <RefreshCw className="h-5 w-5" />
+          <RotateCcw className="h-5 w-5" />
         </Button>
       </div>
 
@@ -410,47 +405,28 @@ function PhotoShoot({ capturedImages, setCapturedImages }: PhotoShootProps) {
         <div className="flex flex-wrap justify-center gap-3">
           {controls
             .filter((c) => c.id !== 'reset')
-            .map(({ id, name, icon: Icon }) => (
-              <TooltipProvider key={id}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <Button
-                      onClick={() => toggleFilter(id)}
-                      disabled={filterDisabled}
-                      variant={
-                        activeFilters.includes(id) ? 'default' : 'outline'
-                      }
-                      className="h-10 w-10 rounded-full p-0"
-                      size="icon"
-                    >
-                      <Icon className="h-4 w-4" />
-                    </Button>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>{name}</p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+            .map(({ id, icon: Icon }) => (
+              <Button
+                key={id}
+                onClick={() => toggleFilter(id)}
+                disabled={filterDisabled}
+                variant={activeFilters.includes(id) ? 'default' : 'outline'}
+                className="h-10 w-10 rounded-full p-0"
+                size="icon"
+              >
+                <Icon className="h-4 w-4" />
+              </Button>
             ))}
 
-          <TooltipProvider>
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  onClick={resetFilters}
-                  variant="outline"
-                  size="icon"
-                  className="h-10 w-10 rounded-full"
-                  disabled={filterDisabled}
-                >
-                  <RefreshCw className="h-4 w-4" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent>
-                <p>Reset Filters</p>
-              </TooltipContent>
-            </Tooltip>
-          </TooltipProvider>
+          <Button
+            onClick={resetFilters}
+            variant="outline"
+            size="icon"
+            className="h-10 w-10 rounded-full"
+            disabled={filterDisabled}
+          >
+            <RefreshCw className="h-4 w-4" />
+          </Button>
         </div>
       </div>
 
