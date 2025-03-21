@@ -124,9 +124,10 @@ function Navbar() {
 
 function StepProgress({ currentStep }: StepProgressProps) {
   return (
-    <div className="my-6 flex items-center justify-center space-x-4">
+    <div className="my-4 flex items-center justify-center space-x-3">
+      {/* Step 1 */}
       <div
-        className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium transition-all duration-300 ${
+        className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium transition-all duration-300 ${
           currentStep === 1
             ? "bg-gray-800 text-white shadow-md"
             : "bg-gray-200 text-gray-600"
@@ -134,11 +135,15 @@ function StepProgress({ currentStep }: StepProgressProps) {
       >
         1
       </div>
-      <div className="relative h-0.5 w-16 bg-gray-300">
+
+      {/* Connection line */}
+      <div className="relative h-0.5 w-12 bg-gray-300">
         <div className="absolute inset-0 bg-gray-800" />
       </div>
+
+      {/* Step 2 */}
       <div
-        className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium transition-all duration-300 ${
+        className={`flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium transition-all duration-300 ${
           currentStep === 2
             ? "bg-gray-800 text-white shadow-md"
             : "bg-gray-200 text-gray-600"
@@ -468,7 +473,10 @@ function PhotoShoot({
     <div className="mx-auto flex max-w-xl flex-col items-center space-y-4 p-3 select-none">
       {/* Existing code for badge and keyboard shortcuts info */}
       <div className="flex w-full items-center justify-between">
-        <Badge variant="outline" className="px-3 py-1.5 text-xs font-medium">
+        <Badge
+          variant="outline"
+          className="bg-background px-3 py-1.5 text-xs font-medium"
+        >
           <span className="font-bold">{capturedImages.length}</span>
           <span className="mx-1">/</span>
           <span>{MAX_CAPTURE}</span>
@@ -988,7 +996,7 @@ export default function PhotoBoothApp() {
   }, [step]);
 
   return (
-    <div className="min-h-screen overflow-hidden bg-gray-50">
+    <div className="min-h-screen overflow-hidden bg-[radial-gradient(circle,rgba(255,75,75,0.6)_0%,rgba(255,192,203,0.4)_40%,rgba(255,255,255,0.9)_90%)]">
       <Navbar />
 
       <StepProgress currentStep={step === "shoot" ? 1 : 2} />
