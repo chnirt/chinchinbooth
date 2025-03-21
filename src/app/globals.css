@@ -1,4 +1,4 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 @plugin "tailwindcss-animate";
 
@@ -124,10 +124,65 @@
   }
 }
 
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;
+@layer utilities {
+  .max-w-3xs {
+    max-width: 14rem; /* 224px */
+  }
+
+  .hide-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  .hide-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }
-.hide-scrollbar {
-  -ms-overflow-style: none; /* Ẩn scrollbar cho IE và Edge */
-  scrollbar-width: none; /* Ẩn scrollbar cho Firefox */
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Flash effect for photo capture */
+.flash-overlay {
+  background: transparent;
+}
+
+.flash .flash-overlay {
+  animation: flash 0.3s ease-out;
+}
+
+@keyframes flash {
+  0% {
+    background: transparent;
+  }
+  50% {
+    background: rgba(255, 255, 255, 0.8);
+  }
+  100% {
+    background: transparent;
+  }
+}
+
+/* Custom scrollbar for horizontal scrolling */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #999;
 }
