@@ -1,8 +1,8 @@
-'use client'
+"use client";
 
-import { useState, useRef, useEffect } from 'react'
-import html2canvas from 'html2canvas-pro'
-import { motion, AnimatePresence } from 'framer-motion'
+import { useState, useRef, useEffect } from "react";
+import html2canvas from "html2canvas-pro";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   FlipHorizontal,
   Sun,
@@ -20,14 +20,14 @@ import {
   Timer,
   X,
   ImageIcon,
-} from 'lucide-react'
-import { Button } from '@/components/ui/button'
-import { Badge } from '@/components/ui/badge'
-import { cn } from '@/lib/utils'
-import { Spotlight } from '@/components/ui/spotlight'
+} from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+import { Spotlight } from "@/components/ui/spotlight";
 
 // Constants
-const MAX_CAPTURE = 10
+const MAX_CAPTURE = 10;
 const DEFAULT_FILTERS = {
   brightness: 100,
   contrast: 100,
@@ -35,74 +35,76 @@ const DEFAULT_FILTERS = {
   sepia: 0,
   saturate: 100,
   blur: 0,
-}
+};
 
 // Types
 interface Control {
-  id: string
-  icon: React.ComponentType<{ className: string; title?: string }>
-  action: string
+  id: string;
+  icon: React.ComponentType<{ className: string; title?: string }>;
+  action: string;
 }
 
 interface StepProgressProps {
-  currentStep: number
+  currentStep: number;
 }
 
 interface PhotoShootProps {
-  capturedImages: string[]
-  setCapturedImages: React.Dispatch<React.SetStateAction<string[]>>
+  capturedImages: string[];
+  setCapturedImages: React.Dispatch<React.SetStateAction<string[]>>;
+  canProceedToLayout: boolean;
+  goToLayoutScreen: () => void;
 }
 
 interface LayoutSelectionProps {
-  capturedImages: string[]
-  previewRef: React.RefObject<HTMLDivElement | null>
-  layoutType: number
-  selectedIndices: number[]
-  setSelectedIndices: React.Dispatch<React.SetStateAction<number[]>>
-  setLayoutType: React.Dispatch<React.SetStateAction<number>>
-  selectedFrame: string | null
-  setSelectedFrame: React.Dispatch<React.SetStateAction<string | null>>
+  capturedImages: string[];
+  previewRef: React.RefObject<HTMLDivElement | null>;
+  layoutType: number;
+  selectedIndices: number[];
+  setSelectedIndices: React.Dispatch<React.SetStateAction<number[]>>;
+  setLayoutType: React.Dispatch<React.SetStateAction<number>>;
+  selectedFrame: string | null;
+  setSelectedFrame: React.Dispatch<React.SetStateAction<string | null>>;
 }
 
 // Filter Controls
 const FILTER_CONTROLS: Control[] = [
-  { id: 'mirror', icon: FlipHorizontal, action: 'mirror' },
-  { id: 'brightness', icon: Sun, action: 'brightness' },
-  { id: 'contrast', icon: Contrast, action: 'contrast' },
-  { id: 'grayscale', icon: ImageOff, action: 'filter' },
-  { id: 'sepia', icon: Sparkles, action: 'filter' },
-  { id: 'saturate', icon: Wand, action: 'filter' },
-  { id: 'reset', icon: RefreshCw, action: 'reset' },
-]
+  { id: "mirror", icon: FlipHorizontal, action: "mirror" },
+  { id: "brightness", icon: Sun, action: "brightness" },
+  { id: "contrast", icon: Contrast, action: "contrast" },
+  { id: "grayscale", icon: ImageOff, action: "filter" },
+  { id: "sepia", icon: Sparkles, action: "filter" },
+  { id: "saturate", icon: Wand, action: "filter" },
+  { id: "reset", icon: RefreshCw, action: "reset" },
+];
 
 // Frame color palette
 const COLOR_PALETTE = [
-  '#FFFFFF', // White
-  '#000000', // Black
-  '#F5F5F5', // Light Gray
-  '#FF6F61', // Coral
-  '#6B5B95', // Purple
-  '#88B04B', // Green
-  '#F7CAC9', // Light Pink
-  '#92A8D1', // Blue
-  '#034F84', // Dark Blue
-  '#F4D06F', // Mustard Yellow
-  '#E94E77', // Hot Pink
-]
+  "#FFFFFF", // White
+  "#000000", // Black
+  "#F5F5F5", // Light Gray
+  "#FF6F61", // Coral
+  "#6B5B95", // Purple
+  "#88B04B", // Green
+  "#F7CAC9", // Light Pink
+  "#92A8D1", // Blue
+  "#034F84", // Dark Blue
+  "#F4D06F", // Mustard Yellow
+  "#E94E77", // Hot Pink
+];
 
 // Available frames
 const FRAMES = [
-  { id: 'none', name: 'No Frame', url: null },
+  { id: "none", name: "No Frame", url: null },
   {
-    id: 'birthday',
-    name: 'Birthday',
-    url: '/birthday-frame-removebg-preview.png',
+    id: "birthday",
+    name: "Birthday",
+    url: "/birthday-frame-removebg-preview.png",
   },
-]
+];
 
 // Replace the timer options and selection logic in the PhotoShoot component
-const TIMER_OPTIONS = [3, 5, 10] as const
-const DEFAULT_TIMER_INDEX = 1 // Default to 5 seconds (index 1)
+const TIMER_OPTIONS = [3, 5, 10] as const;
+const DEFAULT_TIMER_INDEX = 1; // Default to 5 seconds (index 1)
 
 function Navbar() {
   return (
@@ -117,7 +119,7 @@ function Navbar() {
         <span className="text-pink-500">@</span>chinchinbooth
       </h1>
     </motion.nav>
-  )
+  );
 }
 
 function StepProgress({ currentStep }: StepProgressProps) {
@@ -126,8 +128,8 @@ function StepProgress({ currentStep }: StepProgressProps) {
       <div
         className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium transition-all duration-300 ${
           currentStep === 1
-            ? 'bg-gray-800 text-white shadow-md'
-            : 'bg-gray-200 text-gray-600'
+            ? "bg-gray-800 text-white shadow-md"
+            : "bg-gray-200 text-gray-600"
         }`}
       >
         1
@@ -138,81 +140,86 @@ function StepProgress({ currentStep }: StepProgressProps) {
       <div
         className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium transition-all duration-300 ${
           currentStep === 2
-            ? 'bg-gray-800 text-white shadow-md'
-            : 'bg-gray-200 text-gray-600'
+            ? "bg-gray-800 text-white shadow-md"
+            : "bg-gray-200 text-gray-600"
         }`}
       >
         2
       </div>
     </div>
-  )
+  );
 }
 
-function PhotoShoot({ capturedImages, setCapturedImages }: PhotoShootProps) {
-  const videoRef = useRef<HTMLVideoElement>(null)
-  const canvasRef = useRef<HTMLCanvasElement>(null)
-  const capturedImagesRef = useRef<HTMLDivElement>(null)
-  const cameraContainerRef = useRef<HTMLDivElement>(null)
+function PhotoShoot({
+  capturedImages,
+  setCapturedImages,
+  canProceedToLayout,
+  goToLayoutScreen,
+}: PhotoShootProps) {
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const capturedImagesRef = useRef<HTMLDivElement>(null);
+  const cameraContainerRef = useRef<HTMLDivElement>(null);
 
-  const [filters, setFilters] = useState(DEFAULT_FILTERS)
-  const [isMirrored, setIsMirrored] = useState(true)
-  const [isCameraStarted, setIsCameraStarted] = useState(false)
-  const [cameraError, setCameraError] = useState<string | null>(null)
-  const [activeFilters, setActiveFilters] = useState<string[]>(['mirror'])
-  const [isCapturing, setIsCapturing] = useState(false)
+  const [filters, setFilters] = useState(DEFAULT_FILTERS);
+  const [isMirrored, setIsMirrored] = useState(true);
+  const [isCameraStarted, setIsCameraStarted] = useState(false);
+  const [cameraError, setCameraError] = useState<string | null>(null);
+  const [activeFilters, setActiveFilters] = useState<string[]>(["mirror"]);
+  const [isCapturing, setIsCapturing] = useState(false);
 
   // Mode toggles and auto sequence state
-  const [isAutoModeEnabled, setIsAutoModeEnabled] = useState(false) // just mode toggle
-  const [isAutoSequenceActive, setIsAutoSequenceActive] = useState(false) // whether auto capture sequence is running
+  const [isAutoModeEnabled, setIsAutoModeEnabled] = useState(false); // just mode toggle
+  const [isAutoSequenceActive, setIsAutoSequenceActive] = useState(false); // whether auto capture sequence is running
 
   const [selectedTimerIndex, setSelectedTimerIndex] =
-    useState<number>(DEFAULT_TIMER_INDEX)
-  const [countdown, setCountdown] = useState<number | null>(null)
+    useState<number>(DEFAULT_TIMER_INDEX);
+  const [countdown, setCountdown] = useState<number | null>(null);
 
-  const filterDisabled = !isCameraStarted
-  const isMaxCaptureReached = capturedImages.length >= MAX_CAPTURE
-  const selectedTimer = TIMER_OPTIONS[selectedTimerIndex]
+  const filterDisabled = !isCameraStarted;
+  const isMaxCaptureReached = capturedImages.length >= MAX_CAPTURE;
+  const selectedTimer = TIMER_OPTIONS[selectedTimerIndex];
 
   const cycleTimer = () => {
-    setSelectedTimerIndex((prev) => (prev + 1) % TIMER_OPTIONS.length)
-  }
+    setSelectedTimerIndex((prev) => (prev + 1) % TIMER_OPTIONS.length);
+  };
 
   // Initialize camera
   useEffect(() => {
     const startCamera = async () => {
-      if (isCameraStarted) return
+      if (isCameraStarted) return;
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: {
-            facingMode: 'user',
+            facingMode: "user",
             width: { ideal: 1280 },
             height: { ideal: 960 },
           },
-        })
+        });
         if (videoRef.current) {
-          videoRef.current.srcObject = stream
-          setIsCameraStarted(true)
-          setCameraError(null)
+          videoRef.current.srcObject = stream;
+          setIsCameraStarted(true);
+          setCameraError(null);
         }
       } catch {
         setCameraError(
-          'Camera access is required. Please enable camera access in your browser settings and reload the page.',
-        )
+          "Camera access is required. Please enable camera access in your browser settings and reload the page.",
+        );
       }
-    }
-    startCamera()
-  }, [isCameraStarted])
+    };
+    startCamera();
+  }, [isCameraStarted]);
 
   // Auto-scroll when new capture is added and stop auto sequence if max capture reached
   useEffect(() => {
     if (capturedImagesRef.current && capturedImages.length > 0) {
       capturedImagesRef.current.scrollLeft =
-        capturedImagesRef.current.scrollWidth
+        capturedImagesRef.current.scrollWidth;
     }
     if (capturedImages.length >= MAX_CAPTURE && isAutoSequenceActive) {
-      stopAutoSequence()
+      stopAutoSequence();
     }
-  }, [capturedImages.length])
+  }, [capturedImages.length]);
 
   // Capture image from video stream
   const captureImage = () => {
@@ -223,221 +230,225 @@ function PhotoShoot({ capturedImages, setCapturedImages }: PhotoShootProps) {
       capturedImages.length >= MAX_CAPTURE ||
       isCapturing
     )
-      return
+      return;
 
-    setIsCapturing(true)
-    const canvas = canvasRef.current
-    const ctx = canvas.getContext('2d')
+    setIsCapturing(true);
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext("2d");
     if (!ctx) {
-      setIsCapturing(false)
-      return
+      setIsCapturing(false);
+      return;
     }
 
-    const { videoWidth: width, videoHeight: height } = videoRef.current
-    canvas.width = width
-    canvas.height = height
-    ctx.clearRect(0, 0, width, height)
-    ctx.filter = `brightness(${filters.brightness}%) contrast(${filters.contrast}%) grayscale(${filters.grayscale}%) sepia(${filters.sepia}%) saturate(${filters.saturate}%)`
+    const { videoWidth: width, videoHeight: height } = videoRef.current;
+    canvas.width = width;
+    canvas.height = height;
+    ctx.clearRect(0, 0, width, height);
+    ctx.filter = `brightness(${filters.brightness}%) contrast(${filters.contrast}%) grayscale(${filters.grayscale}%) sepia(${filters.sepia}%) saturate(${filters.saturate}%)`;
 
     // Mirror image if needed
-    ctx.setTransform(isMirrored ? -1 : 1, 0, 0, 1, isMirrored ? width : 0, 0)
-    ctx.drawImage(videoRef.current, 0, 0, width, height)
-    ctx.setTransform(1, 0, 0, 1, 0, 0)
+    ctx.setTransform(isMirrored ? -1 : 1, 0, 0, 1, isMirrored ? width : 0, 0);
+    ctx.drawImage(videoRef.current, 0, 0, width, height);
+    ctx.setTransform(1, 0, 0, 1, 0, 0);
 
-    const videoContainer = videoRef.current.parentElement
-    const imageData = canvas.toDataURL('image/png')
+    const videoContainer = videoRef.current.parentElement;
+    const imageData = canvas.toDataURL("image/png");
     if (videoContainer) {
-      videoContainer.classList.add('flash')
+      videoContainer.classList.add("flash");
       setTimeout(() => {
-        videoContainer.classList.remove('flash')
-        setCapturedImages((prev) => [...prev, imageData])
-        setIsCapturing(false)
-        scheduleNextAutoCapture()
-      }, 300)
+        videoContainer.classList.remove("flash");
+        setCapturedImages((prev) => [...prev, imageData]);
+        setIsCapturing(false);
+        scheduleNextAutoCapture();
+      }, 300);
     } else {
-      setCapturedImages((prev) => [...prev, imageData])
-      setIsCapturing(false)
-      scheduleNextAutoCapture()
+      setCapturedImages((prev) => [...prev, imageData]);
+      setIsCapturing(false);
+      scheduleNextAutoCapture();
     }
-  }
+  };
 
   // Undo last capture
   const undoCapture = () => {
     if (capturedImages.length) {
-      setCapturedImages((prev) => prev.slice(0, -1))
+      setCapturedImages((prev) => prev.slice(0, -1));
     }
-  }
+  };
 
   // Reset all captures and stop auto sequence
   const resetCaptures = () => {
-    setCapturedImages([])
-    stopAutoSequence()
-  }
+    setCapturedImages([]);
+    stopAutoSequence();
+  };
 
   // Reset filters to default
   const resetFilters = () => {
-    setFilters(DEFAULT_FILTERS)
-    setActiveFilters(['mirror'])
-  }
+    setFilters(DEFAULT_FILTERS);
+    setActiveFilters(["mirror"]);
+  };
 
   // Toggle individual filter
   const toggleFilter = (id: string) => {
-    if (filterDisabled) return
+    if (filterDisabled) return;
 
-    if (id === 'mirror') {
-      setIsMirrored((prev) => !prev)
+    if (id === "mirror") {
+      setIsMirrored((prev) => !prev);
       setActiveFilters((prev) =>
-        prev.includes('mirror')
-          ? prev.filter((f) => f !== 'mirror')
-          : [...prev, 'mirror'],
-      )
-    } else if (id === 'grayscale') {
+        prev.includes("mirror")
+          ? prev.filter((f) => f !== "mirror")
+          : [...prev, "mirror"],
+      );
+    } else if (id === "grayscale") {
       setFilters((prev) => ({
         ...prev,
         grayscale: prev.grayscale === 0 ? 100 : 0,
         sepia: 0,
-      }))
+      }));
       setActiveFilters((prev) => {
         const newFilters = prev.filter(
-          (f) => f !== 'sepia' && f !== 'grayscale',
-        )
-        return prev.includes('grayscale')
+          (f) => f !== "sepia" && f !== "grayscale",
+        );
+        return prev.includes("grayscale")
           ? newFilters
-          : [...newFilters, 'grayscale']
-      })
-    } else if (id === 'sepia') {
+          : [...newFilters, "grayscale"];
+      });
+    } else if (id === "sepia") {
       setFilters((prev) => ({
         ...prev,
         sepia: prev.sepia === 0 ? 100 : 0,
         grayscale: 0,
-      }))
+      }));
       setActiveFilters((prev) => {
         const newFilters = prev.filter(
-          (f) => f !== 'sepia' && f !== 'grayscale',
-        )
-        return prev.includes('sepia') ? newFilters : [...newFilters, 'sepia']
-      })
-    } else if (id === 'brightness') {
+          (f) => f !== "sepia" && f !== "grayscale",
+        );
+        return prev.includes("sepia") ? newFilters : [...newFilters, "sepia"];
+      });
+    } else if (id === "brightness") {
       setFilters((prev) => ({
         ...prev,
         brightness: prev.brightness === 100 ? 130 : 100,
-      }))
+      }));
       setActiveFilters((prev) =>
-        prev.includes('brightness')
-          ? prev.filter((f) => f !== 'brightness')
-          : [...prev, 'brightness'],
-      )
-    } else if (id === 'contrast') {
+        prev.includes("brightness")
+          ? prev.filter((f) => f !== "brightness")
+          : [...prev, "brightness"],
+      );
+    } else if (id === "contrast") {
       setFilters((prev) => ({
         ...prev,
         contrast: prev.contrast === 100 ? 130 : 100,
-      }))
+      }));
       setActiveFilters((prev) =>
-        prev.includes('contrast')
-          ? prev.filter((f) => f !== 'contrast')
-          : [...prev, 'contrast'],
-      )
-    } else if (id === 'saturate') {
+        prev.includes("contrast")
+          ? prev.filter((f) => f !== "contrast")
+          : [...prev, "contrast"],
+      );
+    } else if (id === "saturate") {
       setFilters((prev) => ({
         ...prev,
         saturate: prev.saturate === 100 ? 150 : 100,
-      }))
+      }));
       setActiveFilters((prev) =>
-        prev.includes('saturate')
-          ? prev.filter((f) => f !== 'saturate')
-          : [...prev, 'saturate'],
-      )
+        prev.includes("saturate")
+          ? prev.filter((f) => f !== "saturate")
+          : [...prev, "saturate"],
+      );
     }
-  }
+  };
 
   // Start capture (single-shot or auto-capture)
   const startCapture = () => {
-    if (capturedImages.length >= MAX_CAPTURE) return
+    if (capturedImages.length >= MAX_CAPTURE) return;
     // Start countdown with the selected timer
-    setCountdown(selectedTimer)
+    setCountdown(selectedTimer);
     if (isAutoModeEnabled) {
-      setIsAutoSequenceActive(true)
+      setIsAutoSequenceActive(true);
     }
-  }
+  };
 
   const stopAutoSequence = () => {
-    setIsAutoSequenceActive(false)
-    setCountdown(null)
-  }
+    setIsAutoSequenceActive(false);
+    setCountdown(null);
+  };
 
   const toggleAutoMode = () => {
-    setIsAutoModeEnabled((prev) => !prev)
+    setIsAutoModeEnabled((prev) => !prev);
     if (isAutoSequenceActive) {
-      stopAutoSequence()
+      stopAutoSequence();
     }
-  }
+  };
 
   // Ref to ensure captureImage is only called once when countdown reaches 0
-  const hasCapturedRef = useRef(false)
+  const hasCapturedRef = useRef(false);
 
   // Countdown effect: reduce countdown every second and trigger capture when it hits 0
   useEffect(() => {
     if (countdown === null) {
-      hasCapturedRef.current = false
-      return
+      hasCapturedRef.current = false;
+      return;
     }
     if (countdown > 0) {
-      hasCapturedRef.current = false
+      hasCapturedRef.current = false;
       const timerId = setTimeout(() => {
-        setCountdown((prev) => (prev !== null ? prev - 1 : null))
-      }, 1000)
-      return () => clearTimeout(timerId)
+        setCountdown((prev) => (prev !== null ? prev - 1 : null));
+      }, 1000);
+      return () => clearTimeout(timerId);
     } else if (countdown === 0 && !hasCapturedRef.current) {
-      hasCapturedRef.current = true
-      captureImage()
+      hasCapturedRef.current = true;
+      captureImage();
     }
-  }, [countdown])
+  }, [countdown]);
 
   // After captureImage completes, schedule the next auto capture if in auto mode
   const scheduleNextAutoCapture = () => {
     if (isAutoSequenceActive && capturedImages.length < MAX_CAPTURE - 1) {
       setTimeout(() => {
-        hasCapturedRef.current = false
-        setCountdown(selectedTimer)
-      }, 1000)
+        hasCapturedRef.current = false;
+        setCountdown(selectedTimer);
+      }, 1000);
     } else {
-      setIsAutoSequenceActive(false)
-      setCountdown(null)
+      setIsAutoSequenceActive(false);
+      setCountdown(null);
     }
-  }
+  };
 
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName || ''))
-        return
+      if (["INPUT", "TEXTAREA"].includes(document.activeElement?.tagName || ""))
+        return;
       switch (e.key) {
-        case ' ':
-        case 'Enter': {
-          if (isAutoSequenceActive) {
-            stopAutoSequence()
+        case " ":
+        case "Enter": {
+          if (canProceedToLayout) {
+            goToLayoutScreen();
           } else {
-            if (countdown === null) {
-              startCapture()
+            if (isAutoSequenceActive) {
+              stopAutoSequence();
             } else {
-              setCountdown(null)
+              if (countdown === null) {
+                startCapture();
+              } else {
+                setCountdown(null);
+              }
             }
           }
-          break
+          break;
         }
-        case 'Backspace':
-        case 'Delete':
-          undoCapture()
-          break
-        case 'Escape':
-          resetCaptures()
-          break
+        case "Backspace":
+        case "Delete":
+          undoCapture();
+          break;
+        case "Escape":
+          resetCaptures();
+          break;
         default:
-          break
+          break;
       }
-    }
-    window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [
     capturedImages, // may not be necessary if other functions depend on it
     isCameraStarted,
@@ -451,7 +462,7 @@ function PhotoShoot({ capturedImages, setCapturedImages }: PhotoShootProps) {
     startCapture,
     undoCapture,
     resetCaptures,
-  ])
+  ]);
   // Update the controls section with the new layout and 'A' button
   return (
     <div className="mx-auto flex max-w-xl flex-col items-center space-y-4 p-3 select-none">
@@ -464,8 +475,8 @@ function PhotoShoot({ capturedImages, setCapturedImages }: PhotoShootProps) {
         </Badge>
 
         <div className="text-xs text-gray-500">
-          <span className="font-medium">Space</span>: Capture |{' '}
-          <span className="font-medium">Delete</span>: Undo |{' '}
+          <span className="font-medium">Space</span>: Capture |{" "}
+          <span className="font-medium">Delete</span>: Undo |{" "}
           <span className="font-medium">Esc</span>: Reset
         </div>
       </div>
@@ -486,7 +497,7 @@ function PhotoShoot({ capturedImages, setCapturedImages }: PhotoShootProps) {
             playsInline
             className="h-full w-full object-cover"
             style={{
-              transform: isMirrored ? 'scaleX(-1)' : 'scaleX(1)',
+              transform: isMirrored ? "scaleX(-1)" : "scaleX(1)",
               filter: `brightness(${filters.brightness}%) contrast(${filters.contrast}%) grayscale(${filters.grayscale}%) sepia(${filters.sepia}%) saturate(${filters.saturate}%)`,
             }}
           />
@@ -516,7 +527,7 @@ function PhotoShoot({ capturedImages, setCapturedImages }: PhotoShootProps) {
       {/* Filter controls */}
       <div className="w-full">
         <div className="filter-controls flex flex-wrap justify-center gap-2 md:gap-3">
-          {FILTER_CONTROLS.filter((c) => c.id !== 'reset').map(
+          {FILTER_CONTROLS.filter((c) => c.id !== "reset").map(
             ({ id, icon: Icon }) => (
               <Button
                 key={id}
@@ -524,7 +535,7 @@ function PhotoShoot({ capturedImages, setCapturedImages }: PhotoShootProps) {
                 disabled={
                   filterDisabled || isAutoSequenceActive || countdown !== null
                 }
-                variant={activeFilters.includes(id) ? 'default' : 'outline'}
+                variant={activeFilters.includes(id) ? "default" : "outline"}
                 className="h-9 w-9 rounded-full p-0 md:h-10 md:w-10"
                 size="icon"
               >
@@ -583,20 +594,25 @@ function PhotoShoot({ capturedImages, setCapturedImages }: PhotoShootProps) {
         {/* Center - Main capture button */}
         <Button
           onClick={
-            isAutoSequenceActive
-              ? stopAutoSequence
-              : countdown === null
-                ? startCapture
-                : () => setCountdown(null)
+            canProceedToLayout
+              ? goToLayoutScreen
+              : isAutoSequenceActive
+                ? stopAutoSequence
+                : countdown === null
+                  ? startCapture
+                  : () => setCountdown(null)
           }
           disabled={
-            !isCameraStarted ||
-            capturedImages.length >= MAX_CAPTURE ||
-            isCapturing
+            !canProceedToLayout &&
+            (!isCameraStarted ||
+              capturedImages.length >= MAX_CAPTURE ||
+              isCapturing)
           }
-          className="flex h-16 w-16 items-center justify-center rounded-full p-0 shadow-md transition-all hover:shadow-lg"
+          className={`flex h-16 w-16 items-center justify-center rounded-full p-0 transition-all ${canProceedToLayout ? "bg-green-400 text-white hover:bg-green-500" : ""}`}
         >
-          {isAutoSequenceActive ? (
+          {canProceedToLayout ? (
+            <ArrowRight className="h-7 w-7" />
+          ) : isAutoSequenceActive ? (
             <X className="h-7 w-7" />
           ) : countdown !== null ? (
             <X className="h-7 w-7" />
@@ -617,7 +633,7 @@ function PhotoShoot({ capturedImages, setCapturedImages }: PhotoShootProps) {
               isAutoSequenceActive
             }
             className="flex h-10 w-10 items-center justify-center rounded-full p-0 font-bold"
-            variant={isAutoModeEnabled ? 'default' : 'outline'}
+            variant={isAutoModeEnabled ? "default" : "outline"}
             size="icon"
           >
             <span className="text-sm font-bold">A</span>
@@ -646,7 +662,7 @@ function PhotoShoot({ capturedImages, setCapturedImages }: PhotoShootProps) {
           style={{
             height: cameraContainerRef.current
               ? cameraContainerRef.current.clientHeight / 2.5
-              : 'auto',
+              : "auto",
           }}
         >
           <AnimatePresence initial={false}>
@@ -654,7 +670,7 @@ function PhotoShoot({ capturedImages, setCapturedImages }: PhotoShootProps) {
               <motion.div
                 key={index}
                 className="aspect-[4/3] flex-shrink-0 snap-center overflow-hidden rounded-lg border border-gray-200"
-                style={{ height: '100%' }}
+                style={{ height: "100%" }}
                 initial={{ opacity: 0, scale: 0.8, x: 50 }}
                 animate={{ opacity: 1, scale: 1, x: 0 }}
                 exit={{ opacity: 0, scale: 0.8, x: -50 }}
@@ -662,7 +678,7 @@ function PhotoShoot({ capturedImages, setCapturedImages }: PhotoShootProps) {
                 layout
               >
                 <img
-                  src={img || '/placeholder.svg'}
+                  src={img || "/placeholder.svg"}
                   alt={`Captured ${index}`}
                   className="h-full w-full object-cover"
                 />
@@ -672,7 +688,7 @@ function PhotoShoot({ capturedImages, setCapturedImages }: PhotoShootProps) {
         </div>
       )}
     </div>
-  )
+  );
 }
 
 function LayoutSelection({
@@ -685,12 +701,12 @@ function LayoutSelection({
   selectedFrame,
   setSelectedFrame,
 }: LayoutSelectionProps) {
-  const [frameColor, setFrameColor] = useState<string>('#FFFFFF')
+  const [frameColor, setFrameColor] = useState<string>("#FFFFFF");
 
   const selectLayoutType = (type: number) => {
-    setLayoutType(type)
-    setSelectedIndices([])
-  }
+    setLayoutType(type);
+    setSelectedIndices([]);
+  };
 
   const toggleSelect = (index: number) =>
     setSelectedIndices((prev) =>
@@ -699,13 +715,13 @@ function LayoutSelection({
         : prev.length < layoutType
           ? [...prev, index]
           : prev,
-    )
+    );
 
   const renderCell = (idx: number) => {
     const cellContent =
       selectedIndices[idx] !== undefined ? (
         <img
-          src={capturedImages[selectedIndices[idx]] || '/placeholder.svg'}
+          src={capturedImages[selectedIndices[idx]] || "/placeholder.svg"}
           alt={`Slot ${idx}`}
           className="h-full w-full object-cover"
         />
@@ -713,36 +729,36 @@ function LayoutSelection({
         <div className="flex flex-col items-center justify-center text-gray-400">
           <span className="text-xs">Empty</span>
         </div>
-      )
+      );
 
     const baseClass =
-      'w-full aspect-[4/3] flex items-center justify-center transition-all duration-200 overflow-hidden'
-    const emptyClass = 'border-dashed border border-gray-300 bg-gray-50'
+      "w-full aspect-[4/3] flex items-center justify-center transition-all duration-200 overflow-hidden";
+    const emptyClass = "border-dashed border border-gray-300 bg-gray-50";
 
     return (
       <div
         key={idx}
-        className={`${baseClass} ${selectedIndices[idx] !== undefined ? '' : emptyClass}`}
+        className={`${baseClass} ${selectedIndices[idx] !== undefined ? "" : emptyClass}`}
       >
         {cellContent}
       </div>
-    )
-  }
+    );
+  };
 
   const renderPreview = () => {
     const commonClasses =
-      'mx-auto overflow-hidden rounded-md border border-gray-300 shadow-md'
+      "mx-auto overflow-hidden rounded-md border border-gray-300 shadow-md";
 
     // Frame overlay
     const frameOverlay = selectedFrame && (
       <div className="pointer-events-none absolute inset-0">
         <img
-          src={FRAMES.find((f) => f.id === selectedFrame)?.url || ''}
+          src={FRAMES.find((f) => f.id === selectedFrame)?.url || ""}
           alt="Frame"
           className="h-full w-full object-contain"
         />
       </div>
-    )
+    );
 
     if (layoutType === 4) {
       return (
@@ -758,7 +774,7 @@ function LayoutSelection({
             {frameOverlay}
           </div>
         </div>
-      )
+      );
     }
 
     return (
@@ -779,8 +795,8 @@ function LayoutSelection({
           {frameOverlay}
         </div>
       </div>
-    )
-  }
+    );
+  };
 
   return (
     <div className="mx-auto max-w-4xl p-3">
@@ -792,7 +808,7 @@ function LayoutSelection({
             <div className="mb-3 flex gap-3">
               <Button
                 onClick={() => selectLayoutType(4)}
-                variant={layoutType === 4 ? 'default' : 'outline'}
+                variant={layoutType === 4 ? "default" : "outline"}
                 className="h-auto rounded-full px-4 py-1 text-sm"
                 size="sm"
               >
@@ -800,7 +816,7 @@ function LayoutSelection({
               </Button>
               <Button
                 onClick={() => selectLayoutType(8)}
-                variant={layoutType === 8 ? 'default' : 'outline'}
+                variant={layoutType === 8 ? "default" : "outline"}
                 className="h-auto rounded-full px-4 py-1 text-sm"
                 size="sm"
               >
@@ -816,8 +832,8 @@ function LayoutSelection({
 
             <div className="grid grid-cols-2 gap-2 rounded-lg border p-2 sm:grid-cols-3">
               {capturedImages.map((img, index) => {
-                const isSelected = selectedIndices.includes(index)
-                const selectionIndex = selectedIndices.indexOf(index) + 1
+                const isSelected = selectedIndices.includes(index);
+                const selectionIndex = selectedIndices.indexOf(index) + 1;
 
                 return (
                   <div
@@ -825,12 +841,12 @@ function LayoutSelection({
                     onClick={() => toggleSelect(index)}
                     className={`relative aspect-[4/3] cursor-pointer overflow-hidden rounded-lg border-2 transition-all duration-200 ${
                       isSelected
-                        ? 'z-10 border-gray-800 shadow-md'
-                        : 'border-gray-200 hover:border-gray-400'
+                        ? "z-10 border-gray-800 shadow-md"
+                        : "border-gray-200 hover:border-gray-400"
                     }`}
                   >
                     <img
-                      src={img || '/placeholder.svg'}
+                      src={img || "/placeholder.svg"}
                       alt={`Photo ${index}`}
                       className="h-full w-full object-cover"
                     />
@@ -840,7 +856,7 @@ function LayoutSelection({
                       </div>
                     )}
                   </div>
-                )
+                );
               })}
             </div>
           </div>
@@ -857,18 +873,18 @@ function LayoutSelection({
                   <Button
                     key={frame.id}
                     onClick={() =>
-                      setSelectedFrame(frame.id === 'none' ? null : frame.id)
+                      setSelectedFrame(frame.id === "none" ? null : frame.id)
                     }
                     variant={
                       selectedFrame === frame.id ||
-                      (frame.id === 'none' && selectedFrame === null)
-                        ? 'default'
-                        : 'outline'
+                      (frame.id === "none" && selectedFrame === null)
+                        ? "default"
+                        : "outline"
                     }
                     className="flex items-center gap-1.5 rounded-full px-3 py-1 text-xs sm:text-sm"
                     size="sm"
                   >
-                    {frame.id === 'none' ? (
+                    {frame.id === "none" ? (
                       <ImageOff className="h-3 w-3" />
                     ) : (
                       <ImageIcon className="h-3 w-3" />
@@ -890,8 +906,8 @@ function LayoutSelection({
                     style={{ backgroundColor: color }}
                     className={`h-8 w-8 flex-shrink-0 rounded-full border-2 transition-all ${
                       frameColor === color
-                        ? 'border-primary'
-                        : 'border-gray-200'
+                        ? "border-primary"
+                        : "border-gray-200"
                     }`}
                     aria-label={`Select ${color}`}
                   ></button>
@@ -910,22 +926,22 @@ function LayoutSelection({
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export default function PhotoBoothApp() {
-  const [step, setStep] = useState<'shoot' | 'layout'>('shoot')
-  const [capturedImages, setCapturedImages] = useState<string[]>([])
-  const [layoutType, setLayoutType] = useState<number>(4) // Default to photo strip layout
-  const [selectedIndices, setSelectedIndices] = useState<number[]>([])
-  const [selectedFrame, setSelectedFrame] = useState<string | null>(null)
-  const previewRef = useRef<HTMLDivElement>(null)
-  const [isDownloading, setIsDownloading] = useState(false)
+  const [step, setStep] = useState<"shoot" | "layout">("shoot");
+  const [capturedImages, setCapturedImages] = useState<string[]>([]);
+  const [layoutType, setLayoutType] = useState<number>(4); // Default to photo strip layout
+  const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
+  const [selectedFrame, setSelectedFrame] = useState<string | null>(null);
+  const previewRef = useRef<HTMLDivElement>(null);
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const downloadComposite = async () => {
-    if (!previewRef.current || isDownloading) return
+    if (!previewRef.current || isDownloading) return;
 
-    setIsDownloading(true)
+    setIsDownloading(true);
 
     try {
       const canvas = await html2canvas(previewRef.current, {
@@ -933,55 +949,57 @@ export default function PhotoBoothApp() {
         useCORS: true,
         backgroundColor: null,
         scale: 2, // Higher quality for Retina displays
-      })
+      });
 
-      const link = document.createElement('a')
-      link.download = 'chinchinbooth_photo.png'
-      link.href = canvas.toDataURL('image/png')
-      link.click()
+      const link = document.createElement("a");
+      link.download = "chinchinbooth_photo.png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
     } catch (error) {
-      console.error('Error generating image:', error)
+      console.error("Error generating image:", error);
     } finally {
-      setIsDownloading(false)
+      setIsDownloading(false);
     }
-  }
+  };
 
   const retakePhotos = () => {
-    setCapturedImages([])
-    setSelectedIndices([])
-    setStep('shoot')
-  }
+    setCapturedImages([]);
+    setSelectedIndices([]);
+    setStep("shoot");
+  };
 
   // Require all 10 photos before proceeding
-  const canProceedToLayout = capturedImages.length === MAX_CAPTURE
-  const canDownload = selectedIndices.length === layoutType
+  const canProceedToLayout = capturedImages.length === MAX_CAPTURE;
+  const canDownload = selectedIndices.length === layoutType;
 
   useEffect(() => {
-    if (step === 'layout') {
+    if (step === "layout") {
       const handleKeyDown = (e: KeyboardEvent) => {
         if (
-          ['INPUT', 'TEXTAREA'].includes(document.activeElement?.tagName || '')
+          ["INPUT", "TEXTAREA"].includes(document.activeElement?.tagName || "")
         )
-          return
-        if (e.key === 'Escape') retakePhotos()
-        else if (e.key.toLowerCase() === 'd') downloadComposite()
-      }
-      window.addEventListener('keydown', handleKeyDown)
-      return () => window.removeEventListener('keydown', handleKeyDown)
+          return;
+        if (e.key === "Escape") retakePhotos();
+        else if (e.key.toLowerCase() === "d") downloadComposite();
+      };
+      window.addEventListener("keydown", handleKeyDown);
+      return () => window.removeEventListener("keydown", handleKeyDown);
     }
-  }, [step])
+  }, [step]);
 
   return (
     <div className="min-h-screen overflow-hidden bg-gray-50">
       <Navbar />
 
-      <StepProgress currentStep={step === 'shoot' ? 1 : 2} />
+      <StepProgress currentStep={step === "shoot" ? 1 : 2} />
 
       <div className="flex-1 overflow-hidden">
-        {step === 'shoot' ? (
+        {step === "shoot" ? (
           <PhotoShoot
             capturedImages={capturedImages}
             setCapturedImages={setCapturedImages}
+            canProceedToLayout={canProceedToLayout}
+            goToLayoutScreen={() => setStep("layout")}
           />
         ) : (
           <LayoutSelection
@@ -998,19 +1016,8 @@ export default function PhotoBoothApp() {
       </div>
 
       <div className="my-6 flex justify-center">
-        {step === 'shoot' ? (
-          <>
-            {canProceedToLayout && (
-              <Button
-                onClick={() => setStep('layout')}
-                className="rounded-full px-5 py-2 font-medium"
-                variant="default"
-              >
-                Continue
-                <ArrowRight className="ml-2 inline-block h-4 w-4" />
-              </Button>
-            )}
-          </>
+        {step === "shoot" ? (
+          <></>
         ) : (
           <div className="flex gap-3">
             <Button
@@ -1026,10 +1033,10 @@ export default function PhotoBoothApp() {
               onClick={downloadComposite}
               disabled={!canDownload || isDownloading}
               className={cn(
-                'flex items-center justify-center rounded-full px-4 py-2 font-medium',
-                !canDownload && 'cursor-not-allowed',
+                "flex items-center justify-center rounded-full px-4 py-2 font-medium",
+                !canDownload && "cursor-not-allowed",
               )}
-              variant={canDownload && !isDownloading ? 'default' : 'secondary'}
+              variant={canDownload && !isDownloading ? "default" : "secondary"}
               size="sm"
             >
               {isDownloading ? (
@@ -1041,7 +1048,7 @@ export default function PhotoBoothApp() {
                 <>
                   <Download className="mr-1 h-4 w-4" />
                   {canDownload
-                    ? 'Download'
+                    ? "Download"
                     : `Select ${layoutType - selectedIndices.length} more`}
                 </>
               )}
@@ -1050,5 +1057,5 @@ export default function PhotoBoothApp() {
         )}
       </div>
     </div>
-  )
+  );
 }
