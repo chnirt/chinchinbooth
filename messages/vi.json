@@ -1,0 +1,33 @@
+{
+  "HomePage": {
+    "title": "Xin chào!",
+    "errors": {
+      "camera_access_required": "Cần phải có quyền truy cập camera. Vui lòng bật quyền truy cập camera trong cài đặt trình duyệt của bạn và tải lại trang."
+    },
+    "undo": "Hoàn tác",
+    "capture": "Chụp",
+    "auto_mode": "Chế độ tự động",
+    "reset": "Đặt lại",
+    "select_photos": "Chọn ảnh",
+    "photo_strip": "Dải ảnh ({count})",
+    "frame_customization": "Tùy chỉnh khung ảnh",
+    "solid_colors": "Màu đơn",
+    "gradients": "Gradient",
+    "frame_style": "Kiểu khung ảnh",
+    "layout_preview": "Xem bố cục",
+    "layout_tips": "Mẹo bố cục",
+    "layout_tips_content": "Chọn những ảnh yêu thích của bạn và tùy chỉnh khung ảnh bằng cách chọn một màu đơn hoặc gradient để tạo ra dải ảnh hoàn hảo. Sử dụng bộ chọn màu để điều chỉnh chính xác. Khi bạn hài lòng với thiết kế, nhấn nút Tải xuống bên dưới.",
+    "retake": "Chụp lại",
+    "processing": "Đang xử lý",
+    "download": "Tải xuống",
+    "select_more": "Chọn thêm {count} ảnh nữa",
+    "empty": "Trống"
+  },
+  "LocaleSwitcher": {
+    "label": "Ngôn ngữ",
+    "en": "English",
+    "vi": "Tiếng Việt",
+    "km": "ភាសាខ្មែរ",
+    "th": "ภาษาไทย"
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "HomePage": {
+    "title": "Welcome!",
+    "errors": {
+      "camera_access_required": "Camera access is required. Please enable camera access in your browser settings and reload the page."
+    },
+    "undo": "Undo",
+    "capture": "Capture",
+    "auto_mode": "Auto Mode",
+    "reset": "Reset",
+    "select_photos": "Select Photos",
+    "photo_strip": "Photo Strip ({count})",
+    "frame_customization": "Frame Customization",
+    "solid_colors": "Solid Colors",
+    "gradients": "Gradients",
+    "frame_style": "Frame Style",
+    "layout_preview": "Layout Preview",
+    "layout_tips": "Layout Tips",
+    "layout_tips_content": "Select your favorite photos and customize the frame with a solid color or gradient to create your perfect photo strip. Use the color picker for precise adjustments. Once you're satisfied with your design, click the Download button below.",
+    "retake": "Retake",
+    "processing": "Processing",
+    "download": "Download",
+    "select_more": "Select {count} more photos",
+    "empty": "Empty"
+  },
+  "LocaleSwitcher": {
+    "label": "Language",
+    "en": "English",
+    "vi": "Vietnamese",
+    "km": "Khmer",
+    "th": "Thai"
+  }
+}

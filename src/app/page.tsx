@@ -20,7 +20,7 @@ import {
   RotateCcw,
   Timer,
   X,
-  // ImageIcon,
+  ImageIcon,
   GripHorizontal,
   CameraIcon,
   Check,
@@ -30,6 +30,8 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { Spotlight } from "@/components/ui/spotlight";
 import html2canvas from "html2canvas-pro";
+import { useTranslations } from "next-intl";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 // import { Input } from "@/components/ui/input";
 
 // Constants
@@ -157,9 +159,15 @@ function Navbar() {
       transition={{ duration: 0.5 }}
     >
       <Spotlight className="top-10 left-0 md:-top-20 md:left-60" fill="white" />
-      <h1 className="relative z-10 flex items-center text-2xl font-bold tracking-tight text-gray-800">
-        <span className="text-pink-500">@</span>chinchinbooth
-      </h1>
+      <div className="relative flex w-full max-w-xl items-center justify-center">
+        <h1 className="relative z-10 flex items-center text-2xl font-bold tracking-tight text-gray-800">
+          <span className="text-pink-500">@</span>chinchinbooth
+        </h1>
+
+        <div className="absolute right-0">
+          <LanguageSwitcher />
+        </div>
+      </div>
     </motion.nav>
   );
 }
@@ -241,6 +249,8 @@ function PhotoShoot({
     useState<number>(DEFAULT_TIMER_INDEX);
   const [countdown, setCountdown] = useState<number | null>(null);
 
+  const t = useTranslations("HomePage");
+
   const filterDisabled = !isCameraStarted;
   const isMaxCaptureReached = capturedImages.length >= MAX_CAPTURE;
   const selectedTimer = TIMER_OPTIONS[selectedTimerIndex];
@@ -268,13 +278,11 @@ function PhotoShoot({
           setCameraError(null);
         }
       } catch {
-        setCameraError(
-          "Camera access is required. Please enable camera access in your browser settings and reload the page.",
-        );
+        setCameraError(t("errors.camera_access_required"));
       }
     };
     startCamera();
-  }, [isCameraStarted]);
+  }, [isCameraStarted, t]);
 
   // Auto-scroll when new capture is added and stop auto sequence if max capture reached
   useEffect(() => {
@@ -328,7 +336,8 @@ function PhotoShoot({
   // Create disable variable for Undo button
   const undoDisabled =
     !capturedImages.length || isAutoSequenceActive || countdown !== null;
-  const timerDisabled = isAutoSequenceActive || countdown !== null;
+  const timerDisabled =
+    !isCameraStarted || isAutoSequenceActive || countdown !== null;
   const captureDisabled =
     !canProceedToLayout &&
     (!isCameraStarted || isMaxCaptureReached || isCapturing);
@@ -734,8 +743,9 @@ function PhotoShoot({
 
         {/* Keyboard shortcuts info */}
         <div className="mt-2 hidden text-xs text-gray-600 lg:block">
-          <strong>Delete</strong>: Undo | <strong>Space</strong>: Capture |{" "}
-          <strong>A</strong>: Auto Mode | <strong>Esc</strong>: Reset
+          <strong>Delete</strong>: {t("undo")} | <strong>Space</strong>:{" "}
+          {t("capture")} | <strong>A</strong>: {t("auto_mode")} |{" "}
+          <strong>Esc</strong>: {t("reset")}
         </div>
       </motion.div>
 
@@ -785,7 +795,7 @@ function LayoutSelection({
   setSelectedIndices,
   setLayoutType,
   selectedFrame,
-  // setSelectedFrame,
+  setSelectedFrame,
   retakePhotos,
   downloadComposite,
   canDownload,
@@ -794,6 +804,8 @@ function LayoutSelection({
   const [frameColor, setFrameColor] = useState<string>("#FFFFFF");
   const [selectedGradient, setSelectedGradient] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"solid" | "gradient">("solid");
+
+  const t = useTranslations("HomePage");
 
   const selectLayoutType = (type: number) => {
     setLayoutType(type);
@@ -828,7 +840,7 @@ function LayoutSelection({
         />
       ) : (
         <div className="flex flex-col items-center justify-center text-gray-400">
-          <span className="text-xs">Empty</span>
+          <span className="text-xs">{t("empty")}</span>
         </div>
       );
 
@@ -923,7 +935,7 @@ function LayoutSelection({
             className="rounded-lg border border-gray-200 bg-white p-4"
           >
             <h2 className="mb-2 text-lg font-semibold text-gray-800">
-              Select Photos
+              {t("select_photos")}
             </h2>
             <div className="mb-3 flex gap-3">
               <Button
@@ -932,7 +944,9 @@ function LayoutSelection({
                 className="h-auto rounded-full px-4 py-1 text-sm"
                 size="sm"
               >
-                Photo Strip (4)
+                {t("photo_strip", {
+                  count: 4,
+                })}
               </Button>
               <Button
                 onClick={() => selectLayoutType(8)}
@@ -940,7 +954,9 @@ function LayoutSelection({
                 className="h-auto rounded-full px-4 py-1 text-sm"
                 size="sm"
               >
-                Photo Strip (8)
+                {t("photo_strip", {
+                  count: 8,
+                })}
               </Button>
             </div>
 
@@ -990,7 +1006,7 @@ function LayoutSelection({
           >
             <div className="mb-3 flex items-center justify-between">
               <h2 className="text-lg font-semibold text-gray-800">
-                Frame Customization
+                {t("frame_customization")}
               </h2>
             </div>
 
@@ -1012,7 +1028,7 @@ function LayoutSelection({
                       : "hover:text-primary text-gray-500",
                   )}
                 >
-                  Solid Colors
+                  {t("solid_colors")}
                 </button>
                 <button
                   onClick={() => setActiveTab("gradient")}
@@ -1023,80 +1039,70 @@ function LayoutSelection({
                       : "hover:text-primary text-gray-500",
                   )}
                 >
-                  Gradients
+                  {t("gradients")}
                 </button>
               </div>
 
               {activeTab === "solid" ? (
-                <div>
-                  <h3 className="mb-2 text-sm font-medium text-gray-700">
-                    Solid Colors
-                  </h3>
-                  <div className="mb-3 grid grid-cols-6 gap-2">
-                    {COLOR_PALETTE.map((color) => {
-                      const isSelected =
-                        frameColor === color && !selectedGradient;
-                      return (
-                        <motion.button
-                          key={color}
-                          onClick={() => handleColorChange(color)}
-                          style={{ backgroundColor: color }}
-                          className={cn(
-                            "relative h-8 w-full rounded-md border-2 transition-all hover:shadow-sm",
-                            isSelected
-                              ? "border-primary shadow-sm"
-                              : "border-gray-200",
-                          )}
-                          aria-label={`Select ${color}`}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                        >
-                          {isSelected && (
-                            <div className="absolute top-1 right-1 flex h-3 w-3 items-center justify-center rounded-full bg-white">
-                              <Check className="text-primary h-2 w-2" />
-                            </div>
-                          )}
-                          <span className="sr-only">{color}</span>
-                        </motion.button>
-                      );
-                    })}
-                  </div>
+                <div className="mb-3 grid grid-cols-6 gap-2">
+                  {COLOR_PALETTE.map((color) => {
+                    const isSelected =
+                      frameColor === color && !selectedGradient;
+                    return (
+                      <motion.button
+                        key={color}
+                        onClick={() => handleColorChange(color)}
+                        style={{ backgroundColor: color }}
+                        className={cn(
+                          "relative h-8 w-full rounded-md border-2 transition-all hover:shadow-sm",
+                          isSelected
+                            ? "border-primary shadow-sm"
+                            : "border-gray-200",
+                        )}
+                        aria-label={`Select ${color}`}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                      >
+                        {isSelected && (
+                          <div className="absolute top-1 right-1 flex h-3 w-3 items-center justify-center rounded-full border border-gray-200 bg-white">
+                            <Check className="text-primary h-2 w-2" />
+                          </div>
+                        )}
+                        <span className="sr-only">{color}</span>
+                      </motion.button>
+                    );
+                  })}
                 </div>
               ) : (
-                <div>
-                  <h3 className="mb-2 text-sm font-medium text-gray-700">
-                    Gradient Presets
-                  </h3>
-                  <div className="grid grid-cols-2 gap-2">
-                    {GRADIENT_PRESETS.map((gradient) => {
-                      const isSelected = selectedGradient === gradient.value;
-                      return (
-                        <motion.button
-                          key={gradient.name}
-                          onClick={() => handleGradientChange(gradient.value)}
-                          style={{ background: gradient.value }}
-                          className={cn(
-                            "relative h-10 w-full rounded-md border-2 transition-all hover:shadow-sm",
-                            isSelected
-                              ? "border-primary shadow-sm"
-                              : "border-gray-200",
-                          )}
-                          aria-label={`Select ${gradient.name} gradient`}
-                          whileHover={{ scale: 1.02 }}
-                          whileTap={{ scale: 0.98 }}
-                        >
-                          {isSelected && (
-                            <div className="absolute top-1 right-1 flex h-3 w-3 items-center justify-center rounded-full bg-white">
-                              <Check className="text-primary h-2 w-2" />
-                            </div>
-                          )}
-                          <span className="text-xs font-medium text-gray-800 drop-shadow-sm">
-                            {gradient.name}
-                          </span>
-                        </motion.button>
-                      );
-                    })}
-                  </div>
+                <div className="grid grid-cols-2 gap-2">
+                  {GRADIENT_PRESETS.map((gradient) => {
+                    const isSelected = selectedGradient === gradient.value;
+                    return (
+                      <motion.button
+                        key={gradient.name}
+                        onClick={() => handleGradientChange(gradient.value)}
+                        style={{ background: gradient.value }}
+                        className={cn(
+                          "relative h-10 w-full rounded-md border-2 transition-all hover:shadow-sm",
+                          isSelected
+                            ? "border-primary shadow-sm"
+                            : "border-gray-200",
+                        )}
+                        aria-label={`Select ${gradient.name} gradient`}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        {isSelected && (
+                          <div className="absolute top-1 right-1 flex h-3 w-3 items-center justify-center rounded-full border border-gray-200 bg-white">
+                            <Check className="text-primary h-2 w-2" />
+                          </div>
+                        )}
+                        <span className="text-xs font-medium text-gray-800 drop-shadow-sm">
+                          {gradient.name}
+                        </span>
+                      </motion.button>
+                    );
+                  })}
                 </div>
               )}
             </motion.div>
@@ -1132,9 +1138,9 @@ function LayoutSelection({
             </div>
 
             {/* Frame Selection */}
-            {/* <div className="mb-4">
+            <div className="mb-4 hidden">
               <h3 className="mb-2 text-sm font-medium text-gray-700">
-                Frame Style
+                {t("frame_style")}
               </h3>
               <div className="flex flex-wrap gap-2">
                 {FRAMES.map((frame) => (
@@ -1161,7 +1167,7 @@ function LayoutSelection({
                   </Button>
                 ))}
               </div>
-            </div> */}
+            </div>
           </motion.div>
         </div>
 
@@ -1172,7 +1178,7 @@ function LayoutSelection({
           transition={{ duration: 0.5, delay: 0.2 }}
         >
           <h2 className="mb-3 text-lg font-semibold text-gray-800">
-            Layout Preview
+            {t("layout_preview")}
           </h2>
           <div className="flex items-center justify-center rounded-lg border border-gray-200 bg-white p-4">
             <div className="w-full max-w-md">{renderPreview()}</div>
@@ -1184,13 +1190,10 @@ function LayoutSelection({
               <GripHorizontal className="mt-0.5 h-4 w-4 text-gray-500" />
               <div>
                 <h3 className="text-sm font-medium text-gray-700">
-                  Layout Tips
+                  {t("layout_tips")}
                 </h3>
                 <p className="mt-1 text-xs text-gray-600">
-                  Select your favorite photos and customize the frame color or
-                  gradient to create your perfect photo strip. Use the hex input
-                  or color picker for precise color matching. Once you&apos;re
-                  happy with your design, click the Download button below.
+                  {t("layout_tips_content")}
                 </p>
               </div>
             </div>
@@ -1206,7 +1209,7 @@ function LayoutSelection({
           size="sm"
         >
           <ArrowLeft className="mr-1 h-4 w-4" />
-          Retake
+          {t("retake")}
         </Button>
         <Button
           onClick={downloadComposite}
@@ -1221,14 +1224,16 @@ function LayoutSelection({
           {isDownloading ? (
             <>
               <RefreshCw className="mr-1 h-4 w-4 animate-spin" />
-              Processing...
+              {t("processing")}...
             </>
           ) : (
             <>
               <Download className="mr-1 h-4 w-4" />
               {canDownload
-                ? "Download"
-                : `Select ${layoutType - selectedIndices.length} more`}
+                ? t("download")
+                : t("select_more", {
+                    count: layoutType - selectedIndices.length,
+                  })}
             </>
           )}
         </Button>
