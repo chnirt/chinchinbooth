@@ -21,12 +21,12 @@ import {
   Timer,
   X,
   // ImageIcon,
-  Palette,
   GripHorizontal,
+  CameraIcon,
+  Check,
   // Check,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { Spotlight } from "@/components/ui/spotlight";
 import html2canvas from "html2canvas-pro";
@@ -248,6 +248,7 @@ function PhotoShoot({
   const selectedTimer = TIMER_OPTIONS[selectedTimerIndex];
 
   const cycleTimer = () => {
+    if (timerDisabled) return;
     setSelectedTimerIndex((prev) => (prev + 1) % TIMER_OPTIONS.length);
   };
 
@@ -283,10 +284,10 @@ function PhotoShoot({
       capturedImagesRef.current.scrollLeft =
         capturedImagesRef.current.scrollWidth;
     }
-    if (capturedImages.length >= MAX_CAPTURE && isAutoSequenceActive) {
+    if (isMaxCaptureReached && isAutoSequenceActive) {
       stopAutoSequence();
     }
-  }, [capturedImages.length]);
+  }, [capturedImages.length, isMaxCaptureReached]);
 
   // Modify the captureImage function to remove the flash effect
   const captureImage = () => {
@@ -294,7 +295,7 @@ function PhotoShoot({
       !isCameraStarted ||
       !videoRef.current ||
       !canvasRef.current ||
-      capturedImages.length >= MAX_CAPTURE ||
+      isMaxCaptureReached ||
       isCapturing
     )
       return;
@@ -326,8 +327,25 @@ function PhotoShoot({
     scheduleNextAutoCapture();
   };
 
+  // Create disable variable for Undo button
+  const undoDisabled =
+    !capturedImages.length || isAutoSequenceActive || countdown !== null;
+  const timerDisabled = isAutoSequenceActive || countdown !== null;
+  const captureDisabled =
+    !canProceedToLayout &&
+    (!isCameraStarted || isMaxCaptureReached || isCapturing);
+  const autoDisabled =
+    !isCameraStarted ||
+    isMaxCaptureReached ||
+    isCapturing ||
+    countdown !== null ||
+    isAutoSequenceActive;
+  const resetDisabled =
+    !capturedImages.length || isAutoSequenceActive || countdown !== null;
+
   // Undo last capture
   const undoCapture = () => {
+    if (undoDisabled) return;
     if (capturedImages.length) {
       setCapturedImages((prev) => prev.slice(0, -1));
     }
@@ -335,12 +353,14 @@ function PhotoShoot({
 
   // Reset all captures and stop auto sequence
   const resetCaptures = () => {
+    if (resetDisabled) return;
     setCapturedImages([]);
     stopAutoSequence();
   };
 
   // Reset filters to default
   const resetFilters = () => {
+    if (resetDisabled) return;
     setFilters(DEFAULT_FILTERS);
     setActiveFilters(["mirror"]);
   };
@@ -417,7 +437,7 @@ function PhotoShoot({
 
   // Start capture (single-shot or auto-capture)
   const startCapture = () => {
-    if (capturedImages.length >= MAX_CAPTURE) return;
+    if (isMaxCaptureReached) return;
     // Start countdown with the selected timer
     setCountdown(selectedTimer);
     if (isAutoModeEnabled) {
@@ -431,6 +451,7 @@ function PhotoShoot({
   };
 
   const toggleAutoMode = () => {
+    if (autoDisabled) return;
     setIsAutoModeEnabled((prev) => !prev);
     if (isAutoSequenceActive) {
       stopAutoSequence();
@@ -501,6 +522,9 @@ function PhotoShoot({
         case "Escape":
           resetCaptures();
           break;
+        case "a":
+          toggleAutoMode();
+          break;
         default:
           break;
       }
@@ -515,7 +539,6 @@ function PhotoShoot({
     isCapturing,
     isAutoSequenceActive,
     countdown,
-    isMaxCaptureReached,
     canProceedToLayout,
     goToLayoutScreen,
   ]);
@@ -523,31 +546,6 @@ function PhotoShoot({
   // Update the UI with the rose-teal color scheme
   return (
     <div className="mx-auto flex max-w-xl flex-col items-center space-y-4 p-3 select-none">
-      {/* Badge and keyboard shortcuts info */}
-      <motion.div
-        className="flex w-full items-center justify-between"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4 }}
-      >
-        <Badge
-          variant="outline"
-          className="border-gray-200 bg-white px-3 py-1.5 text-xs font-medium shadow-sm"
-        >
-          <span className="text-primary font-bold">
-            {capturedImages.length}
-          </span>
-          <span className="mx-1">/</span>
-          <span>{MAX_CAPTURE}</span>
-        </Badge>
-
-        <div className="text-xs text-gray-600">
-          <span className="font-medium">Space</span>: Capture |{" "}
-          <span className="font-medium">Delete</span>: Undo |{" "}
-          <span className="font-medium">Esc</span>: Reset
-        </div>
-      </motion.div>
-
       {/* Camera view with standard border */}
       {cameraError ? (
         <div className="rounded-lg bg-red-50 p-4 text-center font-bold text-red-500">
@@ -566,9 +564,11 @@ function PhotoShoot({
               ref={videoRef}
               autoPlay
               playsInline
-              className="h-full w-full object-cover"
+              className={cn(
+                "h-full w-full object-cover",
+                isMirrored ? "-scale-x-100" : "",
+              )}
               style={{
-                transform: isMirrored ? "scaleX(-1)" : "scaleX(1)",
                 filter: `brightness(${filters.brightness}%) contrast(${filters.contrast}%) grayscale(${filters.grayscale}%) sepia(${filters.sepia}%) saturate(${filters.saturate}%)`,
               }}
             />
@@ -582,12 +582,19 @@ function PhotoShoot({
                   initial={{ opacity: 0, scale: 1.5 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.5 }}
-                  className="text-primary-foreground absolute right-4 bottom-4 flex h-16 w-16 items-center justify-center rounded-full bg-black/50 shadow-lg backdrop-blur-sm"
+                  className="text-primary-foreground absolute right-4 bottom-4 flex h-16 w-16 items-center justify-center rounded-full bg-black/50 shadow-lg"
                 >
                   <span className="text-3xl font-bold">{countdown}</span>
                 </motion.div>
               )}
             </AnimatePresence>
+
+            <div className="absolute top-4 right-4 flex items-center gap-1 rounded bg-black/50 px-2 py-1 text-white">
+              <CameraIcon className="h-4 w-4" />
+              <span>
+                {capturedImages.length}/{MAX_CAPTURE}
+              </span>
+            </div>
           </div>
         </motion.div>
       )}
@@ -635,113 +642,102 @@ function PhotoShoot({
 
       {/* Camera controls with consistent button styling */}
       <motion.div
-        className="flex w-full items-center justify-center gap-3"
+        className="space-y-2"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.3 }}
       >
-        {/* Left side controls */}
-        <div className="flex items-center gap-2">
-          <Button
-            onClick={undoCapture}
-            disabled={
-              !capturedImages.length ||
-              isAutoSequenceActive ||
-              countdown !== null
-            }
-            className="flex h-10 w-10 items-center justify-center rounded-full p-0"
-            variant="outline"
-            size="icon"
-          >
-            <Undo2 className="h-4 w-4" />
-          </Button>
-
-          <div className="relative">
+        <div className="flex w-full items-center justify-center gap-3">
+          {/* Left side controls */}
+          <div className="flex items-center gap-2">
             <Button
+              onClick={undoCapture}
+              disabled={undoDisabled}
+              className="flex h-10 w-10 items-center justify-center rounded-full p-0"
               variant="outline"
               size="icon"
-              className="h-10 w-10 rounded-full"
-              onClick={cycleTimer}
-              disabled={isAutoSequenceActive || countdown !== null}
             >
-              <Timer className="h-4 w-4" />
+              <Undo2 className="h-4 w-4" />
             </Button>
-            <div className="bg-primary text-primary-foreground absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-medium">
-              {selectedTimer}
+
+            <div className="relative">
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-10 w-10 rounded-full"
+                onClick={cycleTimer}
+                disabled={timerDisabled}
+              >
+                <Timer className="h-4 w-4" />
+              </Button>
+              <div className="bg-primary text-primary-foreground absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-medium">
+                {selectedTimer}
+              </div>
             </div>
+          </div>
+
+          {/* Center - Main capture button */}
+          <motion.div whileTap={{ scale: 0.95 }}>
+            <Button
+              onClick={
+                canProceedToLayout
+                  ? goToLayoutScreen
+                  : isAutoSequenceActive
+                    ? stopAutoSequence
+                    : countdown === null
+                      ? startCapture
+                      : () => setCountdown(null)
+              }
+              disabled={captureDisabled}
+              className={cn(
+                "flex h-16 w-16 items-center justify-center rounded-full p-0",
+                canProceedToLayout &&
+                  "bg-green-400 text-white hover:bg-green-500",
+                (isAutoSequenceActive || countdown !== null) &&
+                  "bg-red-400 text-white hover:bg-red-500",
+              )}
+              size="icon"
+            >
+              {canProceedToLayout ? (
+                <ArrowRight className="h-7 w-7" />
+              ) : isAutoSequenceActive ? (
+                <X className="h-7 w-7" />
+              ) : countdown !== null ? (
+                <X className="h-7 w-7" />
+              ) : (
+                <Camera className="h-7 w-7" />
+              )}
+            </Button>
+          </motion.div>
+
+          {/* Right side controls */}
+          <div className="flex items-center gap-2">
+            <Button
+              onClick={toggleAutoMode}
+              disabled={autoDisabled}
+              className="flex h-10 w-10 items-center justify-center rounded-full p-0 font-bold"
+              variant={isAutoModeEnabled ? "default" : "outline"}
+              size="icon"
+            >
+              <span className="text-sm font-bold">A</span>
+            </Button>
+
+            <Button
+              onClick={resetCaptures}
+              disabled={resetDisabled}
+              className="flex h-10 w-10 items-center justify-center rounded-full p-0"
+              variant="outline"
+              size="icon"
+            >
+              <RotateCcw className="h-4 w-4" />
+            </Button>
           </div>
         </div>
 
-        {/* Center - Main capture button */}
-        <motion.div whileTap={{ scale: 0.95 }}>
-          <Button
-            onClick={
-              canProceedToLayout
-                ? goToLayoutScreen
-                : isAutoSequenceActive
-                  ? stopAutoSequence
-                  : countdown === null
-                    ? startCapture
-                    : () => setCountdown(null)
-            }
-            disabled={
-              !canProceedToLayout &&
-              (!isCameraStarted ||
-                capturedImages.length >= MAX_CAPTURE ||
-                isCapturing)
-            }
-            className={cn(
-              "flex h-16 w-16 items-center justify-center rounded-full p-0",
-              canProceedToLayout &&
-                "bg-green-400 text-white hover:bg-green-500",
-              (isAutoSequenceActive || countdown !== null) &&
-                "bg-red-400 text-white hover:bg-red-500",
-            )}
-            size="icon"
-          >
-            {canProceedToLayout ? (
-              <ArrowRight className="h-7 w-7" />
-            ) : isAutoSequenceActive ? (
-              <X className="h-7 w-7" />
-            ) : countdown !== null ? (
-              <X className="h-7 w-7" />
-            ) : (
-              <Camera className="h-7 w-7" />
-            )}
-          </Button>
-        </motion.div>
-
-        {/* Right side controls */}
-        <div className="flex items-center gap-2">
-          <Button
-            onClick={toggleAutoMode}
-            disabled={
-              !isCameraStarted ||
-              capturedImages.length >= MAX_CAPTURE ||
-              isCapturing ||
-              countdown !== null ||
-              isAutoSequenceActive
-            }
-            className="flex h-10 w-10 items-center justify-center rounded-full p-0 font-bold"
-            variant={isAutoModeEnabled ? "default" : "outline"}
-            size="icon"
-          >
-            <span className="text-sm font-bold">A</span>
-          </Button>
-
-          <Button
-            onClick={resetCaptures}
-            disabled={
-              !capturedImages.length ||
-              isAutoSequenceActive ||
-              countdown !== null
-            }
-            className="flex h-10 w-10 items-center justify-center rounded-full p-0"
-            variant="outline"
-            size="icon"
-          >
-            <RotateCcw className="h-4 w-4" />
-          </Button>
+        {/* Keyboard shortcuts info */}
+        <div className="mt-2 hidden text-xs text-gray-600 lg:block">
+          <strong>Delete</strong>: Undo | <strong>Space</strong>: Capture |{" "}
+          <strong>A</strong>: Auto Mode | <strong>Esc</strong>: Reset
         </div>
       </motion.div>
 
@@ -799,7 +795,6 @@ function LayoutSelection({
 }: LayoutSelectionProps) {
   const [frameColor, setFrameColor] = useState<string>("#FFFFFF");
   const [selectedGradient, setSelectedGradient] = useState<string | null>(null);
-  const [colorPickerOpen, setColorPickerOpen] = useState(false);
   const [activeTab, setActiveTab] = useState<"solid" | "gradient">("solid");
 
   const selectLayoutType = (type: number) => {
@@ -840,13 +835,16 @@ function LayoutSelection({
       );
 
     const baseClass =
-      "w-full aspect-[4/3] flex items-center justify-center transition-all duration-200 overflow-hidden";
-    const emptyClass = "border-dashed border border-gray-200 bg-gray-50/50";
+      "w-full aspect-[4/3] flex items-center justify-center transition-all duration-200 overflow-hidden border border-transparent";
+    const emptyClass = "border-dashed border-gray-200 bg-gray-50/50";
 
     return (
       <div
         key={idx}
-        className={`${baseClass} ${selectedIndices[idx] !== undefined ? "" : emptyClass}`}
+        className={cn(
+          baseClass,
+          selectedIndices[idx] === undefined && emptyClass,
+        )}
       >
         {cellContent}
       </div>
@@ -895,7 +893,7 @@ function LayoutSelection({
     }
 
     return (
-      <div className={`${commonClasses} relative`}>
+      <div className={cn(commonClasses, "relative")}>
         <div
           ref={previewRef}
           className="px-4 pt-4 pb-20"
@@ -963,9 +961,10 @@ function LayoutSelection({
                   <motion.div
                     key={index}
                     onClick={() => toggleSelect(index)}
-                    className={`relative aspect-[4/3] cursor-pointer overflow-hidden rounded-lg border-2 transition-all duration-200 ${
-                      isSelected ? "border-primary z-10" : "border-gray-200"
-                    }`}
+                    className={cn(
+                      "relative aspect-[4/3] cursor-pointer overflow-hidden rounded-lg border-2 transition-all duration-200",
+                      isSelected ? "border-primary z-10" : "border-gray-200",
+                    )}
                     whileTap={{ scale: 0.98 }}
                   >
                     <img
@@ -984,7 +983,7 @@ function LayoutSelection({
             </div>
           </motion.div>
 
-          {/* Enhanced Frame Customization Section with Color Picker */}
+          {/* Enhanced Frame Customization Section */}
           <motion.div
             className="rounded-lg border border-gray-200 bg-white p-4"
             initial={{ opacity: 0, y: 20 }}
@@ -995,123 +994,132 @@ function LayoutSelection({
               <h2 className="text-lg font-semibold text-gray-800">
                 Frame Customization
               </h2>
-              <Button
-                onClick={() => setColorPickerOpen(!colorPickerOpen)}
-                variant="outline"
-                size="sm"
-                className="flex items-center gap-1 rounded-full"
-              >
-                <Palette className="h-3.5 w-3.5" />
-                <span className="text-xs">Color Options</span>
-              </Button>
             </div>
 
             {/* Color/Gradient Selection Tabs */}
-            {colorPickerOpen && (
-              <div className="animate-fade-in mb-4">
-                <div className="mb-3 flex border-b border-gray-200">
-                  <button
-                    onClick={() => setActiveTab("solid")}
-                    className={`px-4 py-2 text-sm font-medium ${
-                      activeTab === "solid"
-                        ? "text-primary border-primary border-b-2"
-                        : "hover:text-primary text-gray-500"
-                    }`}
-                  >
-                    Solid Colors
-                  </button>
-                  <button
-                    onClick={() => setActiveTab("gradient")}
-                    className={`px-4 py-2 text-sm font-medium ${
-                      activeTab === "gradient"
-                        ? "text-primary border-primary border-b-2"
-                        : "hover:text-primary text-gray-500"
-                    }`}
-                  >
-                    Gradients
-                  </button>
-                </div>
+            <motion.div
+              className="animate-fade-in mb-4"
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.3 }}
+            >
+              <div className="mb-3 flex border-b border-gray-200">
+                <button
+                  onClick={() => setActiveTab("solid")}
+                  className={cn(
+                    "px-4 py-2 text-sm font-medium transition-colors",
+                    activeTab === "solid"
+                      ? "border-primary text-primary border-b-2"
+                      : "hover:text-primary text-gray-500",
+                  )}
+                >
+                  Solid Colors
+                </button>
+                <button
+                  onClick={() => setActiveTab("gradient")}
+                  className={cn(
+                    "px-4 py-2 text-sm font-medium transition-colors",
+                    activeTab === "gradient"
+                      ? "border-primary text-primary border-b-2"
+                      : "hover:text-primary text-gray-500",
+                  )}
+                >
+                  Gradients
+                </button>
+              </div>
 
-                {activeTab === "solid" ? (
-                  <div>
-                    <h3 className="mb-2 text-sm font-medium text-gray-700">
-                      Solid Colors
-                    </h3>
-                    <div className="mb-3 grid grid-cols-6 gap-2">
-                      {COLOR_PALETTE.map((color) => (
+              {activeTab === "solid" ? (
+                <div>
+                  <h3 className="mb-2 text-sm font-medium text-gray-700">
+                    Solid Colors
+                  </h3>
+                  <div className="mb-3 grid grid-cols-6 gap-2">
+                    {COLOR_PALETTE.map((color) => {
+                      const isSelected =
+                        frameColor === color && !selectedGradient;
+                      return (
                         <motion.button
                           key={color}
                           onClick={() => handleColorChange(color)}
                           style={{ backgroundColor: color }}
-                          className={`h-8 w-full flex-shrink-0 rounded-md border-2 transition-all ${
-                            frameColor === color && !selectedGradient
+                          className={cn(
+                            "relative h-8 w-full rounded-md border-2 transition-all hover:shadow-sm",
+                            isSelected
                               ? "border-primary shadow-sm"
-                              : "border-gray-200"
-                          }`}
+                              : "border-gray-200",
+                          )}
                           aria-label={`Select ${color}`}
                           whileHover={{ scale: 1.05 }}
                           whileTap={{ scale: 0.95 }}
-                        ></motion.button>
-                      ))}
-                    </div>
-
-                    {/* Custom color input */}
-                    {/* <div className="mt-2 flex items-center gap-2">
-                      <input
-                        type="color"
-                        value={frameColor}
-                        onChange={(e) => handleColorChange(e.target.value)}
-                        className="h-8 w-8 cursor-pointer rounded"
-                      />
-                      <span className="text-xs text-purple-600">
-                        Custom color
-                      </span>
-                    </div> */}
+                        >
+                          {isSelected && (
+                            <div className="absolute top-1 right-1 flex h-3 w-3 items-center justify-center rounded-full bg-white">
+                              <Check className="text-primary h-2 w-2" />
+                            </div>
+                          )}
+                          <span className="sr-only">{color}</span>
+                        </motion.button>
+                      );
+                    })}
                   </div>
-                ) : (
-                  <div>
-                    <h3 className="mb-2 text-sm font-medium text-gray-700">
-                      Gradient Presets
-                    </h3>
-                    <div className="grid grid-cols-2 gap-2">
-                      {GRADIENT_PRESETS.map((gradient) => (
+                </div>
+              ) : (
+                <div>
+                  <h3 className="mb-2 text-sm font-medium text-gray-700">
+                    Gradient Presets
+                  </h3>
+                  <div className="grid grid-cols-2 gap-2">
+                    {GRADIENT_PRESETS.map((gradient) => {
+                      const isSelected = selectedGradient === gradient.value;
+                      return (
                         <motion.button
                           key={gradient.name}
                           onClick={() => handleGradientChange(gradient.value)}
                           style={{ background: gradient.value }}
-                          className={`h-10 w-full flex-shrink-0 rounded-md border-2 transition-all ${
-                            selectedGradient === gradient.value
+                          className={cn(
+                            "relative h-10 w-full rounded-md border-2 transition-all hover:shadow-sm",
+                            isSelected
                               ? "border-primary shadow-sm"
-                              : "border-gray-200"
-                          }`}
+                              : "border-gray-200",
+                          )}
                           aria-label={`Select ${gradient.name} gradient`}
                           whileHover={{ scale: 1.02 }}
                           whileTap={{ scale: 0.98 }}
                         >
+                          {isSelected && (
+                            <div className="absolute top-1 right-1 flex h-3 w-3 items-center justify-center rounded-full bg-white">
+                              <Check className="text-primary h-2 w-2" />
+                            </div>
+                          )}
                           <span className="text-xs font-medium text-gray-800 drop-shadow-sm">
                             {gradient.name}
                           </span>
                         </motion.button>
-                      ))}
-                    </div>
+                      );
+                    })}
                   </div>
-                )}
-              </div>
-            )}
+                </div>
+              )}
+            </motion.div>
 
-            {/* Current selection preview */}
-            <div className="mt-3 flex items-center gap-2 rounded-md bg-gray-50 p-2">
-              <div
-                className="h-6 w-6 rounded-md border border-gray-200"
-                style={
-                  selectedGradient
-                    ? { background: selectedGradient }
-                    : { backgroundColor: frameColor }
-                }
-              ></div>
+            {/* Current Selection Preview */}
+            <div className="mt-3 flex items-center gap-3 rounded-md bg-gray-50 p-2">
+              {/* Color Picker */}
+              <input
+                type="color"
+                value={frameColor}
+                onChange={(e) => handleColorChange(e.target.value)}
+                className="h-8 w-8 cursor-pointer rounded-md border border-gray-300 shadow-sm"
+                title="Pick a color"
+              />
+
               <span className="text-xs text-gray-700">
                 {selectedGradient
-                  ? `Gradient: ${GRADIENT_PRESETS.find((g) => g.value === selectedGradient)?.name || "Custom"}`
+                  ? `Gradient: ${
+                      GRADIENT_PRESETS.find((g) => g.value === selectedGradient)
+                        ?.name || "Custom"
+                    }`
                   : `Color: ${frameColor}`}
               </span>
             </div>
@@ -1174,8 +1182,8 @@ function LayoutSelection({
                 <p className="mt-1 text-xs text-gray-600">
                   Select your favorite photos and customize the frame color or
                   gradient to create your perfect photo strip. Use the hex input
-                  or color picker for precise color matching. Once you&apos;re happy
-                  with your design, click the Download button below.
+                  or color picker for precise color matching. Once you&apos;re
+                  happy with your design, click the Download button below.
                 </p>
               </div>
             </div>
@@ -1286,12 +1294,6 @@ export default function PhotoBoothApp() {
 
   return (
     <div className="flex min-h-[100dvh] flex-col overflow-hidden">
-      {/* Dynamic background elements */}
-      <div className="absolute inset-0 -z-10 overflow-hidden">
-        <div className="absolute -top-[40%] -right-[10%] h-[500px] w-[500px] rounded-full bg-gradient-to-br from-rose-200/20 to-pink-200/20 blur-3xl"></div>
-        <div className="absolute -bottom-[30%] -left-[10%] h-[500px] w-[500px] rounded-full bg-gradient-to-tr from-teal-200/20 to-emerald-200/20 blur-3xl"></div>
-      </div>
-
       <Navbar />
 
       <StepProgress currentStep={step === "shoot" ? 1 : 2} />
