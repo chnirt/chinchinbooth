@@ -89,30 +89,28 @@ const FILTER_CONTROLS: Control[] = [
 
 // Enhanced color palette inspired by rose-to-teal gradient
 const COLOR_PALETTE = [
-  // Rose/Pink shades
-  "#F9A8D4", // Pink-300
-  "#F472B6", // Pink-400
-  "#EC4899", // Pink-500
-  "#DB2777", // Pink-600
+  // Neutrals
+  "#FFFFFF", // White – Minimalist, bright
+  "#000000", // Black – High contrast
+  "#F3F4F6", // Gray-100 – Light, soft background
+  "#9CA3AF", // Neutral Gray – Balanced
 
-  // Teal shades
-  "#5EEAD4", // Teal-300
-  "#2DD4BF", // Teal-400
-  "#14B8A6", // Teal-500
-  "#0D9488", // Teal-600
+  // Warm tones
+  "#84504F", // Maroon – Sophisticated deep red
+  "#800020", // Burgundy – Rich, regal red
 
-  // Primary colors
-  "#EF4444", // Red-500
-  "#F59E0B", // Amber-500
-  "#10B981", // Emerald-500
-  "#3B82F6", // Blue-500
-  "#8B5CF6", // Violet-500
+  // Accent
+  "#1E3A8A", // Deep Navy – Modern, deep blue
 
-  // Neutral colors
-  "#FFFFFF", // White
-  "#F3F4F6", // Gray-100
-  "#9CA3AF", // Gray-400
-  "#111827", // Gray-900
+  // Pastels
+  "#FFF9C4", // Pastel Yellow – Soft, warm yellow
+  "#FFCCBC", // Pastel Orange – Gentle, warm orange
+  "#F8BBD0", // Pastel Pink – Delicate, feminine pink
+  "#E1BEE7", // Pastel Purple – Soft mauve
+  "#BBDEFB", // Pastel Blue – Light, cool blue
+  "#C8E6C9", // Pastel Green – Fresh, gentle green
+  // Optional extra pastel:
+  "#E6E6FA", // Pastel Lavender – Subtle and calming
 ];
 
 // Gradient presets for frames - updated to match the rose-teal theme
@@ -287,7 +285,7 @@ function PhotoShoot({
     if (isMaxCaptureReached && isAutoSequenceActive) {
       stopAutoSequence();
     }
-  }, [capturedImages.length, isMaxCaptureReached]);
+  }, [capturedImages.length, isMaxCaptureReached, isAutoSequenceActive]);
 
   // Modify the captureImage function to remove the flash effect
   const captureImage = () => {
@@ -481,7 +479,7 @@ function PhotoShoot({
 
   // After captureImage completes, schedule the next auto capture if in auto mode
   const scheduleNextAutoCapture = () => {
-    if (isAutoSequenceActive && capturedImages.length < MAX_CAPTURE - 1) {
+    if (isAutoModeEnabled && capturedImages.length < MAX_CAPTURE - 1) {
       setTimeout(() => {
         hasCapturedRef.current = false;
         setCountdown(selectedTimer);
@@ -1110,8 +1108,17 @@ function LayoutSelection({
                 type="color"
                 value={frameColor}
                 onChange={(e) => handleColorChange(e.target.value)}
-                className="h-8 w-8 cursor-pointer rounded-md border border-gray-300 shadow-sm"
+                className="h-6 w-6 cursor-pointer"
                 title="Pick a color"
+              />
+
+              <div
+                className="pointer-events-none absolute h-6 w-6 rounded-md border border-gray-200"
+                style={
+                  selectedGradient
+                    ? { background: selectedGradient }
+                    : { backgroundColor: frameColor }
+                }
               />
 
               <span className="text-xs text-gray-700">
