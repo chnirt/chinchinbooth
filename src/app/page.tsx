@@ -193,114 +193,40 @@ const STICKER_LAYOUTS: StickerLayout[] = [
     stickers: [],
   },
   {
-    id: "celebration",
-    name: "Celebration",
+    id: "kimchi-hamster",
+    name: "Kimchi Hamster",
     stickers: [
       {
-        url: "/stickers/confetti.png",
-        positions: [
-          { x: 5, y: 5, rotation: 0, scale: 0.8 },
-          { x: 95, y: 5, rotation: 0, scale: 0.8 },
-          { x: 5, y: 95, rotation: 0, scale: 0.8 },
-          { x: 95, y: 95, rotation: 0, scale: 0.8 },
-        ],
+        url: "/stickers/kimchi-hamster/in-love.png",
+        positions: [{ x: 14, y: 4, rotation: 0, scale: 0.5 }],
       },
       {
-        url: "/stickers/star.png",
-        positions: [
-          { x: 50, y: 10, rotation: 0, scale: 1 },
-          { x: 10, y: 50, rotation: 15, scale: 0.7 },
-          { x: 90, y: 50, rotation: -15, scale: 0.7 },
-          { x: 50, y: 90, rotation: 0, scale: 1 },
-        ],
-      },
-    ],
-  },
-  {
-    id: "love",
-    name: "Love",
-    stickers: [
-      {
-        url: "/stickers/heart.png",
-        positions: [
-          { x: 10, y: 10, rotation: -15, scale: 0.6 },
-          { x: 90, y: 10, rotation: 15, scale: 0.6 },
-          { x: 50, y: 5, rotation: 0, scale: 0.8 },
-          { x: 10, y: 90, rotation: -15, scale: 0.6 },
-          { x: 90, y: 90, rotation: 15, scale: 0.6 },
-          { x: 50, y: 95, rotation: 0, scale: 0.8 },
-        ],
-      },
-    ],
-  },
-  {
-    id: "birthday",
-    name: "Birthday",
-    stickers: [
-      {
-        url: "/stickers/balloon.png",
-        positions: [
-          { x: 15, y: 10, rotation: -10, scale: 0.7 },
-          { x: 85, y: 10, rotation: 10, scale: 0.7 },
-        ],
+        url: "/stickers/kimchi-hamster/love-6.png",
+        positions: [{ x: 88, y: 21, rotation: 0, scale: 0.4 }],
       },
       {
-        url: "/stickers/crown.png",
-        positions: [{ x: 50, y: 5, rotation: 0, scale: 0.9 }],
+        url: "/stickers/kimchi-hamster/love-2.png",
+        positions: [{ x: 13, y: 44, rotation: 0, scale: 0.4 }],
       },
       {
-        url: "/stickers/confetti.png",
-        positions: [
-          { x: 20, y: 85, rotation: 0, scale: 0.6 },
-          { x: 80, y: 85, rotation: 0, scale: 0.6 },
-        ],
-      },
-    ],
-  },
-  {
-    id: "nature",
-    name: "Nature",
-    stickers: [
-      {
-        url: "/stickers/flower.png",
-        positions: [
-          { x: 5, y: 5, rotation: 0, scale: 0.7 },
-          { x: 95, y: 5, rotation: 0, scale: 0.7 },
-          { x: 5, y: 95, rotation: 0, scale: 0.7 },
-          { x: 95, y: 95, rotation: 0, scale: 0.7 },
-          { x: 50, y: 5, rotation: 0, scale: 0.7 },
-          { x: 50, y: 95, rotation: 0, scale: 0.7 },
-        ],
-      },
-    ],
-  },
-  {
-    id: "fun",
-    name: "Fun",
-    stickers: [
-      {
-        url: "/stickers/emoji-smile.png",
-        positions: [
-          { x: 10, y: 10, rotation: -15, scale: 0.6 },
-          { x: 90, y: 10, rotation: 15, scale: 0.6 },
-        ],
+        url: "/stickers/kimchi-hamster/love-5.png",
+        positions: [{ x: 88, y: 64, rotation: 0, scale: 0.4 }],
       },
       {
-        url: "/stickers/sparkle.png",
-        positions: [
-          { x: 50, y: 5, rotation: 0, scale: 0.7 },
-          { x: 10, y: 50, rotation: 0, scale: 0.7 },
-          { x: 90, y: 50, rotation: 0, scale: 0.7 },
-          { x: 50, y: 95, rotation: 0, scale: 0.7 },
-        ],
+        url: "/stickers/kimchi-hamster/love-7.png",
+        positions: [{ x: 12, y: 84, rotation: 0, scale: 0.4 }],
+      },
+      {
+        url: "/stickers/kimchi-hamster/love-1.png",
+        positions: [{ x: 70, y: 95, rotation: 0, scale: 1 }],
       },
     ],
   },
 ];
 
 // Replace the timer options and selection logic in the PhotoShoot component
-const TIMER_OPTIONS = [3, 5, 10] as const;
-const DEFAULT_TIMER_INDEX = 1; // Default to 5 seconds (index 1)
+const TIMER_OPTIONS = [1, 3, 5, 10] as const;
+const DEFAULT_TIMER_INDEX = 1; // Default to 3 seconds (index 1)
 
 // Update the Navbar component with the provided gradient
 function Navbar() {
@@ -948,6 +874,27 @@ function StickerComponent({
   position: StickerPosition;
 }) {
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [dimensions, setDimensions] = useState({ width: 64, height: 64 });
+
+  // Determine if the image is SVG
+  const isSvg = url.endsWith(".svg");
+
+  useEffect(() => {
+    // For non-SVG images, preload to get dimensions
+    if (!isSvg && url) {
+      const img = new Image();
+      img.onload = () => {
+        setDimensions({
+          width: img.width,
+          height: img.height,
+        });
+        setImageLoaded(true);
+      };
+      img.src = url;
+    } else {
+      setImageLoaded(true);
+    }
+  }, [url, isSvg]);
 
   return (
     <div
@@ -963,11 +910,16 @@ function StickerComponent({
       <img
         src={url || "/placeholder.svg"}
         alt="Sticker"
-        className="h-16 w-16 object-contain"
+        className="object-contain"
+        style={{
+          width: isSvg ? "4rem" : `${dimensions.width / 16}rem`,
+          height: isSvg ? "4rem" : `${dimensions.height / 16}rem`,
+          maxWidth: "6rem",
+          maxHeight: "6rem",
+        }}
         onLoad={() => setImageLoaded(true)}
         onError={(e) => {
           console.error(`Failed to load sticker: ${url}`);
-          // Fallback to placeholder if image fails to load
           (e.target as HTMLImageElement).src =
             "/placeholder.svg?height=100&width=100";
         }}
