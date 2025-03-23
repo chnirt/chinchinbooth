@@ -20,11 +20,11 @@ import {
   RotateCcw,
   Timer,
   X,
-  ImageIcon,
+  // ImageIcon,
   GripHorizontal,
   CameraIcon,
   Check,
-  // Check,
+  Sticker,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -32,6 +32,7 @@ import { Spotlight } from "@/components/ui/spotlight";
 import html2canvas from "html2canvas-pro";
 import { useTranslations } from "next-intl";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+// import { ScrollArea } from "@/components/ui/scroll-area";
 // import { Input } from "@/components/ui/input";
 
 // Constants
@@ -63,6 +64,29 @@ interface PhotoShootProps {
   goToLayoutScreen: () => void;
 }
 
+interface StickerPosition {
+  x: number;
+  y: number;
+  rotation: number;
+  scale: number;
+}
+
+interface StickerItem {
+  id: string;
+  name: string;
+  url: string;
+  position: StickerPosition;
+}
+
+interface StickerLayout {
+  id: string;
+  name: string;
+  stickers: {
+    url: string;
+    positions: StickerPosition[];
+  }[];
+}
+
 interface LayoutSelectionProps {
   capturedImages: string[];
   previewRef: React.RefObject<HTMLDivElement | null>;
@@ -72,6 +96,10 @@ interface LayoutSelectionProps {
   setLayoutType: React.Dispatch<React.SetStateAction<number>>;
   selectedFrame: string | null;
   setSelectedFrame: React.Dispatch<React.SetStateAction<string | null>>;
+  selectedStickerLayout: string | null;
+  setSelectedStickerLayout: React.Dispatch<React.SetStateAction<string | null>>;
+  customStickers: StickerItem[];
+  setCustomStickers: React.Dispatch<React.SetStateAction<StickerItem[]>>;
   retakePhotos: () => void;
   downloadComposite: () => Promise<void>;
   canDownload: boolean;
@@ -142,6 +170,131 @@ const FRAMES = [
     id: "hearts",
     name: "Hearts",
     url: "/placeholder.svg?height=400&width=400",
+  },
+];
+
+// // Sticker assets
+// const STICKERS: StickerItem[] = [
+//   { id: "star", name: "Star", url: "/stickers/star.png" },
+//   { id: "heart", name: "Heart", url: "/stickers/heart.png" },
+//   { id: "confetti", name: "Confetti", url: "/stickers/confetti.png" },
+//   { id: "balloon", name: "Balloon", url: "/stickers/balloon.png" },
+//   { id: "crown", name: "Crown", url: "/stickers/crown.png" },
+//   { id: "sparkle", name: "Sparkle", url: "/stickers/sparkle.png" },
+//   { id: "flower", name: "Flower", url: "/stickers/flower.png" },
+//   { id: "emoji-smile", name: "Smile", url: "/stickers/emoji-smile.png" },
+// ];
+
+// Pre-designed sticker layouts
+const STICKER_LAYOUTS: StickerLayout[] = [
+  {
+    id: "none",
+    name: "No Stickers",
+    stickers: [],
+  },
+  {
+    id: "celebration",
+    name: "Celebration",
+    stickers: [
+      {
+        url: "/stickers/confetti.png",
+        positions: [
+          { x: 5, y: 5, rotation: 0, scale: 0.8 },
+          { x: 95, y: 5, rotation: 0, scale: 0.8 },
+          { x: 5, y: 95, rotation: 0, scale: 0.8 },
+          { x: 95, y: 95, rotation: 0, scale: 0.8 },
+        ],
+      },
+      {
+        url: "/stickers/star.png",
+        positions: [
+          { x: 50, y: 10, rotation: 0, scale: 1 },
+          { x: 10, y: 50, rotation: 15, scale: 0.7 },
+          { x: 90, y: 50, rotation: -15, scale: 0.7 },
+          { x: 50, y: 90, rotation: 0, scale: 1 },
+        ],
+      },
+    ],
+  },
+  {
+    id: "love",
+    name: "Love",
+    stickers: [
+      {
+        url: "/stickers/heart.png",
+        positions: [
+          { x: 10, y: 10, rotation: -15, scale: 0.6 },
+          { x: 90, y: 10, rotation: 15, scale: 0.6 },
+          { x: 50, y: 5, rotation: 0, scale: 0.8 },
+          { x: 10, y: 90, rotation: -15, scale: 0.6 },
+          { x: 90, y: 90, rotation: 15, scale: 0.6 },
+          { x: 50, y: 95, rotation: 0, scale: 0.8 },
+        ],
+      },
+    ],
+  },
+  {
+    id: "birthday",
+    name: "Birthday",
+    stickers: [
+      {
+        url: "/stickers/balloon.png",
+        positions: [
+          { x: 15, y: 10, rotation: -10, scale: 0.7 },
+          { x: 85, y: 10, rotation: 10, scale: 0.7 },
+        ],
+      },
+      {
+        url: "/stickers/crown.png",
+        positions: [{ x: 50, y: 5, rotation: 0, scale: 0.9 }],
+      },
+      {
+        url: "/stickers/confetti.png",
+        positions: [
+          { x: 20, y: 85, rotation: 0, scale: 0.6 },
+          { x: 80, y: 85, rotation: 0, scale: 0.6 },
+        ],
+      },
+    ],
+  },
+  {
+    id: "nature",
+    name: "Nature",
+    stickers: [
+      {
+        url: "/stickers/flower.png",
+        positions: [
+          { x: 5, y: 5, rotation: 0, scale: 0.7 },
+          { x: 95, y: 5, rotation: 0, scale: 0.7 },
+          { x: 5, y: 95, rotation: 0, scale: 0.7 },
+          { x: 95, y: 95, rotation: 0, scale: 0.7 },
+          { x: 50, y: 5, rotation: 0, scale: 0.7 },
+          { x: 50, y: 95, rotation: 0, scale: 0.7 },
+        ],
+      },
+    ],
+  },
+  {
+    id: "fun",
+    name: "Fun",
+    stickers: [
+      {
+        url: "/stickers/emoji-smile.png",
+        positions: [
+          { x: 10, y: 10, rotation: -15, scale: 0.6 },
+          { x: 90, y: 10, rotation: 15, scale: 0.6 },
+        ],
+      },
+      {
+        url: "/stickers/sparkle.png",
+        positions: [
+          { x: 50, y: 5, rotation: 0, scale: 0.7 },
+          { x: 10, y: 50, rotation: 0, scale: 0.7 },
+          { x: 90, y: 50, rotation: 0, scale: 0.7 },
+          { x: 50, y: 95, rotation: 0, scale: 0.7 },
+        ],
+      },
+    ],
   },
 ];
 
@@ -786,7 +939,83 @@ function PhotoShoot({
   );
 }
 
-// Update the LayoutSelection component with rose-teal color scheme and hex input
+// Sticker component to render a sticker at a specific position
+function StickerComponent({
+  url,
+  position,
+}: {
+  url: string;
+  position: StickerPosition;
+}) {
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  return (
+    <div
+      className="pointer-events-none absolute"
+      style={{
+        left: `${position.x}%`,
+        top: `${position.y}%`,
+        transform: `translate(-50%, -50%) rotate(${position.rotation}deg) scale(${position.scale})`,
+        opacity: imageLoaded ? 1 : 0,
+        transition: "opacity 0.3s ease-in-out",
+      }}
+    >
+      <img
+        src={url || "/placeholder.svg"}
+        alt="Sticker"
+        className="h-16 w-16 object-contain"
+        onLoad={() => setImageLoaded(true)}
+        onError={(e) => {
+          console.error(`Failed to load sticker: ${url}`);
+          // Fallback to placeholder if image fails to load
+          (e.target as HTMLImageElement).src =
+            "/placeholder.svg?height=100&width=100";
+        }}
+      />
+    </div>
+  );
+}
+
+// Custom sticker component for user-added stickers
+function CustomStickerComponent({
+  sticker,
+  position,
+  onRemove,
+}: {
+  sticker: StickerItem;
+  position: StickerPosition;
+  onRemove: () => void;
+}) {
+  // const [isDragging, setIsDragging] = useState(false);
+
+  return (
+    <div
+      className={"absolute cursor-grab"}
+      // className={`absolute ${isDragging ? "z-50 cursor-grabbing" : "cursor-grab"}`}
+      style={{
+        left: `${position.x}%`,
+        top: `${position.y}%`,
+        transform: `translate(-50%, -50%) rotate(${position.rotation}deg) scale(${position.scale})`,
+      }}
+    >
+      <div className="group relative">
+        <img
+          src={sticker.url || "/placeholder.svg"}
+          alt={sticker.name}
+          className="h-16 w-16 object-contain"
+        />
+        <button
+          onClick={onRemove}
+          className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-white opacity-0 transition-opacity group-hover:opacity-100"
+        >
+          <X className="h-3 w-3" />
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Update the LayoutSelection component with a simpler tab structure
 function LayoutSelection({
   capturedImages,
   previewRef,
@@ -795,7 +1024,11 @@ function LayoutSelection({
   setSelectedIndices,
   setLayoutType,
   selectedFrame,
-  setSelectedFrame,
+  // setSelectedFrame,
+  selectedStickerLayout,
+  setSelectedStickerLayout,
+  customStickers,
+  setCustomStickers,
   retakePhotos,
   downloadComposite,
   canDownload,
@@ -803,9 +1036,64 @@ function LayoutSelection({
 }: LayoutSelectionProps) {
   const [frameColor, setFrameColor] = useState<string>("#FFFFFF");
   const [selectedGradient, setSelectedGradient] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"solid" | "gradient">("solid");
+  const [activeTab, setActiveTab] = useState<"solid" | "gradient" | "stickers">(
+    "solid",
+  );
+  // const [selectedSticker, setSelectedSticker] = useState<StickerItem | null>(
+  //   null,
+  // );
+  // const [orientation, setOrientation] = useState<"portrait" | "landscape">(
+  //   "portrait",
+  // );
+  // const selectionContainerRef = useRef<HTMLDivElement>(null);
+  // const [previewDimensions, setPreviewDimensions] = useState({
+  //   width: 0,
+  //   height: 0,
+  // });
 
   const t = useTranslations("HomePage");
+
+  // // Detect orientation
+  // useEffect(() => {
+  //   const checkOrientation = () => {
+  //     setOrientation(
+  //       window.innerWidth > window.innerHeight ? "landscape" : "portrait",
+  //     );
+  //   };
+
+  //   checkOrientation();
+  //   window.addEventListener("resize", checkOrientation);
+
+  //   return () => {
+  //     window.removeEventListener("resize", checkOrientation);
+  //   };
+  // }, []);
+
+  // Update preview dimensions when it changes
+  useEffect(() => {
+    if (previewRef.current) {
+      const updateDimensions = () => {
+        if (previewRef.current) {
+          // setPreviewDimensions({
+          //   width: previewRef.current.clientWidth,
+          //   height: previewRef.current.clientHeight,
+          // });
+        }
+      };
+
+      updateDimensions();
+
+      // Use ResizeObserver to detect changes in the preview element size
+      const resizeObserver = new ResizeObserver(updateDimensions);
+      resizeObserver.observe(previewRef.current);
+
+      return () => {
+        if (previewRef.current) {
+          resizeObserver.unobserve(previewRef.current);
+        }
+      };
+    }
+  }, [previewRef, layoutType]);
 
   const selectLayoutType = (type: number) => {
     setLayoutType(type);
@@ -830,6 +1118,27 @@ function LayoutSelection({
     setSelectedGradient(gradient);
   };
 
+  const handleStickerLayoutChange = (layoutId: string) => {
+    setSelectedStickerLayout(layoutId);
+  };
+
+  // const addCustomSticker = () => {
+  //   if (!selectedSticker) return;
+
+  //   // Add sticker to center of frame
+  //   setCustomStickers((prev) => [
+  //     ...prev,
+  //     {
+  //       ...selectedSticker,
+  //       position: { x: 50, y: 50, rotation: 0, scale: 1 },
+  //     },
+  //   ]);
+  // };
+
+  const removeCustomSticker = (index: number) => {
+    setCustomStickers((prev) => prev.filter((_, i) => i !== index));
+  };
+
   const renderCell = (idx: number) => {
     const cellContent =
       selectedIndices[idx] !== undefined ? (
@@ -840,7 +1149,7 @@ function LayoutSelection({
         />
       ) : (
         <div className="flex flex-col items-center justify-center text-gray-400">
-          <span className="text-xs">{t("empty")}</span>
+          <span className="text-xs">Empty</span>
         </div>
       );
 
@@ -876,6 +1185,37 @@ function LayoutSelection({
       </div>
     );
 
+    // Sticker overlays from layouts
+    const stickerOverlays = selectedStickerLayout && (
+      <div className="pointer-events-none absolute inset-0">
+        {STICKER_LAYOUTS.find(
+          (layout) => layout.id === selectedStickerLayout,
+        )?.stickers.map((stickerSet, setIndex) =>
+          stickerSet.positions.map((position, posIndex) => (
+            <StickerComponent
+              key={`${setIndex}-${posIndex}`}
+              url={stickerSet.url}
+              position={position}
+            />
+          )),
+        )}
+      </div>
+    );
+
+    // Custom stickers added by user
+    const customStickerOverlays = customStickers.length > 0 && (
+      <div className="pointer-events-none absolute inset-0">
+        {customStickers.map((sticker, index) => (
+          <CustomStickerComponent
+            key={`custom-${index}`}
+            sticker={sticker}
+            position={sticker.position}
+            onRemove={() => removeCustomSticker(index)}
+          />
+        ))}
+      </div>
+    );
+
     const backgroundStyle = selectedGradient
       ? { background: selectedGradient }
       : { backgroundColor: frameColor };
@@ -897,6 +1237,8 @@ function LayoutSelection({
               {Array.from({ length: 4 }, (_, idx) => renderCell(idx))}
             </div>
             {frameOverlay}
+            {stickerOverlays}
+            {customStickerOverlays}
           </div>
         </div>
       );
@@ -918,6 +1260,8 @@ function LayoutSelection({
             </div>
           </div>
           {frameOverlay}
+          {stickerOverlays}
+          {customStickerOverlays}
         </div>
       </div>
     );
@@ -1010,7 +1354,7 @@ function LayoutSelection({
               </h2>
             </div>
 
-            {/* Color/Gradient Selection Tabs */}
+            {/* Tabs for different customization options */}
             <motion.div
               className="animate-fade-in mb-4"
               initial={{ height: 0, opacity: 0 }}
@@ -1041,9 +1385,23 @@ function LayoutSelection({
                 >
                   {t("gradients")}
                 </button>
+                <button
+                  onClick={() => setActiveTab("stickers")}
+                  className={cn(
+                    "px-4 py-2 text-sm font-medium transition-colors",
+                    activeTab === "stickers"
+                      ? "border-primary text-primary border-b-2"
+                      : "hover:text-primary text-gray-500",
+                  )}
+                >
+                  Stickers
+                </button>
               </div>
+            </motion.div>
 
-              {activeTab === "solid" ? (
+            {/* Content based on active tab */}
+            <div className="mb-4">
+              {activeTab === "solid" && (
                 <div className="mb-3 grid grid-cols-6 gap-2">
                   {COLOR_PALETTE.map((color) => {
                     const isSelected =
@@ -1060,8 +1418,6 @@ function LayoutSelection({
                             : "border-gray-200",
                         )}
                         aria-label={`Select ${color}`}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
                       >
                         {isSelected && (
                           <div className="absolute top-1 right-1 flex h-3 w-3 items-center justify-center rounded-full border border-gray-200 bg-white">
@@ -1073,7 +1429,9 @@ function LayoutSelection({
                     );
                   })}
                 </div>
-              ) : (
+              )}
+
+              {activeTab === "gradient" && (
                 <div className="grid grid-cols-2 gap-2">
                   {GRADIENT_PRESETS.map((gradient) => {
                     const isSelected = selectedGradient === gradient.value;
@@ -1089,8 +1447,6 @@ function LayoutSelection({
                             : "border-gray-200",
                         )}
                         aria-label={`Select ${gradient.name} gradient`}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
                       >
                         {isSelected && (
                           <div className="absolute top-1 right-1 flex h-3 w-3 items-center justify-center rounded-full border border-gray-200 bg-white">
@@ -1105,69 +1461,126 @@ function LayoutSelection({
                   })}
                 </div>
               )}
-            </motion.div>
 
-            {/* Current Selection Preview */}
-            <div className="mt-3 flex items-center gap-3 rounded-md bg-gray-50 p-2">
-              {/* Color Picker */}
-              <input
-                type="color"
-                value={frameColor}
-                onChange={(e) => handleColorChange(e.target.value)}
-                className="h-6 w-6 cursor-pointer"
-                title="Pick a color"
-              />
+              {activeTab === "stickers" && (
+                <div className="mb-4 grid grid-cols-2 gap-2">
+                  {STICKER_LAYOUTS.map((layout) => {
+                    const isSelected = selectedStickerLayout === layout.id;
+                    return (
+                      <motion.button
+                        key={layout.id}
+                        onClick={() => handleStickerLayoutChange(layout.id)}
+                        className={cn(
+                          "relative flex h-16 w-full flex-col items-center justify-center rounded-md border-2 transition-all",
+                          isSelected
+                            ? "border-primary shadow-sm"
+                            : "border-gray-200",
+                        )}
+                        aria-label={`Select ${layout.name} sticker layout`}
+                      >
+                        {isSelected && (
+                          <div className="absolute top-1 right-1 flex h-3 w-3 items-center justify-center rounded-full border border-gray-200 bg-white">
+                            <Check className="text-primary h-2 w-2" />
+                          </div>
+                        )}
+                        {layout.id !== "none" && (
+                          <Sticker className="mb-1 h-4 w-4" />
+                        )}
+                        <span className="text-xs font-medium text-gray-800">
+                          {layout.name}
+                        </span>
+                      </motion.button>
+                    );
+                  })}
 
-              <div
-                className="pointer-events-none absolute h-6 w-6 rounded-md border border-gray-200"
-                style={
-                  selectedGradient
-                    ? { background: selectedGradient }
-                    : { backgroundColor: frameColor }
-                }
-              />
+                  {/* <h3 className="mb-2 text-sm font-medium text-gray-700">
+                    Individual Stickers
+                  </h3>
+                  <ScrollArea className="h-40 rounded-md border p-2">
+                    <div className="grid grid-cols-3 gap-2">
+                      {STICKERS.map((sticker) => (
+                        <motion.button
+                          key={sticker.id}
+                          onClick={() => setSelectedSticker(sticker)}
+                          className={cn(
+                            "relative flex aspect-square flex-col items-center justify-center rounded-md border-2 p-1 transition-all hover:shadow-sm",
+                            selectedSticker?.id === sticker.id
+                              ? "border-primary shadow-sm"
+                              : "border-gray-200",
+                          )}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                        >
+                          <img
+                            src={sticker.url || "/placeholder.svg"}
+                            alt={sticker.name}
+                            className="h-12 w-12 object-contain"
+                          />
+                        </motion.button>
+                      ))}
+                    </div>
+                  </ScrollArea>
 
-              <span className="text-xs text-gray-700">
-                {selectedGradient
-                  ? `Gradient: ${
-                      GRADIENT_PRESETS.find((g) => g.value === selectedGradient)
-                        ?.name || "Custom"
-                    }`
-                  : `Color: ${frameColor}`}
-              </span>
+                  <div className="mt-3 flex items-center justify-between">
+                    <span className="text-xs text-gray-600">
+                      {selectedSticker
+                        ? `Selected: ${selectedSticker.name}`
+                        : "Select a sticker to add"}
+                    </span>
+                    <Button
+                      onClick={addCustomSticker}
+                      disabled={!selectedSticker}
+                      size="sm"
+                      className="h-8 rounded-full"
+                    >
+                      Add to Frame
+                    </Button>
+                  </div> */}
+                </div>
+              )}
             </div>
 
-            {/* Frame Selection */}
-            <div className="mb-4 hidden">
-              <h3 className="mb-2 text-sm font-medium text-gray-700">
-                {t("frame_style")}
-              </h3>
-              <div className="flex flex-wrap gap-2">
-                {FRAMES.map((frame) => (
-                  <Button
-                    key={frame.id}
-                    onClick={() =>
-                      setSelectedFrame(frame.id === "none" ? null : frame.id)
-                    }
-                    variant={
-                      selectedFrame === frame.id ||
-                      (frame.id === "none" && selectedFrame === null)
-                        ? "default"
-                        : "outline"
-                    }
-                    className="flex items-center gap-1.5 rounded-full px-3 py-1 text-xs sm:text-sm"
-                    size="sm"
-                  >
-                    {frame.id === "none" ? (
-                      <ImageOff className="h-3 w-3" />
-                    ) : (
-                      <ImageIcon className="h-3 w-3" />
-                    )}
-                    {frame.name}
-                  </Button>
-                ))}
+            {/* Current Selection Preview for colors */}
+            {activeTab === "solid" && (
+              <div className="mt-3 flex items-center gap-3 rounded-md bg-gray-50 p-2">
+                {/* Color Picker */}
+                <input
+                  type="color"
+                  value={frameColor}
+                  onChange={(e) => handleColorChange(e.target.value)}
+                  className="h-6 w-6 cursor-pointer"
+                  title="Pick a color"
+                />
+
+                <div
+                  className="pointer-events-none absolute h-6 w-6 rounded-md border border-gray-200"
+                  style={{ backgroundColor: frameColor }}
+                />
+
+                <span className="text-xs text-gray-700">
+                  {`Color: ${frameColor}`}
+                </span>
               </div>
-            </div>
+            )}
+
+            {/* Sticker tips */}
+            {activeTab === "stickers" && (
+              <div className="mt-3 rounded-md bg-gray-50 p-3">
+                <div className="flex items-start gap-2">
+                  <Sticker className="mt-0.5 h-4 w-4 text-gray-500" />
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-700">
+                      Sticker Tips
+                    </h3>
+                    <p className="mt-1 text-xs text-gray-600">
+                      Choose from our pre-designed sticker layouts or add
+                      individual stickers to personalize your photos. Stickers
+                      will be included in your final download.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
           </motion.div>
         </div>
 
@@ -1249,6 +1662,10 @@ export default function PhotoBoothApp() {
   const [layoutType, setLayoutType] = useState<number>(4);
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
   const [selectedFrame, setSelectedFrame] = useState<string | null>(null);
+  const [selectedStickerLayout, setSelectedStickerLayout] = useState<
+    string | null
+  >("none");
+  const [customStickers, setCustomStickers] = useState<StickerItem[]>([]);
   const [isDownloading, setIsDownloading] = useState(false);
   const previewRef = useRef<HTMLDivElement | null>(null);
 
@@ -1275,13 +1692,13 @@ export default function PhotoBoothApp() {
         allowTaint: true,
         useCORS: true,
         backgroundColor: null,
-        scale: 2, // Higher quality for Retina displays
+        scale: 3, // Higher quality for Retina displays
       });
 
       const link = document.createElement("a");
       const fileName = `chinchinbooth_photo_${Date.now()}.jpeg`;
       link.download = fileName;
-      link.href = canvas.toDataURL("image/jpeg", 0.8);
+      link.href = canvas.toDataURL("image/jpeg", 1.0);
       link.click();
     } catch (error) {
       console.error("Error generating image:", error);
@@ -1346,6 +1763,10 @@ export default function PhotoBoothApp() {
               setLayoutType={setLayoutType}
               selectedFrame={selectedFrame}
               setSelectedFrame={setSelectedFrame}
+              selectedStickerLayout={selectedStickerLayout}
+              setSelectedStickerLayout={setSelectedStickerLayout}
+              customStickers={customStickers}
+              setCustomStickers={setCustomStickers}
               retakePhotos={retakePhotos}
               downloadComposite={downloadComposite}
               canDownload={canDownload}
