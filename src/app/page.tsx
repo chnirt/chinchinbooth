@@ -1279,8 +1279,9 @@ export default function PhotoBoothApp() {
       });
 
       const link = document.createElement("a");
-      link.download = "chinchinbooth_photo.png";
-      link.href = canvas.toDataURL("image/png");
+      const fileName = `chinchinbooth_photo_${Date.now()}.jpeg`;
+      link.download = fileName;
+      link.href = canvas.toDataURL("image/jpeg", 0.8);
       link.click();
     } catch (error) {
       console.error("Error generating image:", error);
