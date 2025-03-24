@@ -43,6 +43,7 @@ export function LayoutSelection({
   uploadAndGenerateQR,
   isUploading,
   imageUrl,
+  setImageUrl,
 }: LayoutSelectionProps) {
   const [frameColor, setFrameColor] = useState<string>("#FFFFFF");
   const [selectedGradient, setSelectedGradient] = useState<string | null>(null);
@@ -90,6 +91,7 @@ export function LayoutSelection({
   const selectLayoutType = (type: number) => {
     setLayoutType(type);
     setSelectedIndices([]);
+    setImageUrl(null);
   };
 
   const toggleSelect = (index: number) =>
@@ -104,14 +106,17 @@ export function LayoutSelection({
   const handleColorChange = (color: string) => {
     setFrameColor(color);
     setSelectedGradient(null);
+    setImageUrl(null);
   };
 
   const handleGradientChange = (gradient: string) => {
     setSelectedGradient(gradient);
+    setImageUrl(null);
   };
 
   const handleStickerLayoutChange = (layoutId: string) => {
     setSelectedStickerLayout(layoutId);
+    setImageUrl(null);
   };
 
   const removeCustomSticker = (index: number) => {

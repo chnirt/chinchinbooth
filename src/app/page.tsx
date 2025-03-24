@@ -17,6 +17,7 @@ import {
   updateQRGenerationCount,
 } from "@/lib/upload-utils";
 import { toast } from "sonner";
+import Footer from "@/components/footer";
 
 export default function PhotoBoothApp() {
   const [step, setStep] = useState<"shoot" | "layout">("shoot");
@@ -127,6 +128,11 @@ export default function PhotoBoothApp() {
     }
   }, [step]);
 
+  useEffect(() => {
+    document.addEventListener("contextmenu", (event) => event.preventDefault());
+    document.addEventListener("selectstart", (event) => event.preventDefault());
+  }, []);
+
   return (
     <div className="flex min-h-[100dvh] flex-col overflow-hidden">
       <Navbar />
@@ -179,10 +185,13 @@ export default function PhotoBoothApp() {
               uploadAndGenerateQR={uploadAndGenerateQR}
               isUploading={isUploading}
               imageUrl={imageUrl}
+              setImageUrl={setImageUrl}
             />
           </motion.div>
         )}
       </AnimatePresence>
+
+      <Footer />
     </div>
   );
 }

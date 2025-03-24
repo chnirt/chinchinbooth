@@ -59,4 +59,5 @@ export interface LayoutSelectionProps {
   uploadAndGenerateQR: () => Promise<void>;
   isUploading: boolean;
   imageUrl: string | null;
+  setImageUrl: React.Dispatch<React.SetStateAction<string | null>>;
 }
