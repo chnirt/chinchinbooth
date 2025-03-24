@@ -2,7 +2,7 @@
   "HomePage": {
     "title": "Xin chào!",
     "errors": {
-      "camera_access_required": "Cần phải có quyền truy cập camera. Vui lòng bật quyền truy cập camera trong cài đặt trình duyệt của bạn và tải lại trang."
+      "camera_access_required": "Bạn cần cấp quyền truy cập camera. Vui lòng bật quyền trong cài đặt trình duyệt và tải lại trang."
     },
     "undo": "Hoàn tác",
     "capture": "Chụp",
@@ -20,14 +20,22 @@
     "retake": "Chụp lại",
     "processing": "Đang xử lý",
     "download": "Tải xuống",
-    "select_more": "Chọn thêm {count} ảnh nữa",
-    "empty": "Trống"
-  },
-  "LocaleSwitcher": {
-    "label": "Ngôn ngữ",
-    "en": "English",
-    "vi": "Tiếng Việt",
-    "km": "ភាសាខ្មែរ",
-    "th": "ภาษาไทย"
+    "select_more": "Chọn thêm {count} ảnh",
+    "empty": "Trống",
+    "select_prompt": "Chọn {count} ảnh ({selectedCount}/{count})",
+    "stickers": "Sticker",
+    "sticker_tips": "Mẹo sử dụng sticker",
+    "sticker_tips_content": "Chọn từ các bố cục sticker được thiết kế sẵn hoặc thêm sticker cá nhân để tùy chỉnh ảnh của bạn. Sticker sẽ được bao gồm trong tệp tải xuống cuối cùng.",
+    "uploading": "Đang tải lên",
+    "upload_&_generate_qr": "Tải lên & Tạo QR",
+    "scan_qr_to_download_image": "Quét QR để tải ảnh",
+    "open_link": "Mở liên kết",
+    "copy_link": "Sao chép liên kết",
+    "copied": "Đã sao chép",
+    "share": "Chia sẻ",
+    "send_to_phone": "Gửi đến điện thoại",
+    "hide_qr": "Ẩn QR",
+    "scan_to_view_on_mobile": "Quét để xem trên điện thoại",
+    "scan_content": "Quét mã QR này bằng camera điện thoại của bạn để ngay lập tức xem và tải xuống ảnh của bạn"
   }
 }

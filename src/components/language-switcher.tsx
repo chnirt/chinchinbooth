@@ -1,20 +1,31 @@
-import { useLocale, useTranslations } from "next-intl";
+import { useLocale } from "next-intl";
 import LocaleSwitcherSelect from "./locale-switcher-select";
+import { LANGUAGES, SupportedLocale } from "@/constants/languages";
+
+const LOCALE_OPTIONS: Array<{ value: SupportedLocale; label: string }> =
+  Object.entries(LANGUAGES).map(([key]) => ({
+    value: key as SupportedLocale,
+    label: getFlagEmoji(key as SupportedLocale),
+  }));
+
+function getFlagEmoji(locale: SupportedLocale): string {
+  const flags: Record<SupportedLocale, string> = {
+    en: "🇬🇧",
+    vi: "🇻🇳",
+    km: "🇰🇭",
+    th: "🇹🇭",
+  };
+  return flags[locale] || "";
+}
 
 export default function LocaleSwitcher() {
-  const t = useTranslations("LocaleSwitcher");
-  const locale = useLocale();
+  const locale = useLocale() as SupportedLocale;
 
   return (
     <LocaleSwitcherSelect
       defaultValue={locale}
-      items={[
-        { value: "en", label: "🇬🇧" },
-        { value: "vi", label: "🇻🇳" },
-        { value: "th", label: "🇹🇭" },
-        { value: "km", label: "🇰🇭" },
-      ]}
-      label={t("label")}
+      items={LOCALE_OPTIONS}
+      label={LANGUAGES[locale]}
     />
   );
 }

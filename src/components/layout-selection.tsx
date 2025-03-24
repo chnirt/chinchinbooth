@@ -9,6 +9,9 @@ import {
   Check,
   GripHorizontal,
   Sticker,
+  Copy,
+  Share2,
+  Smartphone,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -18,6 +21,7 @@ import { COLOR_PALETTE, GRADIENT_PRESETS } from "@/constants/styles";
 import { FRAMES, STICKER_LAYOUTS } from "@/constants/assets";
 import { StickerComponent } from "@/components/stickers/sticker-component";
 import { CustomStickerComponent } from "@/components/stickers/custom-sticker-component";
+import { QRCodeCanvas } from "qrcode.react";
 
 export function LayoutSelection({
   capturedImages,
@@ -27,7 +31,7 @@ export function LayoutSelection({
   setSelectedIndices,
   setLayoutType,
   selectedFrame,
-//   setSelectedFrame,
+  // setSelectedFrame,
   selectedStickerLayout,
   setSelectedStickerLayout,
   customStickers,
@@ -36,12 +40,17 @@ export function LayoutSelection({
   downloadComposite,
   canDownload,
   isDownloading,
+  uploadAndGenerateQR,
+  isUploading,
+  imageUrl,
 }: LayoutSelectionProps) {
   const [frameColor, setFrameColor] = useState<string>("#FFFFFF");
   const [selectedGradient, setSelectedGradient] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"solid" | "gradient" | "stickers">(
     "solid",
   );
+  const [copied, setCopied] = useState(false);
+  const [showQRSection, setShowQRSection] = useState(false);
 
   const t = useTranslations("HomePage");
 
@@ -65,6 +74,18 @@ export function LayoutSelection({
       };
     }
   }, [previewRef, layoutType]);
+
+  // Show QR section when imageUrl is available
+  useEffect(() => {
+    if (imageUrl) {
+      setShowQRSection(true);
+    }
+  }, [imageUrl]);
+
+  // Reset copied state when imageUrl changes
+  useEffect(() => {
+    setCopied(false);
+  }, [imageUrl]);
 
   const selectLayoutType = (type: number) => {
     setLayoutType(type);
@@ -95,6 +116,36 @@ export function LayoutSelection({
 
   const removeCustomSticker = (index: number) => {
     setCustomStickers((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const copyToClipboard = async () => {
+    if (!imageUrl) return;
+
+    try {
+      await navigator.clipboard.writeText(imageUrl);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch (err) {
+      console.error("Failed to copy URL:", err);
+    }
+  };
+
+  const shareUrl = async () => {
+    if (!imageUrl) return;
+
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: "My Photo Booth Creation",
+          text: "Check out my photo booth creation!",
+          url: imageUrl,
+        });
+      } catch (err) {
+        console.error("Error sharing:", err);
+      }
+    } else {
+      copyToClipboard();
+    }
   };
 
   const renderCell = (idx: number) => {
@@ -225,6 +276,79 @@ export function LayoutSelection({
     );
   };
 
+  // QR Code Section Component
+  const QRCodeSection = () => {
+    if (!imageUrl) return null;
+
+    return (
+      <motion.div
+        className="rounded-lg border border-gray-200 bg-white p-4"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+      >
+        <div className="flex flex-col items-center">
+          <div className="mb-3 flex items-center gap-2">
+            <Smartphone className="text-primary h-5 w-5" />
+            <h3 className="text-base font-medium text-gray-800">
+              {t("scan_to_view_on_mobile")}
+            </h3>
+          </div>
+
+          <div className="mb-4 rounded-lg border border-gray-100 bg-white p-4 shadow-sm">
+            <QRCodeCanvas
+              value={imageUrl}
+              size={200}
+              level="H"
+              includeMargin={true}
+              className="max-w-full"
+            />
+          </div>
+
+          <p className="mb-3 max-w-xs text-center text-xs text-gray-500">
+            {t("scan_content")}
+          </p>
+
+          <div className="flex w-full flex-wrap justify-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex items-center text-xs"
+              onClick={() => window.open(imageUrl, "_blank")}
+            >
+              <Download className="mr-1 h-3 w-3" />
+              {t("open_link")}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex items-center text-xs"
+              onClick={copyToClipboard}
+            >
+              {copied ? (
+                <Check className="mr-1 h-3 w-3" />
+              ) : (
+                <Copy className="mr-1 h-3 w-3" />
+              )}
+              {copied ? `${t("copied")}!` : t("copy_link")}
+            </Button>
+            {typeof navigator.share === "function" && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="flex items-center text-xs"
+                onClick={shareUrl}
+              >
+                <Share2 className="mr-1 h-3 w-3" />
+                {t("share")}
+              </Button>
+            )}
+          </div>
+        </div>
+      </motion.div>
+    );
+  };
+
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-6 p-3">
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -263,9 +387,10 @@ export function LayoutSelection({
             </div>
 
             <p className="mb-2 text-xs text-gray-600">
-              {layoutType === 4
-                ? `Select 4 photos (${selectedIndices.length}/4)`
-                : `Select 8 photos (${selectedIndices.length}/8)`}
+              {t("select_prompt", {
+                count: layoutType,
+                selectedCount: selectedIndices.length,
+              })}
             </p>
 
             <div className="grid grid-cols-2 gap-2 rounded-lg border border-gray-200 bg-white p-2 sm:grid-cols-3">
@@ -352,7 +477,7 @@ export function LayoutSelection({
                       : "hover:text-primary text-gray-500",
                   )}
                 >
-                  Stickers
+                  {t("stickers")}
                 </button>
               </div>
             </motion.div>
@@ -467,7 +592,7 @@ export function LayoutSelection({
                 />
 
                 <div
-                  className="pointer-events-none h-6 w-6 rounded-md border border-gray-200"
+                  className="pointer-events-none absolute h-6 w-6 rounded-md border border-gray-200"
                   style={
                     selectedGradient
                       ? { background: selectedGradient }
@@ -490,12 +615,10 @@ export function LayoutSelection({
                   <Sticker className="mt-0.5 h-4 w-4 text-gray-500" />
                   <div>
                     <h3 className="text-sm font-medium text-gray-700">
-                      Sticker Tips
+                      {t("sticker_tips")}
                     </h3>
                     <p className="mt-1 text-xs text-gray-600">
-                      Choose from our pre-designed sticker layouts or add
-                      individual stickers to personalize your photos. Stickers
-                      will be included in your final download.
+                      {t("sticker_tips_content")}
                     </p>
                   </div>
                 </div>
@@ -534,7 +657,7 @@ export function LayoutSelection({
         </motion.div>
       </div>
 
-      <div className="flex justify-center gap-3">
+      <div className="flex flex-wrap justify-center gap-3">
         <Button
           onClick={retakePhotos}
           variant="outline"
@@ -570,7 +693,48 @@ export function LayoutSelection({
             </>
           )}
         </Button>
+        <Button
+          onClick={uploadAndGenerateQR}
+          disabled={!canDownload || isUploading}
+          className={cn(
+            "flex items-center justify-center rounded-full px-4 py-2 font-medium",
+            !canDownload && "cursor-not-allowed",
+          )}
+          variant={canDownload && !isUploading ? "default" : "secondary"}
+          size="sm"
+        >
+          {isUploading ? (
+            <>
+              <RefreshCw className="mr-1 h-4 w-4 animate-spin" />
+              {t("uploading")}...
+            </>
+          ) : (
+            <>
+              <Smartphone className="mr-1 h-4 w-4" />
+              {t("send_to_phone")}
+            </>
+          )}
+        </Button>
+
+        {/* Close QR button - only visible on mobile when QR is shown */}
+        {imageUrl && showQRSection && (
+          <Button
+            onClick={() => setShowQRSection(false)}
+            variant="outline"
+            className="flex items-center justify-center rounded-full px-4 py-2 md:hidden"
+            size="sm"
+          >
+            {t("hide_qr")}
+          </Button>
+        )}
       </div>
+
+      {/* QR Code Modal for Mobile - Only shown when imageUrl exists and on small screens */}
+      {imageUrl && showQRSection && (
+        <div className="flex items-center justify-center">
+          <QRCodeSection />
+        </div>
+      )}
     </div>
   );
 }

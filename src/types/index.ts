@@ -56,4 +56,7 @@ export interface LayoutSelectionProps {
   downloadComposite: () => Promise<void>;
   canDownload: boolean;
   isDownloading: boolean;
+  uploadAndGenerateQR: () => Promise<void>;
+  isUploading: boolean;
+  imageUrl: string | null;
 }

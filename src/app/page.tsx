@@ -11,6 +11,12 @@ import { PhotoShoot } from "@/components/photo-shoot";
 import { LayoutSelection } from "@/components/layout-selection";
 import { MAX_CAPTURE } from "@/constants";
 import type { StickerItem } from "@/types";
+import {
+  uploadToCloudinary,
+  checkDailyQRLimit,
+  updateQRGenerationCount,
+} from "@/lib/upload-utils";
+import { toast } from "sonner";
 
 export default function PhotoBoothApp() {
   const [step, setStep] = useState<"shoot" | "layout">("shoot");
@@ -24,6 +30,8 @@ export default function PhotoBoothApp() {
   const [customStickers, setCustomStickers] = useState<StickerItem[]>([]);
   const [isDownloading, setIsDownloading] = useState(false);
   const previewRef = useRef<HTMLDivElement | null>(null);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const canProceedToLayout = capturedImages.length === MAX_CAPTURE;
   const canDownload = selectedIndices.length === layoutType;
@@ -35,6 +43,8 @@ export default function PhotoBoothApp() {
   const retakePhotos = () => {
     setCapturedImages([]);
     setSelectedIndices([]);
+    setSelectedStickerLayout(null);
+    setImageUrl(null);
     setStep("shoot");
   };
 
@@ -60,6 +70,44 @@ export default function PhotoBoothApp() {
       console.error("Error generating image:", error);
     } finally {
       setIsDownloading(false);
+    }
+  };
+
+  // Update the uploadAndGenerateQR function to use the utility functions
+  const uploadAndGenerateQR = async () => {
+    if (checkDailyQRLimit()) {
+      toast("You have reached the daily limit for generating QR codes.");
+      return;
+    }
+
+    if (!previewRef.current || isUploading) return;
+    setIsUploading(true);
+    setImageUrl(null);
+
+    try {
+      const canvas = await html2canvas(previewRef.current, {
+        allowTaint: true,
+        useCORS: true,
+        backgroundColor: null,
+        scale: 2,
+      });
+
+      const fileToUpload = await new Promise<Blob>((resolve) => {
+        canvas.toBlob((blob) => resolve(blob!), "image/jpeg", 0.8);
+      });
+
+      if (!fileToUpload) throw new Error("No file to upload");
+
+      const secureUrl = await uploadToCloudinary(fileToUpload);
+      setImageUrl(secureUrl);
+
+      // Update the QR generation count
+      updateQRGenerationCount();
+    } catch (error) {
+      console.error("Error uploading image:", error);
+      toast("Failed to upload. Please try again.");
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -128,6 +176,9 @@ export default function PhotoBoothApp() {
               downloadComposite={downloadComposite}
               canDownload={canDownload}
               isDownloading={isDownloading}
+              uploadAndGenerateQR={uploadAndGenerateQR}
+              isUploading={isUploading}
+              imageUrl={imageUrl}
             />
           </motion.div>
         )}
