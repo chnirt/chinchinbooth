@@ -120,31 +120,40 @@ const FILTER_CONTROLS: Control[] = [
 // Enhanced color palette inspired by rose-to-teal gradient
 const COLOR_PALETTE = [
   // Neutrals
-  "#FFFFFF", // White – Minimalist, bright
-  "#000000", // Black – High contrast
-  "#F3F4F6", // Gray-100 – Light, soft background
-  "#9CA3AF", // Neutral Gray – Balanced
+  "#FFFFFF", // White
+  "#000000", // Black
+  "#F3F4F6", // Gray-100
+  "#B0BEC5", // Misty Gray
+  "#6D7278", // Graphite Gray
 
   // Warm tones
-  "#84504F", // Maroon – Sophisticated deep red
-  "#800020", // Burgundy – Rich, regal red
+  "#84504F", // Maroon
+  "#800020", // Burgundy
 
   // Accent
-  "#1E3A8A", // Deep Navy – Modern, deep blue
+  "#23395B", // Midnight Blue
 
   // Pastels
-  "#FFF9C4", // Pastel Yellow – Soft, warm yellow
-  "#FFCCBC", // Pastel Orange – Gentle, warm orange
-  "#F8BBD0", // Pastel Pink – Delicate, feminine pink
-  "#E1BEE7", // Pastel Purple – Soft mauve
-  "#BBDEFB", // Pastel Blue – Light, cool blue
-  "#C8E6C9", // Pastel Green – Fresh, gentle green
-  // Optional extra pastel:
-  "#E6E6FA", // Pastel Lavender – Subtle and calming
+  "#FFF9C4", // Pastel Yellow
+  "#FFCCBC", // Pastel Orange
+  "#F8BBD0", // Pastel Pink
+  "#E1BEE7", // Pastel Purple
+  "#BBDEFB", // Pastel Blue
+  "#C8E6C9", // Pastel Green
+  "#E6E6FA", // Pastel Lavender (optional)
 ];
 
 // Gradient presets for frames - updated to match the rose-teal theme
 const GRADIENT_PRESETS = [
+  // Pastel & Soft Tones
+  { name: "Blush", value: "linear-gradient(to right, #FECACA, #FBCFE8)" }, // Soft pink
+  { name: "Cloud", value: "linear-gradient(to right, #E0E7FF, #C7D2FE)" }, // Light blue
+  { name: "Lilac", value: "linear-gradient(to right, #E9D5FF, #C4B5FD)" }, // Gentle purple
+  { name: "Dew", value: "linear-gradient(to right, #D1FAE5, #A7F3D0)" }, // Fresh green
+  { name: "Sky", value: "linear-gradient(to right, #BAE6FD, #93C5FD)" }, // Soft sky blue
+  { name: "Mellow", value: "linear-gradient(to right, #FEF9C3, #FDE68A)" }, // Warm yellow
+
+  // Classic Soft Gradients
   { name: "Rose Teal", value: "linear-gradient(to right, #FBCFE8, #99F6E4)" },
   { name: "Sunset", value: "linear-gradient(to right, #FEF3C7, #FECACA)" },
   { name: "Ocean", value: "linear-gradient(to right, #BFDBFE, #A5F3FC)" },
@@ -1506,11 +1515,17 @@ function LayoutSelection({
 
                 <div
                   className="pointer-events-none absolute h-6 w-6 rounded-md border border-gray-200"
-                  style={{ backgroundColor: frameColor }}
-                />
+                  style={
+                    selectedGradient
+                      ? { background: selectedGradient }
+                      : { backgroundColor: frameColor }
+                  }
+                ></div>
 
                 <span className="text-xs text-gray-700">
-                  {`Color: ${frameColor}`}
+                  {selectedGradient
+                    ? `Gradient: ${GRADIENT_PRESETS.find((g) => g.value === selectedGradient)?.name || "Custom"}`
+                    : `Color: ${frameColor}`}
                 </span>
               </div>
             )}
