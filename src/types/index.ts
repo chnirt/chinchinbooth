@@ -16,27 +16,16 @@ export interface PhotoShootProps {
   goToLayoutScreen: () => void;
 }
 
-export interface StickerPosition {
-  x: number;
-  y: number;
-  rotation: number;
-  scale: number;
+export interface PhotoStripItem {
+  count: number;
+  overlayUrl: string | null;
+  backgroundUrl: string | null;
 }
 
-export interface StickerItem {
+export interface Frame {
   id: string;
   name: string;
-  url: string;
-  position: StickerPosition;
-}
-
-export interface StickerLayout {
-  id: string;
-  name: string;
-  stickers: {
-    url: string;
-    positions: StickerPosition[];
-  }[];
+  photostrip: PhotoStripItem[];
 }
 
 export interface LayoutSelectionProps {
@@ -48,10 +37,6 @@ export interface LayoutSelectionProps {
   setLayoutType: React.Dispatch<React.SetStateAction<number>>;
   selectedFrame: string | null;
   setSelectedFrame: React.Dispatch<React.SetStateAction<string | null>>;
-  selectedStickerLayout: string | null;
-  setSelectedStickerLayout: React.Dispatch<React.SetStateAction<string | null>>;
-  customStickers: StickerItem[];
-  setCustomStickers: React.Dispatch<React.SetStateAction<StickerItem[]>>;
   retakePhotos: () => void;
   downloadComposite: () => Promise<void>;
   canDownload: boolean;

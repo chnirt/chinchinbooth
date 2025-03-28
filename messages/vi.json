@@ -36,6 +36,7 @@
     "send_to_phone": "Gửi đến điện thoại",
     "hide_qr": "Ẩn QR",
     "scan_to_view_on_mobile": "Quét để xem trên điện thoại",
-    "scan_content": "Quét mã QR này bằng camera điện thoại của bạn để ngay lập tức xem và tải xuống ảnh của bạn"
+    "scan_content": "Quét mã QR này bằng camera điện thoại của bạn để ngay lập tức xem và tải xuống ảnh của bạn",
+    "frames": "Khung"
   }
 }

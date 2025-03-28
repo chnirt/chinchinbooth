@@ -8,7 +8,6 @@ import {
   RefreshCw,
   Check,
   GripHorizontal,
-  Sticker,
   Copy,
   Share2,
   Smartphone,
@@ -18,10 +17,9 @@ import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import type { LayoutSelectionProps } from "@/types";
 import { COLOR_PALETTE, GRADIENT_PRESETS } from "@/constants/styles";
-import { FRAMES, STICKER_LAYOUTS } from "@/constants/assets";
-import { StickerComponent } from "@/components/stickers/sticker-component";
-import { CustomStickerComponent } from "@/components/stickers/custom-sticker-component";
+import { FRAMES } from "@/constants/assets";
 import { QRCodeCanvas } from "qrcode.react";
+import { FrameSelector } from "./frame-selector";
 
 export function LayoutSelection({
   capturedImages,
@@ -31,11 +29,7 @@ export function LayoutSelection({
   setSelectedIndices,
   setLayoutType,
   selectedFrame,
-  // setSelectedFrame,
-  selectedStickerLayout,
-  setSelectedStickerLayout,
-  customStickers,
-  setCustomStickers,
+  setSelectedFrame,
   retakePhotos,
   downloadComposite,
   canDownload,
@@ -47,7 +41,7 @@ export function LayoutSelection({
 }: LayoutSelectionProps) {
   const [frameColor, setFrameColor] = useState<string>("#FFFFFF");
   const [selectedGradient, setSelectedGradient] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"solid" | "gradient" | "stickers">(
+  const [activeTab, setActiveTab] = useState<"solid" | "gradient" | "frames">(
     "solid",
   );
   const [copied, setCopied] = useState(false);
@@ -112,15 +106,6 @@ export function LayoutSelection({
   const handleGradientChange = (gradient: string) => {
     setSelectedGradient(gradient);
     setImageUrl(null);
-  };
-
-  const handleStickerLayoutChange = (layoutId: string) => {
-    setSelectedStickerLayout(layoutId);
-    setImageUrl(null);
-  };
-
-  const removeCustomSticker = (index: number) => {
-    setCustomStickers((prev) => prev.filter((_, i) => i !== index));
   };
 
   const copyToClipboard = async () => {
@@ -188,47 +173,43 @@ export function LayoutSelection({
     const commonClasses =
       "mx-auto overflow-hidden rounded-md border border-gray-200 shadow-md";
 
-    // Frame overlay
-    const frameOverlay = selectedFrame && (
-      <div className="pointer-events-none absolute inset-0">
-        <img
-          src={FRAMES.find((f) => f.id === selectedFrame)?.url || ""}
-          alt="Frame"
-          className="h-full w-full object-contain"
-        />
-      </div>
-    );
-
-    // Sticker overlays from layouts
-    const stickerOverlays = selectedStickerLayout && (
-      <div className="pointer-events-none absolute inset-0">
-        {STICKER_LAYOUTS.find(
-          (layout) => layout.id === selectedStickerLayout,
-        )?.stickers.map((stickerSet, setIndex) =>
-          stickerSet.positions.map((position, posIndex) => (
-            <StickerComponent
-              key={`${setIndex}-${posIndex}`}
-              url={stickerSet.url}
-              position={position}
-            />
-          )),
-        )}
-      </div>
-    );
-
-    // Custom stickers added by user
-    const customStickerOverlays = customStickers.length > 0 && (
-      <div className="pointer-events-none absolute inset-0">
-        {customStickers.map((sticker, index) => (
-          <CustomStickerComponent
-            key={`custom-${index}`}
-            sticker={sticker}
-            position={sticker.position}
-            onRemove={() => removeCustomSticker(index)}
+    // Frame background
+    const frameBackground =
+      selectedFrame &&
+      FRAMES.find((f) => f.id === selectedFrame)?.photostrip?.find(
+        (p) => p.count === layoutType,
+      )?.backgroundUrl ? (
+        <div className="pointer-events-none absolute inset-0 z-0">
+          <img
+            src={
+              FRAMES.find((f) => f.id === selectedFrame)?.photostrip?.find(
+                (p) => p.count === layoutType,
+              )?.backgroundUrl || ""
+            }
+            alt="Frame Background"
+            className="h-full w-full object-contain"
           />
-        ))}
-      </div>
-    );
+        </div>
+      ) : null;
+
+    // Frame overlay
+    const frameOverlay =
+      selectedFrame &&
+      FRAMES.find((f) => f.id === selectedFrame)?.photostrip?.find(
+        (p) => p.count === layoutType,
+      )?.overlayUrl ? (
+        <div className="pointer-events-none absolute inset-0 z-20">
+          <img
+            src={
+              FRAMES.find((f) => f.id === selectedFrame)?.photostrip?.find(
+                (p) => p.count === layoutType,
+              )?.overlayUrl || ""
+            }
+            alt="Frame Overlay"
+            className="h-full w-full object-contain"
+          />
+        </div>
+      ) : null;
 
     const backgroundStyle = selectedGradient
       ? { background: selectedGradient }
@@ -244,15 +225,14 @@ export function LayoutSelection({
         >
           <div
             ref={previewRef}
-            className="flex flex-col gap-4 px-4 pt-4 pb-20"
+            className="relative flex flex-col gap-4 px-4 pt-4 pb-20"
             style={backgroundStyle}
           >
-            <div className="grid grid-cols-1 gap-2">
+            {frameBackground}
+            <div className="relative z-10 grid grid-cols-1 gap-2">
               {Array.from({ length: 4 }, (_, idx) => renderCell(idx))}
             </div>
             {frameOverlay}
-            {stickerOverlays}
-            {customStickerOverlays}
           </div>
         </div>
       );
@@ -265,7 +245,8 @@ export function LayoutSelection({
           className="px-4 pt-4 pb-20"
           style={backgroundStyle}
         >
-          <div className="grid grid-cols-2 gap-2">
+          {frameBackground}
+          <div className="relative z-10 grid grid-cols-2 gap-2">
             <div className="flex flex-col gap-2">
               {Array.from({ length: 4 }, (_, idx) => renderCell(idx))}
             </div>
@@ -274,8 +255,8 @@ export function LayoutSelection({
             </div>
           </div>
           {frameOverlay}
-          {stickerOverlays}
-          {customStickerOverlays}
+          {/* {stickerOverlays} */}
+          {/* {customStickerOverlays} */}
         </div>
       </div>
     );
@@ -474,15 +455,15 @@ export function LayoutSelection({
                   {t("gradients")}
                 </button>
                 <button
-                  onClick={() => setActiveTab("stickers")}
+                  onClick={() => setActiveTab("frames")}
                   className={cn(
                     "px-4 py-2 text-sm font-medium transition-colors",
-                    activeTab === "stickers"
+                    activeTab === "frames"
                       ? "border-primary text-primary border-b-2"
                       : "hover:text-primary text-gray-500",
                   )}
                 >
-                  {t("stickers")}
+                  {t("frames")}
                 </button>
               </div>
             </motion.div>
@@ -550,37 +531,12 @@ export function LayoutSelection({
                 </div>
               )}
 
-              {activeTab === "stickers" && (
-                <div className="mb-4 grid grid-cols-2 gap-2">
-                  {STICKER_LAYOUTS.map((layout) => {
-                    const isSelected = selectedStickerLayout === layout.id;
-                    return (
-                      <motion.button
-                        key={layout.id}
-                        onClick={() => handleStickerLayoutChange(layout.id)}
-                        className={cn(
-                          "relative flex h-16 w-full flex-col items-center justify-center rounded-md border-2 transition-all",
-                          isSelected
-                            ? "border-primary shadow-sm"
-                            : "border-gray-200",
-                        )}
-                        aria-label={`Select ${layout.name} sticker layout`}
-                      >
-                        {isSelected && (
-                          <div className="absolute top-1 right-1 flex h-3 w-3 items-center justify-center rounded-full border border-gray-200 bg-white">
-                            <Check className="text-primary h-2 w-2" />
-                          </div>
-                        )}
-                        {layout.id !== "none" && (
-                          <Sticker className="mb-1 h-4 w-4" />
-                        )}
-                        <span className="text-xs font-medium text-gray-800">
-                          {layout.name}
-                        </span>
-                      </motion.button>
-                    );
-                  })}
-                </div>
+              {activeTab === "frames" && (
+                <FrameSelector
+                  selectedFrame={selectedFrame}
+                  setSelectedFrame={setSelectedFrame}
+                  setImageUrl={setImageUrl || (() => {})}
+                />
               )}
             </div>
 
@@ -610,23 +566,6 @@ export function LayoutSelection({
                     ? `Gradient: ${GRADIENT_PRESETS.find((g) => g.value === selectedGradient)?.name || "Custom"}`
                     : `Color: ${frameColor}`}
                 </span>
-              </div>
-            )}
-
-            {/* Sticker tips */}
-            {activeTab === "stickers" && (
-              <div className="mt-3 rounded-md bg-gray-50 p-3">
-                <div className="flex items-start gap-2">
-                  <Sticker className="mt-0.5 h-4 w-4 text-gray-500" />
-                  <div>
-                    <h3 className="text-sm font-medium text-gray-700">
-                      {t("sticker_tips")}
-                    </h3>
-                    <p className="mt-1 text-xs text-gray-600">
-                      {t("sticker_tips_content")}
-                    </p>
-                  </div>
-                </div>
               </div>
             )}
           </motion.div>

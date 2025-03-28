@@ -10,7 +10,6 @@ import { StepProgress } from "@/components/step-progress";
 import { PhotoShoot } from "@/components/photo-shoot";
 import { LayoutSelection } from "@/components/layout-selection";
 import { MAX_CAPTURE } from "@/constants";
-import type { StickerItem } from "@/types";
 import {
   uploadToCloudinary,
   checkDailyQRLimit,
@@ -25,10 +24,6 @@ export default function PhotoBoothApp() {
   const [layoutType, setLayoutType] = useState<number>(4);
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
   const [selectedFrame, setSelectedFrame] = useState<string | null>(null);
-  const [selectedStickerLayout, setSelectedStickerLayout] = useState<
-    string | null
-  >("none");
-  const [customStickers, setCustomStickers] = useState<StickerItem[]>([]);
   const [isDownloading, setIsDownloading] = useState(false);
   const previewRef = useRef<HTMLDivElement | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -44,7 +39,6 @@ export default function PhotoBoothApp() {
   const retakePhotos = () => {
     setCapturedImages([]);
     setSelectedIndices([]);
-    setSelectedStickerLayout(null);
     setImageUrl(null);
     setStep("shoot");
   };
@@ -55,13 +49,29 @@ export default function PhotoBoothApp() {
     setIsDownloading(true);
 
     try {
+      // Get the current dimensions of the element
+      const rect = previewRef.current.getBoundingClientRect();
+      console.log("🚀 ~ downloadComposite ~ rect:", rect);
+      // Define the desired output width (fixed)
+      const desiredWidth = 200;
+      // Calculate the scale factor to convert the current width to the desired width
+      const scaleFactor = desiredWidth / rect.width;
+
+      // Calculate the final scale by multiplying the base scale with the scale factor
+      const finalScale = 3 * scaleFactor; // Base scale of 3 for high quality on Retina displays
+
+      // Use html2canvas with the adjusted scale
       const canvas = await html2canvas(previewRef.current, {
         allowTaint: true,
         useCORS: true,
         backgroundColor: null,
-        scale: 3, // Higher quality for Retina displays
+        // Pass the original element dimensions
+        width: rect.width,
+        height: rect.height,
+        scale: finalScale,
       });
 
+      // Create a link to download the image
       const link = document.createElement("a");
       const fileName = `chinchinbooth_photo_${Date.now()}.jpeg`;
       link.download = fileName;
@@ -174,10 +184,6 @@ export default function PhotoBoothApp() {
               setLayoutType={setLayoutType}
               selectedFrame={selectedFrame}
               setSelectedFrame={setSelectedFrame}
-              selectedStickerLayout={selectedStickerLayout}
-              setSelectedStickerLayout={setSelectedStickerLayout}
-              customStickers={customStickers}
-              setCustomStickers={setCustomStickers}
               retakePhotos={retakePhotos}
               downloadComposite={downloadComposite}
               canDownload={canDownload}
