@@ -147,7 +147,7 @@ export function LayoutSelection({
           className="h-full w-full object-cover"
         />
       ) : (
-        <div className="flex flex-col items-center justify-center text-gray-400">
+        <div className="flex h-full w-full flex-col items-center justify-center text-gray-400">
           <span className="text-xs">Empty</span>
         </div>
       );
@@ -217,14 +217,14 @@ export function LayoutSelection({
 
     if (layoutType === 4) {
       return (
-        <div className={cn("relative max-w-1/2", commonClasses)}>
+        <div className={cn("max-w-1/2", commonClasses)}>
           <div
             ref={previewRef}
             className="flex aspect-[1/3] flex-col gap-[4%] p-[8%]"
             style={backgroundStyle}
           >
             {frameBackground}
-            <div className="relative z-10 grid grid-cols-1 gap-2">
+            <div className="z-10 grid grid-cols-1 gap-[4%]">
               {Array.from({ length: 4 }, (_, idx) => renderCell(idx))}
             </div>
             {frameOverlay}
