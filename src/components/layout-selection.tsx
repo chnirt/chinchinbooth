@@ -217,15 +217,10 @@ export function LayoutSelection({
 
     if (layoutType === 4) {
       return (
-        <div
-          className={cn(
-            "relative max-w-[calc((100%-8px)/2+16px)]",
-            commonClasses,
-          )}
-        >
+        <div className={cn("relative max-w-1/2", commonClasses)}>
           <div
             ref={previewRef}
-            className="relative flex aspect-[1/3] flex-col gap-4 px-4 pt-4"
+            className="flex aspect-[1/3] flex-col gap-[4%] p-[8%]"
             style={backgroundStyle}
           >
             {frameBackground}
@@ -242,15 +237,15 @@ export function LayoutSelection({
       <div className={cn(commonClasses, "relative")}>
         <div
           ref={previewRef}
-          className="aspect-[2/3] px-4 pt-4"
+          className="aspect-[2/3] gap-[2%] p-[4%]"
           style={backgroundStyle}
         >
           {frameBackground}
-          <div className="relative z-10 grid grid-cols-2 gap-2">
-            <div className="flex flex-col gap-2">
+          <div className="relative z-10 grid grid-cols-2 gap-[2%]">
+            <div className="flex flex-col gap-[2%]">
               {Array.from({ length: 4 }, (_, idx) => renderCell(idx))}
             </div>
-            <div className="flex flex-col gap-2">
+            <div className="flex flex-col gap-[2%]">
               {Array.from({ length: 4 }, (_, idx) => renderCell(idx + 4))}
             </div>
           </div>
