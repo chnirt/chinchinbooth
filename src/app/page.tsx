@@ -23,7 +23,7 @@ export default function PhotoBoothApp() {
   const [capturedImages, setCapturedImages] = useState<string[]>([]);
   const [layoutType, setLayoutType] = useState<number>(4);
   const [selectedIndices, setSelectedIndices] = useState<number[]>([]);
-  const [selectedFrame, setSelectedFrame] = useState<string | null>(null);
+  const [selectedFrame, setSelectedFrame] = useState<string | null>("none");
   const [isDownloading, setIsDownloading] = useState(false);
   const previewRef = useRef<HTMLDivElement | null>(null);
   const [imageUrl, setImageUrl] = useState<string | null>(null);

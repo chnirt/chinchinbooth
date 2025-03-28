@@ -225,7 +225,7 @@ export function LayoutSelection({
         >
           <div
             ref={previewRef}
-            className="relative flex flex-col gap-4 px-4 pt-4 pb-20"
+            className="relative flex aspect-[1/3] flex-col gap-4 px-4 pt-4"
             style={backgroundStyle}
           >
             {frameBackground}
@@ -242,7 +242,7 @@ export function LayoutSelection({
       <div className={cn(commonClasses, "relative")}>
         <div
           ref={previewRef}
-          className="px-4 pt-4 pb-20"
+          className="aspect-[2/3] px-4 pt-4"
           style={backgroundStyle}
         >
           {frameBackground}
@@ -255,8 +255,6 @@ export function LayoutSelection({
             </div>
           </div>
           {frameOverlay}
-          {/* {stickerOverlays} */}
-          {/* {customStickerOverlays} */}
         </div>
       </div>
     );
@@ -612,7 +610,7 @@ export function LayoutSelection({
           {t("retake")}
         </Button>
         <Button
-          onClick={()=> downloadComposite(layoutType)}
+          onClick={() => downloadComposite(layoutType)}
           disabled={!canDownload || isDownloading}
           className={cn(
             "flex items-center justify-center rounded-full px-4 py-2 font-medium",
