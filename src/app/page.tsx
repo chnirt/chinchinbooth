@@ -43,42 +43,77 @@ export default function PhotoBoothApp() {
     setStep("shoot");
   };
 
-  const downloadComposite = async () => {
+  const downloadComposite = async (layoutType: number) => {
     if (!previewRef.current || isDownloading) return;
-
     setIsDownloading(true);
 
     try {
-      // Get the current dimensions of the element
+      // Set default desired output dimensions for an 8-panel layout (2 columns x 4 rows)
+      // 8-panel composite: 1200 x 1800 pixels (assumes preview includes padding/gaps)
+      let desiredWidth = 1200; // pixels
+      let desiredHeight = 1800; // pixels
+
+      // For a 4-panel layout (vertical strip), use these dimensions
+      if (layoutType === 4) {
+        desiredWidth = 600; // pixels
+        desiredHeight = 1800; // pixels
+      }
+
+      // Get the current displayed size of the element
       const rect = previewRef.current.getBoundingClientRect();
-      console.log("🚀 ~ downloadComposite ~ rect:", rect);
-      // Define the desired output width (fixed)
-      const desiredWidth = 200;
-      // Calculate the scale factor to convert the current width to the desired width
-      const scaleFactor = desiredWidth / rect.width;
+      const currentWidth = rect.width;
+      const currentHeight = rect.height;
 
-      // Calculate the final scale by multiplying the base scale with the scale factor
-      const finalScale = 3 * scaleFactor; // Base scale of 3 for high quality on Retina displays
+      // Calculate the scale factor based on the desired width
+      const scaleFactor = desiredWidth / currentWidth;
 
-      // Use html2canvas with the adjusted scale
+      // Render the element with html2canvas at its current size, then scale it up
       const canvas = await html2canvas(previewRef.current, {
         allowTaint: true,
         useCORS: true,
         backgroundColor: null,
-        // Pass the original element dimensions
-        width: rect.width,
-        height: rect.height,
-        scale: finalScale,
+        width: currentWidth, // original width
+        height: currentHeight, // original height
+        scale: scaleFactor, // scale factor to achieve desired width
       });
 
-      // Create a link to download the image
+      // Create a new canvas with fixed dimensions
+      const forcedCanvas = document.createElement("canvas");
+      forcedCanvas.width = desiredWidth;
+      forcedCanvas.height = desiredHeight;
+      const ctx = forcedCanvas.getContext("2d");
+      if (!ctx) {
+        throw new Error("Unable to get 2D context");
+      }
+
+      // Draw the generated canvas onto the new canvas,
+      // scaling it to fill the entire forced canvas area
+      ctx.drawImage(
+        canvas, // source canvas
+        0,
+        0,
+        canvas.width,
+        canvas.height, // source rectangle (full canvas)
+        0,
+        0,
+        desiredWidth,
+        desiredHeight, // destination rectangle in the forced canvas
+      );
+
+      // Set the download file name based on the layout type
+      // Use "1x4" for a 4-panel layout, and "2x4" for an 8-panel layout
+      const fileName =
+        layoutType === 4
+          ? `chinchinbooth_1x4_${Date.now()}.jpeg`
+          : `chinchinbooth_2x4_${Date.now()}.jpeg`;
+
+      // Create a link to download the final image
       const link = document.createElement("a");
-      const fileName = `chinchinbooth_photo_${Date.now()}.jpeg`;
       link.download = fileName;
-      link.href = canvas.toDataURL("image/jpeg", 1.0);
+      link.href = forcedCanvas.toDataURL("image/jpeg", 1.0);
       link.click();
     } catch (error) {
-      console.error("Error generating image:", error);
+      console.error("Error generating the image:", error);
     } finally {
       setIsDownloading(false);
     }
@@ -121,22 +156,6 @@ export default function PhotoBoothApp() {
       setIsUploading(false);
     }
   };
-
-  // Keyboard shortcuts for layout screen
-  useEffect(() => {
-    if (step === "layout") {
-      const handleKeyDown = (e: KeyboardEvent) => {
-        if (
-          ["INPUT", "TEXTAREA"].includes(document.activeElement?.tagName || "")
-        )
-          return;
-        if (e.key === "Escape") retakePhotos();
-        if (e.key.toLowerCase() === "d") downloadComposite();
-      };
-      window.addEventListener("keydown", handleKeyDown);
-      return () => window.removeEventListener("keydown", handleKeyDown);
-    }
-  }, [step]);
 
   useEffect(() => {
     document.addEventListener("contextmenu", (event) => event.preventDefault());

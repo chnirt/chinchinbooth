@@ -612,7 +612,7 @@ export function LayoutSelection({
           {t("retake")}
         </Button>
         <Button
-          onClick={downloadComposite}
+          onClick={()=> downloadComposite(layoutType)}
           disabled={!canDownload || isDownloading}
           className={cn(
             "flex items-center justify-center rounded-full px-4 py-2 font-medium",
