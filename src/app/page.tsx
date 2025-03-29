@@ -164,6 +164,8 @@ export default function PhotoBoothApp() {
 
   return (
     <div className="flex min-h-[100dvh] flex-col overflow-hidden">
+      {/* <div className="absolute inset-0 bg-[radial-gradient(circle,_rgba(255,0,0,0.8)_0%,_rgba(255,0,0,0)_70%)]"></div> */}
+
       <Navbar />
 
       <StepProgress currentStep={step === "shoot" ? 1 : 2} />

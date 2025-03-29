@@ -134,7 +134,7 @@ export function FilterGallery({
       {/* Category navigation with fixed Normal button */}
       <div className="gap relative mb-3 flex">
         {/* Fixed Normal button */}
-        <div className="bg-white">
+        <div>
           <Button
             onClick={handleNormalClick}
             variant={"ghost"}
