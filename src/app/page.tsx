@@ -12,7 +12,7 @@ import { LayoutSelection } from "@/components/layout-selection";
 import { MAX_CAPTURE } from "@/constants";
 import {
   uploadToCloudinary,
-  checkDailyQRLimit,
+  // checkDailyQRLimit,
   updateQRGenerationCount,
 } from "@/lib/upload-utils";
 import { toast } from "sonner";
@@ -121,10 +121,10 @@ export default function PhotoBoothApp() {
 
   // Update the uploadAndGenerateQR function to use the utility functions
   const uploadAndGenerateQR = async () => {
-    if (checkDailyQRLimit()) {
-      toast("You have reached the daily limit for generating QR codes.");
-      return;
-    }
+    // if (checkDailyQRLimit()) {
+    //   toast("You have reached the daily limit for generating QR codes.");
+    //   return;
+    // }
 
     if (!previewRef.current || isUploading) return;
     setIsUploading(true);
