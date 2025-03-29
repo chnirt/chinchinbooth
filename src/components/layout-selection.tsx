@@ -176,13 +176,13 @@ export function LayoutSelection({
     // Frame background
     const frameBackground =
       selectedFrame &&
-      FRAMES.find((f) => f.id === selectedFrame)?.photostrip?.find(
+      FRAMES.find((f) => f.id === selectedFrame)?.layouts?.find(
         (p) => p.count === layoutType,
       )?.backgroundUrl ? (
         <div className="pointer-events-none absolute inset-0 z-0">
           <img
             src={
-              FRAMES.find((f) => f.id === selectedFrame)?.photostrip?.find(
+              FRAMES.find((f) => f.id === selectedFrame)?.layouts?.find(
                 (p) => p.count === layoutType,
               )?.backgroundUrl || ""
             }
@@ -195,13 +195,13 @@ export function LayoutSelection({
     // Frame overlay
     const frameOverlay =
       selectedFrame &&
-      FRAMES.find((f) => f.id === selectedFrame)?.photostrip?.find(
+      FRAMES.find((f) => f.id === selectedFrame)?.layouts?.find(
         (p) => p.count === layoutType,
       )?.overlayUrl ? (
         <div className="pointer-events-none absolute inset-0 z-20">
           <img
             src={
-              FRAMES.find((f) => f.id === selectedFrame)?.photostrip?.find(
+              FRAMES.find((f) => f.id === selectedFrame)?.layouts?.find(
                 (p) => p.count === layoutType,
               )?.overlayUrl || ""
             }
@@ -217,7 +217,7 @@ export function LayoutSelection({
 
     if (layoutType === 4) {
       return (
-        <div className={cn("max-w-1/2", commonClasses)}>
+        <div className={cn("relative max-w-1/2", commonClasses)}>
           <div
             ref={previewRef}
             className="flex aspect-[1/3] flex-col gap-[4%] p-[8%]"
@@ -237,7 +237,7 @@ export function LayoutSelection({
       <div className={cn(commonClasses, "relative")}>
         <div
           ref={previewRef}
-          className="aspect-[2/3] gap-[2%] p-[4%]"
+          className="flex aspect-[2/3] flex-col gap-[2%] p-[4%]"
           style={backgroundStyle}
         >
           {frameBackground}

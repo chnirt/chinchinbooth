@@ -16,7 +16,7 @@ export interface PhotoShootProps {
   goToLayoutScreen: () => void;
 }
 
-export interface PhotoStripItem {
+export interface Layout {
   count: number;
   overlayUrl: string | null;
   backgroundUrl: string | null;
@@ -25,7 +25,7 @@ export interface PhotoStripItem {
 export interface Frame {
   id: string;
   name: string;
-  photostrip: PhotoStripItem[];
+  layouts: Layout[];
 }
 
 export interface LayoutSelectionProps {

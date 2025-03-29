@@ -5,15 +5,23 @@ export const FRAMES: Frame[] = [
   {
     id: "none",
     name: "No Frame",
-    photostrip: [
+    layouts: [
       { count: 4, overlayUrl: null, backgroundUrl: null },
       { count: 8, overlayUrl: null, backgroundUrl: null },
     ],
   },
   {
+    id: "film-strip",
+    name: "Film Strip",
+    layouts: [
+      { count: 4, overlayUrl: null, backgroundUrl: "/film-strip/4/bg.png" },
+      { count: 8, overlayUrl: null, backgroundUrl: "/film-strip/8/bg.png" },
+    ],
+  },
+  {
     id: "hearts",
     name: "Hearts",
-    photostrip: [
+    layouts: [
       {
         count: 4,
         overlayUrl: "/hearts/4/overlay.png",
@@ -29,7 +37,7 @@ export const FRAMES: Frame[] = [
   // {
   //   id: "summer-time",
   //   name: "Summer Time",
-  //   photostrip: [
+  //   layouts: [
   //     {
   //       count: 4,
   //       overlayUrl: "/summer-time/4/overlay.png",
