@@ -487,7 +487,7 @@ export function PhotoShoot({
             {capturedImages.map((img, index) => (
               <motion.div
                 key={index}
-                className="relative aspect-[4/3] flex-shrink-0 snap-center overflow-hidden rounded-lg border border-gray-200 shadow-md"
+                className="relative aspect-[4/3] flex-shrink-0 snap-center overflow-hidden rounded-lg border border-gray-200"
                 style={{ height: "100%" }}
                 initial={{
                   opacity: 0,

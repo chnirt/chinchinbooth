@@ -237,11 +237,11 @@ export function LayoutSelection({
       <div className={cn(commonClasses, "relative")}>
         <div
           ref={previewRef}
-          className="flex aspect-[2/3] flex-col gap-[2.5%] p-[5%]"
+          className="flex aspect-[2/3] flex-col gap-[calc(2.5%*3/2)] p-[5%]"
           style={backgroundStyle}
         >
           {frameBackground}
-          <div className="relative z-10 grid grid-cols-2 gap-[2.5%]">
+          <div className="relative z-10 grid grid-cols-2 gap-[calc(2.5%*3/2)]">
             <div className="flex flex-col gap-[2.5%]">
               {Array.from({ length: 4 }, (_, idx) => renderCell(idx))}
             </div>
