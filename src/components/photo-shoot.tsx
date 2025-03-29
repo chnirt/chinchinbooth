@@ -305,68 +305,70 @@ export function PhotoShoot({
           {cameraError}
         </div>
       ) : (
-        <motion.div
-          ref={cameraContainerRef}
-          className="relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-gray-200 bg-black shadow-lg"
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5, delay: 0.1 }}
-        >
-          <div className="relative h-full w-full overflow-hidden rounded-xl">
-            <video
-              ref={videoRef}
-              autoPlay
-              playsInline
-              className={cn(
-                "h-full w-full object-cover",
-                isMirrored ? "-scale-x-100" : "",
-              )}
-              style={{ filter: generateFilterStyle(currentFilter) }}
-            />
-            {/* Guide overlay with animated border */}
-            <div className="animate-pulse-gentle pointer-events-none absolute inset-4 rounded-lg border-2 border-white/30" />
+        <div className="flex w-full flex-col gap-2">
+          <motion.div
+            ref={cameraContainerRef}
+            className="relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-gray-200 bg-black"
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+          >
+            <div className="relative h-full w-full overflow-hidden rounded-xl">
+              <video
+                ref={videoRef}
+                autoPlay
+                playsInline
+                className={cn(
+                  "h-full w-full object-cover",
+                  isMirrored ? "-scale-x-100" : "",
+                )}
+                style={{ filter: generateFilterStyle(currentFilter) }}
+              />
+              {/* Guide overlay with animated border */}
+              <div className="animate-pulse-gentle pointer-events-none absolute inset-4 rounded-lg border-2 border-white/30" />
 
-            {/* Countdown overlay with default styling */}
-            <AnimatePresence>
-              {countdown !== null && countdown > 0 && (
-                <motion.div
-                  initial={{ opacity: 0, scale: 1.5 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.5 }}
-                  className="text-primary-foreground absolute right-4 bottom-4 flex h-16 w-16 items-center justify-center rounded-full bg-black/50 shadow-lg"
-                >
-                  <span className="text-3xl font-bold">{countdown}</span>
-                </motion.div>
-              )}
-            </AnimatePresence>
+              {/* Countdown overlay with default styling */}
+              <AnimatePresence>
+                {countdown !== null && countdown > 0 && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 1.5 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.5 }}
+                    className="text-primary-foreground absolute right-4 bottom-4 flex h-16 w-16 items-center justify-center rounded-full bg-black/50 shadow-lg"
+                  >
+                    <span className="text-3xl font-bold">{countdown}</span>
+                  </motion.div>
+                )}
+              </AnimatePresence>
 
-            <div className="absolute top-4 right-4 flex items-center gap-1 rounded bg-black/50 px-2 py-1 text-white">
-              <CameraIcon className="h-4 w-4" />
-              <span>
-                {capturedImages.length}/{MAX_CAPTURE}
-              </span>
+              <div className="absolute top-4 right-4 flex items-center gap-1 rounded bg-black/50 px-2 py-1 text-white">
+                <CameraIcon className="h-4 w-4" />
+                <span>
+                  {capturedImages.length}/{MAX_CAPTURE}
+                </span>
+              </div>
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
+
+          {/* Filter Gallery - Redesigned with fixed Normal button */}
+          <motion.div
+            className="w-full"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.2 }}
+          >
+            <div className="rounded-lg bg-white">
+              <FilterGallery
+                onFilterChange={handleFilterChange}
+                currentFilter={currentFilter}
+                sampleImageUrl="/placeholder.jpg"
+              />
+            </div>
+          </motion.div>
+        </div>
       )}
 
       <canvas ref={canvasRef} className="hidden" />
-
-      {/* Filter Gallery - Redesigned with fixed Normal button */}
-      <motion.div
-        className="w-full"
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.4, delay: 0.2 }}
-      >
-        <div className="rounded-lg bg-white">
-          <FilterGallery
-            onFilterChange={handleFilterChange}
-            currentFilter={currentFilter}
-            sampleImageUrl="/placeholder.jpg"
-          />
-        </div>
-      </motion.div>
 
       {/* Camera controls with consistent button styling */}
       <motion.div

@@ -151,7 +151,7 @@ export function FilterGallery({
         {/* Scrollable categories */}
         <div
           ref={categoriesContainerRef}
-          className="hide-scrollbar flex overflow-x-auto pb-1"
+          className="hide-scrollbar flex overflow-x-auto"
         >
           {categories
             .filter((cat) => cat !== "normal")
