@@ -11,6 +11,22 @@ export const FRAMES: Frame[] = [
     ],
   },
   {
+    id: "sweet-heart",
+    name: "Sweet Heart",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/sweet-heart/4/overlay.png",
+        backgroundUrl: "/sweet-heart/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/sweet-heart/8/overlay.png",
+        backgroundUrl: "/sweet-heart/8/bg.png",
+      },
+    ],
+  },
+  {
     id: "film-strip",
     name: "Film Strip",
     layouts: [
