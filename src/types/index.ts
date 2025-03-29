@@ -1,10 +1,4 @@
 // Types for the photo booth application
-export interface Control {
-  id: string;
-  icon: React.ComponentType<{ className: string; title?: string }>;
-  action: string;
-}
-
 export interface StepProgressProps {
   currentStep: number;
 }

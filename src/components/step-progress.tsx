@@ -20,7 +20,6 @@ export function StepProgress({ currentStep }: StepProgressProps) {
             ? "bg-primary text-primary-foreground shadow-sm"
             : "bg-gray-200 text-gray-600",
         )}
-        whileTap={{ scale: 0.95 }}
       >
         1
       </motion.div>
@@ -45,7 +44,6 @@ export function StepProgress({ currentStep }: StepProgressProps) {
             ? "bg-primary text-primary-foreground shadow-sm"
             : "bg-gray-200 text-gray-600",
         )}
-        whileTap={{ scale: 0.95 }}
       >
         2
       </motion.div>

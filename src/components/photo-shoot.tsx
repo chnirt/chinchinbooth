@@ -3,7 +3,6 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  RefreshCw,
   Undo2,
   Camera,
   ArrowRight,
@@ -16,13 +15,10 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import type { PhotoShootProps } from "@/types";
-import {
-  DEFAULT_FILTERS,
-  FILTER_CONTROLS,
-  MAX_CAPTURE,
-  TIMER_OPTIONS,
-  DEFAULT_TIMER_INDEX,
-} from "@/constants";
+import { MAX_CAPTURE, TIMER_OPTIONS, DEFAULT_TIMER_INDEX } from "@/constants";
+import { FilterGallery, generateFilterStyle } from "./filter-gallery";
+import type { FilterValues } from "@/types/filters";
+import { FILTER_COLLECTIONS } from "@/constants/filters";
 
 export function PhotoShoot({
   capturedImages,
@@ -34,12 +30,14 @@ export function PhotoShoot({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const capturedImagesRef = useRef<HTMLDivElement>(null);
   const cameraContainerRef = useRef<HTMLDivElement>(null);
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
-  const [filters, setFilters] = useState(DEFAULT_FILTERS);
-  const [isMirrored, setIsMirrored] = useState(true);
+  const [currentFilter, setCurrentFilter] = useState<FilterValues>(
+    FILTER_COLLECTIONS.normal[0].filter,
+  );
+  const [isMirrored] = useState(true);
   const [isCameraStarted, setIsCameraStarted] = useState(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
-  const [activeFilters, setActiveFilters] = useState<string[]>(["mirror"]);
   const [isCapturing, setIsCapturing] = useState(false);
 
   // Mode toggles and auto sequence state
@@ -52,7 +50,6 @@ export function PhotoShoot({
 
   const t = useTranslations("HomePage");
 
-  const filterDisabled = !isCameraStarted;
   const isMaxCaptureReached = capturedImages.length >= MAX_CAPTURE;
   const selectedTimer = TIMER_OPTIONS[selectedTimerIndex];
 
@@ -119,7 +116,7 @@ export function PhotoShoot({
     canvas.width = width;
     canvas.height = height;
     ctx.clearRect(0, 0, width, height);
-    ctx.filter = `brightness(${filters.brightness}%) contrast(${filters.contrast}%) grayscale(${filters.grayscale}%) sepia(${filters.sepia}%) saturate(${filters.saturate}%)`;
+    ctx.filter = generateFilterStyle(currentFilter);
 
     // Mirror image if needed
     ctx.setTransform(isMirrored ? -1 : 1, 0, 0, 1, isMirrored ? width : 0, 0);
@@ -166,83 +163,6 @@ export function PhotoShoot({
     stopAutoSequence();
   };
 
-  // Reset filters to default
-  const resetFilters = () => {
-    if (resetDisabled) return;
-    setFilters(DEFAULT_FILTERS);
-    setActiveFilters(["mirror"]);
-  };
-
-  // Toggle individual filter
-  const toggleFilter = (id: string) => {
-    if (filterDisabled) return;
-
-    if (id === "mirror") {
-      setIsMirrored((prev) => !prev);
-      setActiveFilters((prev) =>
-        prev.includes("mirror")
-          ? prev.filter((f) => f !== "mirror")
-          : [...prev, "mirror"],
-      );
-    } else if (id === "grayscale") {
-      setFilters((prev) => ({
-        ...prev,
-        grayscale: prev.grayscale === 0 ? 100 : 0,
-        sepia: 0,
-      }));
-      setActiveFilters((prev) => {
-        const newFilters = prev.filter(
-          (f) => f !== "sepia" && f !== "grayscale",
-        );
-        return prev.includes("grayscale")
-          ? newFilters
-          : [...newFilters, "grayscale"];
-      });
-    } else if (id === "sepia") {
-      setFilters((prev) => ({
-        ...prev,
-        sepia: prev.sepia === 0 ? 100 : 0,
-        grayscale: 0,
-      }));
-      setActiveFilters((prev) => {
-        const newFilters = prev.filter(
-          (f) => f !== "sepia" && f !== "grayscale",
-        );
-        return prev.includes("sepia") ? newFilters : [...newFilters, "sepia"];
-      });
-    } else if (id === "brightness") {
-      setFilters((prev) => ({
-        ...prev,
-        brightness: prev.brightness === 100 ? 130 : 100,
-      }));
-      setActiveFilters((prev) =>
-        prev.includes("brightness")
-          ? prev.filter((f) => f !== "brightness")
-          : [...prev, "brightness"],
-      );
-    } else if (id === "contrast") {
-      setFilters((prev) => ({
-        ...prev,
-        contrast: prev.contrast === 100 ? 130 : 100,
-      }));
-      setActiveFilters((prev) =>
-        prev.includes("contrast")
-          ? prev.filter((f) => f !== "contrast")
-          : [...prev, "contrast"],
-      );
-    } else if (id === "saturate") {
-      setFilters((prev) => ({
-        ...prev,
-        saturate: prev.saturate === 100 ? 150 : 100,
-      }));
-      setActiveFilters((prev) =>
-        prev.includes("saturate")
-          ? prev.filter((f) => f !== "saturate")
-          : [...prev, "saturate"],
-      );
-    }
-  };
-
   // Start capture (single-shot or auto-capture)
   const startCapture = () => {
     if (isMaxCaptureReached) return;
@@ -273,18 +193,29 @@ export function PhotoShoot({
   useEffect(() => {
     if (countdown === null) {
       hasCapturedRef.current = false;
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
       return;
     }
+
     if (countdown > 0) {
       hasCapturedRef.current = false;
-      const timerId = setTimeout(() => {
+      timerRef.current = setTimeout(() => {
         setCountdown((prev) => (prev !== null ? prev - 1 : null));
       }, 1000);
-      return () => clearTimeout(timerId);
     } else if (countdown === 0 && !hasCapturedRef.current) {
       hasCapturedRef.current = true;
       captureImage();
     }
+
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+        timerRef.current = null;
+      }
+    };
   }, [countdown]);
 
   // After captureImage completes, schedule the next auto capture if in auto mode
@@ -297,6 +228,21 @@ export function PhotoShoot({
     } else {
       setIsAutoSequenceActive(false);
       setCountdown(null);
+    }
+  };
+
+  // Handle filter change
+  const handleFilterChange = (filter: FilterValues) => {
+    // Apply the filter immediately
+    setCurrentFilter(filter);
+
+    // Add a subtle animation to indicate the filter has changed
+    if (videoRef.current) {
+      const video = videoRef.current;
+      video.classList.add("filter-transition");
+      setTimeout(() => {
+        video.classList.remove("filter-transition");
+      }, 300);
     }
   };
 
@@ -342,7 +288,6 @@ export function PhotoShoot({
   }, [
     capturedImages,
     isCameraStarted,
-    filters,
     isMirrored,
     isCapturing,
     isAutoSequenceActive,
@@ -376,9 +321,7 @@ export function PhotoShoot({
                 "h-full w-full object-cover",
                 isMirrored ? "-scale-x-100" : "",
               )}
-              style={{
-                filter: `brightness(${filters.brightness}%) contrast(${filters.contrast}%) grayscale(${filters.grayscale}%) sepia(${filters.sepia}%) saturate(${filters.saturate}%)`,
-              }}
+              style={{ filter: generateFilterStyle(currentFilter) }}
             />
             {/* Guide overlay with animated border */}
             <div className="animate-pulse-gentle pointer-events-none absolute inset-4 rounded-lg border-2 border-white/30" />
@@ -409,42 +352,19 @@ export function PhotoShoot({
 
       <canvas ref={canvasRef} className="hidden" />
 
-      {/* Filter controls with consistent button styling */}
+      {/* Filter Gallery - Redesigned with fixed Normal button */}
       <motion.div
         className="w-full"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.2 }}
       >
-        <div className="filter-controls flex flex-wrap justify-center gap-2 md:gap-3">
-          {FILTER_CONTROLS.filter((c) => c.id !== "reset").map(
-            ({ id, icon: Icon }) => (
-              <Button
-                key={id}
-                onClick={() => toggleFilter(id)}
-                disabled={
-                  filterDisabled || isAutoSequenceActive || countdown !== null
-                }
-                variant={activeFilters.includes(id) ? "default" : "outline"}
-                className="h-9 w-9 rounded-full p-0 md:h-10 md:w-10"
-                size="icon"
-              >
-                <Icon className="h-4 w-4" />
-              </Button>
-            ),
-          )}
-
-          <Button
-            onClick={resetFilters}
-            variant="outline"
-            size="icon"
-            className="h-9 w-9 rounded-full p-0 md:h-10 md:w-10"
-            disabled={
-              filterDisabled || isAutoSequenceActive || countdown !== null
-            }
-          >
-            <RefreshCw className="h-4 w-4" />
-          </Button>
+        <div className="rounded-lg bg-white">
+          <FilterGallery
+            onFilterChange={handleFilterChange}
+            currentFilter={currentFilter}
+            sampleImageUrl="/placeholder.jpg"
+          />
         </div>
       </motion.div>
 
@@ -561,23 +481,73 @@ export function PhotoShoot({
               : "auto",
           }}
         >
-          <AnimatePresence initial={false}>
+          <AnimatePresence initial={false} mode="popLayout">
             {capturedImages.map((img, index) => (
               <motion.div
                 key={index}
-                className="aspect-[4/3] flex-shrink-0 snap-center overflow-hidden rounded-lg border border-gray-200 shadow-md"
+                className="relative aspect-[4/3] flex-shrink-0 snap-center overflow-hidden rounded-lg border border-gray-200 shadow-md"
                 style={{ height: "100%" }}
-                initial={{ opacity: 0, scale: 0.8, x: 50 }}
-                animate={{ opacity: 1, scale: 1, x: 0 }}
-                exit={{ opacity: 0, scale: 0.8, x: -50 }}
-                transition={{ duration: 0.3 }}
+                initial={{
+                  opacity: 0,
+                  scale: 0.7,
+                  y: 20,
+                }}
+                animate={{
+                  opacity: 1,
+                  scale: 1,
+                  y: 0,
+                  transition: {
+                    type: "spring",
+                    stiffness: 300,
+                    damping: 20,
+                    delay: index * 0.05, // Stagger effect
+                  },
+                }}
+                exit={{
+                  opacity: 0,
+                  scale: 0.7,
+                  y: 20,
+                  transition: {
+                    type: "spring",
+                    stiffness: 300,
+                    damping: 20,
+                    delay: index * 0.03, // Slightly faster stagger for exit
+                  },
+                }}
                 layout
               >
-                <img
+                {/* Image */}
+                <motion.img
                   src={img || "/placeholder.svg"}
                   alt={`Captured ${index}`}
                   className="h-full w-full object-cover"
+                  initial={{ filter: "blur(8px)" }}
+                  animate={{
+                    filter: "blur(0px)",
+                    transition: { duration: 0.3, delay: 0.1 },
+                  }}
                 />
+
+                {/* Image number indicator */}
+                <motion.div
+                  className="bg-primary absolute top-1 right-1 flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold text-white"
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={{
+                    scale: 1,
+                    opacity: 0.9,
+                    transition: {
+                      type: "spring",
+                      stiffness: 500,
+                      damping: 25,
+                      delay: 0.2 + index * 0.05,
+                    },
+                  }}
+                >
+                  {index + 1}
+                </motion.div>
+
+                {/* Subtle overlay gradient */}
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-50" />
               </motion.div>
             ))}
           </AnimatePresence>

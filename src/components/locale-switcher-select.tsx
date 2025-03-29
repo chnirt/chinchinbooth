@@ -1,11 +1,11 @@
 "use client";
 
 import * as Select from "@radix-ui/react-select";
-import clsx from "clsx";
 import { useTransition } from "react";
 import { Locale } from "@/i18n/config";
 import { setUserLocale } from "@/services/locale";
 import { CheckIcon, LanguagesIcon } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type Props = {
   defaultValue: string;
@@ -32,7 +32,7 @@ export default function LocaleSwitcherSelect({
       <Select.Root defaultValue={defaultValue} onValueChange={onChange}>
         <Select.Trigger
           aria-label={label}
-          className={clsx(
+          className={cn(
             "rounded-sm p-2 transition-colors hover:bg-slate-200",
             isPending && "pointer-events-none opacity-60",
           )}
@@ -56,7 +56,7 @@ export default function LocaleSwitcherSelect({
                 >
                   <div className="mr-2 w-[1rem]">
                     {item.value === defaultValue && (
-                      <CheckIcon className="h-5 w-5 text-slate-600" />
+                      <CheckIcon className="text-primary h-5 w-5" />
                     )}
                   </div>
                   <span className="text-slate-900">{item.label}</span>
