@@ -61,15 +61,39 @@ export function PhotoShoot({
   // Initialize camera
   useEffect(() => {
     const startCamera = async () => {
-      if (isCameraStarted) return;
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const cameras = devices.filter((device) => device.kind === "videoinput");
+
+      let constraints;
+
+      if (cameras.length === 1) {
+        // 🔹 Laptop detected → Use default camera (original code)
+        console.log("Laptop detected → Using built-in camera");
+        constraints = {
           video: {
             facingMode: "user",
             width: { ideal: 1280 },
             height: { ideal: 960 },
           },
-        });
+        };
+      } else if (cameras.length > 1) {
+        // 🔹 PC detected → Use external camera (last one in the list)
+        console.log("PC detected → Using external camera");
+        constraints = {
+          video: {
+            deviceId: { exact: cameras[cameras.length - 1].deviceId },
+            width: { ideal: 1280 },
+            height: { ideal: 960 },
+          },
+        };
+      } else {
+        console.log("No camera detected.");
+        return;
+      }
+
+      if (isCameraStarted) return;
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia(constraints);
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
           setIsCameraStarted(true);
