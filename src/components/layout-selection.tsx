@@ -224,7 +224,7 @@ export function LayoutSelection({
             style={backgroundStyle}
           >
             {frameBackground}
-            <div className="z-10 grid grid-cols-1 gap-[5%]">
+            <div className="relative z-10 grid grid-cols-1 gap-[5%]">
               {Array.from({ length: 4 }, (_, idx) => renderCell(idx))}
             </div>
             {frameOverlay}
