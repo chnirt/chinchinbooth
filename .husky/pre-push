@@ -1,0 +1,5 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+echo "🔍 Pre-push: Syncing APP_VERSION to Vercel..."
+sh scripts/sync-vercel-env.sh

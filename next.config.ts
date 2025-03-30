@@ -1,11 +1,10 @@
 import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
-import { execSync } from "child_process";
 
 const nextConfig: NextConfig = {
   /* config options here */
   env: {
-    APP_VERSION: execSync("git describe --tags --always").toString().trim(),
+    APP_VERSION: process.env.APP_VERSION || "dev",
   },
 };
 
