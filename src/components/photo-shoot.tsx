@@ -14,7 +14,7 @@ import {
   RefreshCcw,
   CameraOff,
   Clock,
-  CheckCircle2,
+  ArrowRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -382,6 +382,16 @@ export function PhotoShoot({
     isAutoSequenceActive;
   const resetDisabled =
     !capturedImages.length || isAutoSequenceActive || countdown !== null;
+  const selectCameraDisabled =
+    !isCameraStarted ||
+    isCapturing ||
+    countdown !== null ||
+    isAutoSequenceActive;
+  const mirrorDisabled =
+    !isCameraStarted ||
+    isCapturing ||
+    countdown !== null ||
+    isAutoSequenceActive;
 
   // Undo last capture
   const undoCapture = useCallback(() => {
@@ -568,7 +578,7 @@ export function PhotoShoot({
   // Get appropriate icon for the main capture button
   const getCaptureButtonIcon = useCallback(() => {
     if (canProceedToLayout) {
-      return <CheckCircle2 className="h-7 w-7" />;
+      return <ArrowRight className="h-7 w-7" />;
     } else if (isAutoSequenceActive || countdown !== null) {
       return <X className="h-7 w-7" />;
     } else if (!isCameraStarted) {
@@ -612,7 +622,10 @@ export function PhotoShoot({
                 {/* Camera selection dropdown */}
                 {cameras.length > 0 && (
                   <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
+                    <DropdownMenuTrigger
+                      asChild
+                      disabled={selectCameraDisabled}
+                    >
                       <Button className="flex items-center gap-1 rounded-lg bg-black/50 p-2 text-white hover:bg-black/70">
                         {cameras[currentCameraIndex] &&
                           getCameraIcon(cameras[currentCameraIndex].type)}
@@ -655,6 +668,7 @@ export function PhotoShoot({
                   onClick={toggleMirroring}
                   className="flex h-9 items-center justify-center gap-1 rounded-lg bg-black/50 p-2 text-white hover:bg-black/70"
                   size="sm"
+                  disabled={mirrorDisabled}
                 >
                   <RefreshCcw className="h-4 w-4" />
                   <span className="hidden text-xs font-medium sm:inline">
