@@ -12,6 +12,6 @@ vercel env rm APP_VERSION production || echo "No existing APP_VERSION variable f
 # Add the new APP_VERSION variable to the production environment.
 # Use --confirm instead of --yes (or remove the flag if not supported)
 echo "Adding new APP_VERSION to Vercel..."
-echo "$APP_VERSION" | vercel env add APP_VERSION production --confirm
+echo "$APP_VERSION" | vercel env add APP_VERSION production
 
 echo "✅ Vercel environment updated with APP_VERSION=$APP_VERSION"
