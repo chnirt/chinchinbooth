@@ -51,24 +51,23 @@ export function LayoutSelection({
 
   // Update preview dimensions when it changes
   useEffect(() => {
-    if (previewRef.current) {
-      const updateDimensions = () => {
-        // Implementation for dimension updates if needed
-      };
+    const previewElement = previewRef.current;
+    if (!previewElement) return;
 
-      updateDimensions();
+    const updateDimensions = () => {
+      // Implementation for dimension updates if needed
+    };
 
-      // Use ResizeObserver to detect changes in the preview element size
-      const resizeObserver = new ResizeObserver(updateDimensions);
-      resizeObserver.observe(previewRef.current);
+    updateDimensions();
 
-      return () => {
-        if (previewRef.current) {
-          resizeObserver.unobserve(previewRef.current);
-        }
-      };
-    }
-  }, [previewRef, layoutType]);
+    // Use ResizeObserver to detect changes in the preview element size
+    const resizeObserver = new ResizeObserver(updateDimensions);
+    resizeObserver.observe(previewElement);
+
+    return () => {
+      resizeObserver.unobserve(previewElement);
+    };
+  }, [layoutType, previewRef]); // Don't include `previewRef`
 
   // Show QR section when imageUrl is available
   useEffect(() => {

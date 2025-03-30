@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Ban, Check } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -31,7 +31,7 @@ export function FilterGallery({
   const categoryRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   // Find the current filter in collections
-  const getCurrentFilterId = () => {
+  const getCurrentFilterId = useCallback(() => {
     for (const category in FILTER_COLLECTIONS) {
       const filters =
         FILTER_COLLECTIONS[category as keyof typeof FILTER_COLLECTIONS];
@@ -42,7 +42,7 @@ export function FilterGallery({
       }
     }
     return "normal";
-  };
+  }, [currentFilter]);
 
   const currentFilterId = getCurrentFilterId();
 
@@ -127,7 +127,7 @@ export function FilterGallery({
     if (category !== activeCategory) {
       setActiveCategory(category);
     }
-  }, [currentFilter, activeCategory]);
+  }, [currentFilter, activeCategory, getCurrentFilterId]);
 
   return (
     <div className={cn("w-full", className)}>
