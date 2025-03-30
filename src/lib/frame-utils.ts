@@ -1,5 +1,5 @@
-import type { Frame } from "@/types"
-import { FRAMES } from "@/constants/assets"
+import type { Frame, Layout } from "@/types";
+import { FRAMES } from "@/constants/assets";
 
 /**
  * Validates a frame object to ensure it has all required properties
@@ -7,8 +7,8 @@ import { FRAMES } from "@/constants/assets"
  * @returns Whether the frame is valid
  */
 export function isValidFrame(frame: Frame | null): boolean {
-  if (!frame) return true // null is valid (no frame)
-  return typeof frame.id === "string" && typeof frame.name === "string"
+  if (!frame) return true; // null is valid (no frame)
+  return typeof frame.id === "string" && typeof frame.name === "string";
 }
 
 /**
@@ -17,8 +17,8 @@ export function isValidFrame(frame: Frame | null): boolean {
  * @returns The frame object or null if not found
  */
 export function getFrameById(frameId: string | null): Frame | null {
-  if (!frameId) return null
-  return FRAMES.find((frame) => frame.id === frameId) || null
+  if (!frameId) return null;
+  return FRAMES.find((frame) => frame.id === frameId) || null;
 }
 
 /**
@@ -29,18 +29,18 @@ export function getFrameById(frameId: string | null): Frame | null {
 export function preloadFrameImage(frameUrl: string | null): Promise<void> {
   return new Promise((resolve) => {
     if (!frameUrl) {
-      resolve()
-      return
+      resolve();
+      return;
     }
 
-    const img = new Image()
-    img.onload = () => resolve()
+    const img = new Image();
+    img.onload = () => resolve();
     img.onerror = () => {
-      console.error(`Failed to preload frame image: ${frameUrl}`)
-      resolve()
-    }
-    img.src = frameUrl
-  })
+      console.error(`Failed to preload frame image: ${frameUrl}`);
+      resolve();
+    };
+    img.src = frameUrl;
+  });
 }
 
 /**
@@ -55,28 +55,40 @@ export async function handleFrameSelection(
   try {
     // If frameId is null, we're deselecting the frame
     if (frameId === null) {
-      callback(null)
-      return
+      callback(null);
+      return;
     }
 
     // Get the frame object
-    const frame = getFrameById(frameId)
+    const frame = getFrameById(frameId);
 
     // Validate the frame
     if (!isValidFrame(frame)) {
-      console.error(`Invalid frame: ${frameId}`)
-      return
+      console.error(`Invalid frame: ${frameId}`);
+      return;
     }
 
-    // // Preload the frame image if it exists
+    // Preload the frame image if it exists
     // if (frame && frame.url) {
-    //   await preloadFrameImage(frame.url)
+    //   await preloadFrameImage(frame.url);
     // }
 
+    if (frame && frame.layouts.length > 0) {
+      await Promise.all(
+        frame.layouts.map((layout: Layout) =>
+          Promise.all([
+            layout.backgroundUrl
+              ? preloadFrameImage(layout.backgroundUrl)
+              : null,
+            layout.overlayUrl ? preloadFrameImage(layout.overlayUrl) : null,
+          ]),
+        ),
+      );
+    }
+
     // Update the state with the selected frame ID
-    callback(frameId)
+    callback(frameId);
   } catch (error) {
-    console.error("Error selecting frame:", error)
+    console.error("Error selecting frame:", error);
   }
 }
-

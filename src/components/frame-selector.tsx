@@ -73,7 +73,7 @@ export function FrameSelector({
               className={cn(
                 "relative flex h-16 w-full flex-col items-center justify-center rounded-md border-2 transition-all",
                 isSelected ? "border-primary shadow-sm" : "border-gray-200",
-                isLoading && "cursor-wait opacity-50",
+                isLoading && "opacity-50",
               )}
             >
               {isSelected && (
