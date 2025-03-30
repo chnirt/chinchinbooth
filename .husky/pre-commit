@@ -4,5 +4,5 @@
 echo "🔍 Pre-commit: Updating .env.local with APP_VERSION..."
 sh scripts/update-version.sh
 
-# Optionally, add .env.local to staging if you want to track changes:
+# Optionally, add .env.local to staging if you want to commit the updated file:
 # git add .env.local

@@ -9,12 +9,12 @@ echo "Last tag: $LAST_TAG"
 LAST_COMMIT_MSG=$(git log -1 --pretty=%B)
 echo "Last commit message: $LAST_COMMIT_MSG"
 
-# Extract MAJOR, MINOR, and PATCH values from the last tag (assumes format vMAJOR.MINOR.PATCH)
+# Extract MAJOR, MINOR, and PATCH from the last tag (assumes format vMAJOR.MINOR.PATCH)
 MAJOR=$(echo $LAST_TAG | cut -d. -f1 | tr -d 'v')
 MINOR=$(echo $LAST_TAG | cut -d. -f2)
 PATCH=$(echo $LAST_TAG | cut -d. -f3)
 
-# Determine the new version based on commit message
+# Determine new version based on commit message
 if echo "$LAST_COMMIT_MSG" | grep -q "#major"; then
   MAJOR=$((MAJOR + 1))
   MINOR=0
@@ -32,11 +32,16 @@ fi
 NEW_VERSION="v$MAJOR.$MINOR.$PATCH"
 echo "New version: $NEW_VERSION"
 
-# Optionally, create a new Git tag (if desired)
-git tag $NEW_VERSION
-echo "Created new Git tag: $NEW_VERSION"
+# Attempt to create a new Git tag.
+# If the tag already exists, display a warning.
+if git rev-parse "$NEW_VERSION" >/dev/null 2>&1; then
+  echo "Warning: Tag $NEW_VERSION already exists."
+else
+  git tag $NEW_VERSION
+  echo "Created new Git tag: $NEW_VERSION"
+fi
 
-# Update .env.local with the new version (for both server and client)
+# Update .env.local with the new version.
 cat > .env.local <<EOF
 APP_VERSION=$NEW_VERSION
 NEXT_PUBLIC_APP_VERSION=$NEW_VERSION
