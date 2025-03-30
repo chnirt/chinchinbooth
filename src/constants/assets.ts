@@ -11,6 +11,22 @@ export const FRAMES: Frame[] = [
     ],
   },
   {
+    id: "good-vibes",
+    name: "Good vibes",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/good-vibes/4/overlay.png",
+        backgroundUrl: "/good-vibes/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/good-vibes/8/overlay.png",
+        backgroundUrl: "/good-vibes/8/bg.png",
+      },
+    ],
+  },
+  {
     id: "pretty-girl",
     name: "Pretty Girl",
     layouts: [
