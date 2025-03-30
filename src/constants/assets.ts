@@ -11,6 +11,22 @@ export const FRAMES: Frame[] = [
     ],
   },
   {
+    id: "summer",
+    name: "Summer",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/summer/4/overlay.png",
+        backgroundUrl: "/summer/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/summer/8/overlay.png",
+        backgroundUrl: "/summer/8/bg.png",
+      },
+    ],
+  },
+  {
     id: "sweet-heart",
     name: "Sweet Heart",
     layouts: [

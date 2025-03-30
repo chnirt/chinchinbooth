@@ -81,7 +81,7 @@ export function PhotoShoot({
         console.log("PC detected → Using external camera");
         constraints = {
           video: {
-            deviceId: { exact: cameras[cameras.length - 1].deviceId },
+            deviceId: { exact: cameras[0].deviceId },
             width: { ideal: 1280 },
             height: { ideal: 960 },
           },
