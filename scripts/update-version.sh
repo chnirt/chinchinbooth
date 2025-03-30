@@ -33,7 +33,6 @@ NEW_VERSION="v$MAJOR.$MINOR.$PATCH"
 echo "New version: $NEW_VERSION"
 
 # Attempt to create a new Git tag.
-# If the tag already exists, display a warning.
 if git rev-parse "$NEW_VERSION" >/dev/null 2>&1; then
   echo "Warning: Tag $NEW_VERSION already exists."
 else
@@ -41,10 +40,20 @@ else
   echo "Created new Git tag: $NEW_VERSION"
 fi
 
-# Update .env.local with the new version.
-cat > .env.local <<EOF
-APP_VERSION=$NEW_VERSION
-NEXT_PUBLIC_APP_VERSION=$NEW_VERSION
-EOF
+# Update .env.local: Update the APP_VERSION and NEXT_PUBLIC_APP_VERSION keys while preserving others.
+update_or_append() {
+  KEY=$1
+  VALUE=$2
+  FILE=".env.local"
+  if grep -q "^$KEY=" "$FILE"; then
+    # For Linux: use sed -i; for macOS, use sed -i '' 
+    sed -i.bak "s/^$KEY=.*/$KEY=$VALUE/" "$FILE"
+  else
+    echo "$KEY=$VALUE" >> "$FILE"
+  fi
+}
+
+update_or_append "APP_VERSION" "$NEW_VERSION"
+update_or_append "NEXT_PUBLIC_APP_VERSION" "$NEW_VERSION"
 
 echo "✅ .env.local updated with APP_VERSION=$NEW_VERSION"
