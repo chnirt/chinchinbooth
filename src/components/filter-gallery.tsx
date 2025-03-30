@@ -145,6 +145,7 @@ export function FilterGallery({
             )}
           >
             <Ban className="h-3 w-3" />
+            <span className="sr-only">Normal Filter</span>
           </Button>
         </div>
 

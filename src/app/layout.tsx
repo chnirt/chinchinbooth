@@ -39,6 +39,9 @@ export const metadata: Metadata = {
   //   description: "Capture fun moments, create stickers & WebAR. Try it now!",
   //   images: ["https://chinchinbooth.vercel.app/og-image.jpg"],
   // },
+  other: {
+    "apple-mobile-web-app-title": "ChinChin Booth", // ✅ Add Apple Web App Title
+  },
 };
 
 export default async function RootLayout({

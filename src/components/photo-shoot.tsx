@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Undo2,
@@ -53,7 +53,7 @@ export function PhotoShoot({
   const isMaxCaptureReached = capturedImages.length >= MAX_CAPTURE;
   const selectedTimer = TIMER_OPTIONS[selectedTimerIndex];
 
-  const cycleTimer = () => {
+  const nextTimer = () => {
     if (timerDisabled) return;
     setSelectedTimerIndex((prev) => (prev + 1) % TIMER_OPTIONS.length);
   };
@@ -106,6 +106,11 @@ export function PhotoShoot({
     startCamera();
   }, [isCameraStarted, t]);
 
+  const stopAutoSequence = useCallback(() => {
+    setIsAutoSequenceActive(false);
+    setCountdown(null);
+  }, []);
+
   // Auto-scroll when new capture is added and stop auto sequence if max capture reached
   useEffect(() => {
     if (capturedImagesRef.current && capturedImages.length > 0) {
@@ -115,10 +120,28 @@ export function PhotoShoot({
     if (isMaxCaptureReached && isAutoSequenceActive) {
       stopAutoSequence();
     }
-  }, [capturedImages.length, isMaxCaptureReached, isAutoSequenceActive]);
+  }, [
+    capturedImages.length,
+    isMaxCaptureReached,
+    isAutoSequenceActive,
+    stopAutoSequence,
+  ]);
+
+  // After captureImage completes, schedule the next auto capture if in auto mode
+  const scheduleNextAutoCapture = useCallback(() => {
+    if (isAutoModeEnabled && capturedImages.length < MAX_CAPTURE - 1) {
+      setTimeout(() => {
+        hasCapturedRef.current = false;
+        setCountdown(selectedTimer);
+      }, 1000);
+    } else {
+      setIsAutoSequenceActive(false);
+      setCountdown(null);
+    }
+  }, [capturedImages.length, isAutoModeEnabled, selectedTimer]);
 
   // Modify the captureImage function to remove the flash effect
-  const captureImage = () => {
+  const captureImage = useCallback(() => {
     if (
       !isCameraStarted ||
       !videoRef.current ||
@@ -153,7 +176,15 @@ export function PhotoShoot({
     setCapturedImages((prev) => [...prev, imageData]);
     setIsCapturing(false);
     scheduleNextAutoCapture();
-  };
+  }, [
+    currentFilter,
+    isCameraStarted,
+    isCapturing,
+    isMaxCaptureReached,
+    isMirrored,
+    scheduleNextAutoCapture,
+    setCapturedImages,
+  ]);
 
   // Create disable variable for Undo button
   const undoDisabled =
@@ -173,42 +204,37 @@ export function PhotoShoot({
     !capturedImages.length || isAutoSequenceActive || countdown !== null;
 
   // Undo last capture
-  const undoCapture = () => {
+  const undoCapture = useCallback(() => {
     if (undoDisabled) return;
     if (capturedImages.length) {
       setCapturedImages((prev) => prev.slice(0, -1));
     }
-  };
+  }, [capturedImages.length, setCapturedImages, undoDisabled]);
 
   // Reset all captures and stop auto sequence
-  const resetCaptures = () => {
+  const resetCaptures = useCallback(() => {
     if (resetDisabled) return;
     setCapturedImages([]);
     stopAutoSequence();
-  };
+  }, [resetDisabled, setCapturedImages, stopAutoSequence]);
 
   // Start capture (single-shot or auto-capture)
-  const startCapture = () => {
+  const startCapture = useCallback(() => {
     if (isMaxCaptureReached) return;
     // Start countdown with the selected timer
     setCountdown(selectedTimer);
     if (isAutoModeEnabled) {
       setIsAutoSequenceActive(true);
     }
-  };
+  }, [isAutoModeEnabled, isMaxCaptureReached, selectedTimer]);
 
-  const stopAutoSequence = () => {
-    setIsAutoSequenceActive(false);
-    setCountdown(null);
-  };
-
-  const toggleAutoMode = () => {
+  const toggleAutoMode = useCallback(() => {
     if (autoDisabled) return;
     setIsAutoModeEnabled((prev) => !prev);
     if (isAutoSequenceActive) {
       stopAutoSequence();
     }
-  };
+  }, [autoDisabled, isAutoSequenceActive, stopAutoSequence]);
 
   // Ref to ensure captureImage is only called once when countdown reaches 0
   const hasCapturedRef = useRef(false);
@@ -240,20 +266,7 @@ export function PhotoShoot({
         timerRef.current = null;
       }
     };
-  }, [countdown]);
-
-  // After captureImage completes, schedule the next auto capture if in auto mode
-  const scheduleNextAutoCapture = () => {
-    if (isAutoModeEnabled && capturedImages.length < MAX_CAPTURE - 1) {
-      setTimeout(() => {
-        hasCapturedRef.current = false;
-        setCountdown(selectedTimer);
-      }, 1000);
-    } else {
-      setIsAutoSequenceActive(false);
-      setCountdown(null);
-    }
-  };
+  }, [captureImage, countdown]);
 
   // Handle filter change
   const handleFilterChange = (filter: FilterValues) => {
@@ -318,6 +331,11 @@ export function PhotoShoot({
     countdown,
     canProceedToLayout,
     goToLayoutScreen,
+    stopAutoSequence,
+    startCapture,
+    undoCapture,
+    resetCaptures,
+    toggleAutoMode,
   ]);
 
   // Update the UI with the rose-teal color scheme
@@ -412,6 +430,7 @@ export function PhotoShoot({
               size="icon"
             >
               <Undo2 className="h-4 w-4" />
+              <span className="sr-only">Undo capture</span>
             </Button>
 
             <div className="relative">
@@ -419,10 +438,11 @@ export function PhotoShoot({
                 variant="outline"
                 size="icon"
                 className="h-10 w-10 rounded-full"
-                onClick={cycleTimer}
+                onClick={nextTimer}
                 disabled={timerDisabled}
               >
                 <Timer className="h-4 w-4" />
+                <span className="sr-only">Next timer</span>
               </Button>
               <div className="bg-primary text-primary-foreground absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-medium">
                 {selectedTimer}
@@ -461,6 +481,7 @@ export function PhotoShoot({
               ) : (
                 <Camera className="h-7 w-7" />
               )}
+              <span className="sr-only">Capture</span>
             </Button>
           </motion.div>
 
@@ -474,6 +495,7 @@ export function PhotoShoot({
               size="icon"
             >
               <span className="text-sm font-bold">A</span>
+              <span className="sr-only">Toggle auto mode</span>
             </Button>
 
             <Button
@@ -484,6 +506,7 @@ export function PhotoShoot({
               size="icon"
             >
               <RotateCcw className="h-4 w-4" />
+              <span className="sr-only">Reset capture</span>
             </Button>
           </div>
         </div>

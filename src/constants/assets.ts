@@ -11,6 +11,22 @@ export const FRAMES: Frame[] = [
     ],
   },
   {
+    id: "pretty-girl",
+    name: "Pretty Girl",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/pretty-girl/4/overlay.png",
+        backgroundUrl: "/pretty-girl/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/pretty-girl/8/overlay.png",
+        backgroundUrl: "/pretty-girl/8/bg.png",
+      },
+    ],
+  },
+  {
     id: "summer",
     name: "Summer",
     layouts: [
@@ -66,20 +82,4 @@ export const FRAMES: Frame[] = [
       },
     ],
   },
-  // {
-  //   id: "summer-time",
-  //   name: "Summer Time",
-  //   layouts: [
-  //     {
-  //       count: 4,
-  //       overlayUrl: "/summer-time/4/overlay.png",
-  //       backgroundUrl: "/summer-time/4/bg.png",
-  //     },
-  //     {
-  //       count: 8,
-  //       overlayUrl: "/summer-time/8/overlay.png",
-  //       backgroundUrl: "/summer-time/8/bg.png",
-  //     },
-  //   ],
-  // },
 ];
