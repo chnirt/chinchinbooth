@@ -50,15 +50,20 @@ update_or_append() {
   VALUE=$2
   FILE=".env.local"
 
-  # If file exists, check if KEY exists
+  # If the file exists, update the key if it exists
   if [ -f "$FILE" ] && grep -q "^$KEY=" "$FILE"; then
-    # Replace the line; the sed command here works for both Linux and macOS (using -i.bak)
+    # Replace the entire line using sed (creates a backup on macOS)
     sed -i.bak "s/^$KEY=.*/$KEY=$VALUE/" "$FILE"
   else
-    # If file exists and is not empty, ensure a newline is added before appending
-    if [ -s "$FILE" ]; then
-      echo "" >> "$FILE"
+    # If the file exists, check if its last character is a newline
+    if [ -f "$FILE" ]; then
+      lastchar=$(tail -c1 "$FILE")
+      if [ "$lastchar" != "" ] && [ "$lastchar" != "\n" ]; then
+        # Append a newline if not present
+        echo "" >> "$FILE"
+      fi
     fi
+    # Append the key=value pair on a new line
     echo "$KEY=$VALUE" >> "$FILE"
   fi
 }
