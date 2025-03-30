@@ -3,10 +3,9 @@ echo "🔄 Updating local APP_VERSION based on commit message..."
 
 # Retrieve the latest tag version (fallback to v1.0.0)
 LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v1.0.0")
-echo "Last tag: $LAST_TAG"
 
-# Get the latest commit message
-LAST_COMMIT_MSG=$(git log -1 --pretty=%B)
+# Get the latest commit message (subject only)
+LAST_COMMIT_MSG=$(git log -1 --pretty=format:%s)
 echo "Last commit message: $LAST_COMMIT_MSG"
 
 # Extract MAJOR, MINOR, and PATCH from the last tag (assumes format vMAJOR.MINOR.PATCH)

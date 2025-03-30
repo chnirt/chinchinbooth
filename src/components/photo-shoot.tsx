@@ -694,7 +694,7 @@ export function PhotoShoot({
                 )}
               </AnimatePresence>
 
-              <div className="absolute top-4 right-4 flex items-center gap-1 rounded bg-black/50 px-2 py-1 text-white">
+              <div className="absolute top-4 right-4 flex items-center gap-1 rounded-lg bg-black/50 px-2 py-1 text-white">
                 <ImageIcon className="h-4 w-4" />
                 <span>
                   {capturedImages.length}/{MAX_CAPTURE}
