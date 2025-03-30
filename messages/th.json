@@ -37,6 +37,9 @@
     "hide_qr": "ซ่อน QR",
     "scan_to_view_on_mobile": "สแกนเพื่อดูบนมือถือ",
     "scan_content": "สแกน QR นี้เพื่อดูและดาวน์โหลดรูปของคุณทันที",
-    "frames": "เฟรม"
+    "frames": "กรอบ",
+    "active": "เปิด",
+    "change_timer": "ตั้งเวลา",
+    "toggle_mirror": "สลับกระจก"
   }
 }

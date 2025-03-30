@@ -37,6 +37,9 @@
     "hide_qr": "Hide QR",
     "scan_to_view_on_mobile": "Scan to view on mobile",
     "scan_content": "Scan this QR code with your phone camera to instantly view and download your creation",
-    "frames": "Frames"
+    "frames": "Frames",
+    "active": "Active",
+    "change_timer": "Change timer",
+    "toggle_mirror": "Toggle mirror"
   }
 }

@@ -37,6 +37,9 @@
     "hide_qr": "Ẩn QR",
     "scan_to_view_on_mobile": "Quét để xem trên điện thoại",
     "scan_content": "Quét mã QR này bằng camera điện thoại của bạn để ngay lập tức xem và tải xuống ảnh của bạn",
-    "frames": "Khung"
+    "frames": "Khung",
+    "active": "Hoạt động",
+    "change_timer": "Đổi giờ",
+    "toggle_mirror": "Lật gương"
   }
 }

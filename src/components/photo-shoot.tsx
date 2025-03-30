@@ -5,11 +5,16 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Undo2,
   Camera,
-  ArrowRight,
   RotateCcw,
-  Timer,
   X,
-  CameraIcon,
+  ImageIcon,
+  ChevronDown,
+  Smartphone,
+  Monitor,
+  RefreshCcw,
+  CameraOff,
+  Clock,
+  CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -19,6 +24,30 @@ import { MAX_CAPTURE, TIMER_OPTIONS, DEFAULT_TIMER_INDEX } from "@/constants";
 import { FilterGallery, generateFilterStyle } from "./filter-gallery";
 import type { FilterValues } from "@/types/filters";
 import { FILTER_COLLECTIONS } from "@/constants/filters";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { useMobile } from "@/hooks/use-mobile";
+
+// Camera type enum
+enum CameraType {
+  FRONT = "front",
+  BACK = "back",
+  BACK_ULTRA_WIDE = "back_ultra_wide",
+  BACK_TELEPHOTO = "back_telephoto",
+  EXTERNAL = "external",
+  UNKNOWN = "unknown",
+}
+
+// Camera info interface
+interface CameraInfo {
+  device: MediaDeviceInfo;
+  type: CameraType;
+  label: string;
+}
 
 export function PhotoShoot({
   capturedImages,
@@ -32,10 +61,11 @@ export function PhotoShoot({
   const cameraContainerRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
 
+  const isMobile = useMobile();
   const [currentFilter, setCurrentFilter] = useState<FilterValues>(
     FILTER_COLLECTIONS.normal[0].filter,
   );
-  const [isMirrored] = useState(true);
+  const [isMirrored, setIsMirrored] = useState(isMobile);
   const [isCameraStarted, setIsCameraStarted] = useState(false);
   const [cameraError, setCameraError] = useState<string | null>(null);
   const [isCapturing, setIsCapturing] = useState(false);
@@ -44,67 +74,219 @@ export function PhotoShoot({
   const [isAutoModeEnabled, setIsAutoModeEnabled] = useState(false); // just mode toggle
   const [isAutoSequenceActive, setIsAutoSequenceActive] = useState(false); // whether auto capture sequence is running
 
+  // Timer-related state
   const [selectedTimerIndex, setSelectedTimerIndex] =
     useState<number>(DEFAULT_TIMER_INDEX);
   const [countdown, setCountdown] = useState<number | null>(null);
+
+  const [cameras, setCameras] = useState<CameraInfo[]>([]);
+  const [currentCameraIndex, setCurrentCameraIndex] = useState(0);
 
   const t = useTranslations("HomePage");
 
   const isMaxCaptureReached = capturedImages.length >= MAX_CAPTURE;
   const selectedTimer = TIMER_OPTIONS[selectedTimerIndex];
 
-  const nextTimer = () => {
+  // Create disable variable for Timer button
+  const timerDisabled =
+    !isCameraStarted || isAutoSequenceActive || countdown !== null;
+
+  // Timer control functions
+  const changeTimer = useCallback(() => {
     if (timerDisabled) return;
     setSelectedTimerIndex((prev) => (prev + 1) % TIMER_OPTIONS.length);
-  };
+  }, [timerDisabled]);
+
+  // Detect camera type based on label and capabilities
+  const detectCameraType = useCallback(
+    (
+      device: MediaDeviceInfo,
+      index: number,
+      totalCameras: number,
+    ): CameraType => {
+      const label = device.label.toLowerCase();
+
+      // Check for explicit keywords in the label
+      if (label.includes("ultra") || label.includes("wide")) {
+        return CameraType.BACK_ULTRA_WIDE;
+      }
+
+      if (label.includes("tele") || label.includes("zoom")) {
+        return CameraType.BACK_TELEPHOTO;
+      }
+
+      if (
+        label.includes("back") ||
+        label.includes("rear") ||
+        label.includes("environment")
+      ) {
+        return CameraType.BACK;
+      }
+
+      if (
+        label.includes("front") ||
+        label.includes("face") ||
+        label.includes("user") ||
+        label.includes("selfie")
+      ) {
+        return CameraType.FRONT;
+      }
+
+      // Heuristics for mobile devices
+      if (isMobile) {
+        // On mobile with multiple cameras
+        if (totalCameras >= 3) {
+          // First is usually main back, second is ultra-wide or telephoto, last is front
+          if (index === 0) return CameraType.BACK;
+          if (index === totalCameras - 1) return CameraType.FRONT;
+          return index === 1
+            ? CameraType.BACK_ULTRA_WIDE
+            : CameraType.BACK_TELEPHOTO;
+        } else if (totalCameras === 2) {
+          // With 2 cameras, first is usually back, second is front
+          return index === 0 ? CameraType.BACK : CameraType.FRONT;
+        }
+        // Single camera on mobile is usually front
+        return CameraType.FRONT;
+      }
+
+      // For desktop/laptop
+      if (index === 0 && totalCameras === 1) {
+        // Built-in webcam
+        return CameraType.FRONT;
+      }
+
+      // External cameras or additional cameras
+      if (index > 0 || totalCameras > 1) {
+        return CameraType.EXTERNAL;
+      }
+
+      return CameraType.UNKNOWN;
+    },
+    [isMobile],
+  );
+
+  // Format camera label for display
+  const formatCameraLabel = useCallback(
+    (cameraInfo: CameraInfo): string => {
+      const { type, device } = cameraInfo;
+      const baseLabel =
+        device.label || `Camera ${cameras.indexOf(cameraInfo) + 1}`;
+
+      switch (type) {
+        case CameraType.FRONT:
+          return isMobile ? "Front Camera" : "Main Camera";
+        case CameraType.BACK:
+          return "Rear Camera";
+        case CameraType.BACK_ULTRA_WIDE:
+          return "Ultra-Wide Camera";
+        case CameraType.BACK_TELEPHOTO:
+          return "Telephoto Camera";
+        case CameraType.EXTERNAL:
+          return `External Camera ${cameras.filter((c) => c.type === CameraType.EXTERNAL).indexOf(cameraInfo) + 1}`;
+        default:
+          return baseLabel;
+      }
+    },
+    [cameras, isMobile],
+  );
 
   // Initialize camera
   useEffect(() => {
-    const startCamera = async () => {
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const cameras = devices.filter((device) => device.kind === "videoinput");
-
-      let constraints;
-
-      if (cameras.length === 1) {
-        // 🔹 Laptop detected → Use default camera (original code)
-        console.log("Laptop detected → Using built-in camera");
-        constraints = {
-          video: {
-            facingMode: "user",
-            width: { ideal: 1280 },
-            height: { ideal: 960 },
-          },
-        };
-      } else if (cameras.length > 1) {
-        // 🔹 PC detected → Use external camera (last one in the list)
-        console.log("PC detected → Using external camera");
-        constraints = {
-          video: {
-            deviceId: { exact: cameras[0].deviceId },
-            width: { ideal: 1280 },
-            height: { ideal: 960 },
-          },
-        };
-      } else {
-        console.log("No camera detected.");
-        return;
-      }
-
-      if (isCameraStarted) return;
+    const initializeCameras = async () => {
       try {
+        // Request permission first
+        await navigator.mediaDevices.getUserMedia({ video: true });
+
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const videoDevices = devices.filter(
+          (device) => device.kind === "videoinput",
+        );
+
+        if (videoDevices.length === 0) {
+          console.log("No camera detected.");
+          setCameraError("No cameras detected on your device");
+          return;
+        }
+
+        // Process camera information
+        const cameraInfos: CameraInfo[] = videoDevices.map((device, index) => {
+          const type = detectCameraType(device, index, videoDevices.length);
+          return {
+            device,
+            type,
+            label: device.label || `Camera ${index + 1}`,
+          };
+        });
+
+        setCameras(cameraInfos);
+
+        // If we haven't started a camera yet, start with the first one
+        if (!isCameraStarted) {
+          // For mobile devices, prefer back camera if available
+          if (isMobile) {
+            const backCameraIndex = cameraInfos.findIndex(
+              (c) =>
+                c.type === CameraType.BACK ||
+                c.type === CameraType.BACK_ULTRA_WIDE ||
+                c.type === CameraType.BACK_TELEPHOTO,
+            );
+            if (backCameraIndex !== -1) {
+              setCurrentCameraIndex(backCameraIndex);
+            }
+          }
+        }
+      } catch (error) {
+        console.error("Camera initialization error:", error);
+        setCameraError(t("errors.camera_access_required"));
+      }
+    };
+
+    initializeCameras();
+  }, [detectCameraType, isMobile, t]);
+
+  // Start selected camera
+  useEffect(() => {
+    const startCamera = async () => {
+      if (
+        isCameraStarted ||
+        cameras.length === 0 ||
+        currentCameraIndex >= cameras.length
+      )
+        return;
+
+      try {
+        const selectedCamera = cameras[currentCameraIndex];
+
+        // Set mirroring based on camera type
+        const shouldMirror =
+          selectedCamera.type === CameraType.FRONT ||
+          selectedCamera.type === CameraType.UNKNOWN;
+        setIsMirrored(shouldMirror);
+
+        // Use the currently selected camera
+        const constraints = {
+          video: {
+            deviceId: { exact: selectedCamera.device.deviceId },
+            width: { ideal: 1280 },
+            height: { ideal: 960 },
+          },
+        };
+
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
         if (videoRef.current) {
           videoRef.current.srcObject = stream;
           setIsCameraStarted(true);
           setCameraError(null);
         }
-      } catch {
+      } catch (error) {
+        console.error("Camera start error:", error);
         setCameraError(t("errors.camera_access_required"));
       }
     };
+
     startCamera();
-  }, [isCameraStarted, t]);
+  }, [cameras, currentCameraIndex, isCameraStarted, t]);
 
   const stopAutoSequence = useCallback(() => {
     setIsAutoSequenceActive(false);
@@ -189,8 +371,6 @@ export function PhotoShoot({
   // Create disable variable for Undo button
   const undoDisabled =
     !capturedImages.length || isAutoSequenceActive || countdown !== null;
-  const timerDisabled =
-    !isCameraStarted || isAutoSequenceActive || countdown !== null;
   const captureDisabled =
     !canProceedToLayout &&
     (!isCameraStarted || isMaxCaptureReached || isCapturing);
@@ -283,6 +463,11 @@ export function PhotoShoot({
     }
   };
 
+  // Toggle mirroring manually
+  const toggleMirroring = useCallback(() => {
+    setIsMirrored((prev) => !prev);
+  }, []);
+
   // Keyboard shortcuts
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -316,6 +501,12 @@ export function PhotoShoot({
         case "a":
           toggleAutoMode();
           break;
+        case "m":
+          toggleMirroring();
+          break;
+        case "t":
+          changeTimer();
+          break;
         default:
           break;
       }
@@ -336,7 +527,56 @@ export function PhotoShoot({
     undoCapture,
     resetCaptures,
     toggleAutoMode,
+    toggleMirroring,
+    changeTimer,
   ]);
+
+  const selectCamera = useCallback(
+    (index: number) => {
+      if (index === currentCameraIndex) return;
+
+      // Stop current stream
+      if (videoRef.current && videoRef.current.srcObject) {
+        const stream = videoRef.current.srcObject as MediaStream;
+        stream.getTracks().forEach((track) => track.stop());
+        videoRef.current.srcObject = null;
+      }
+
+      // Switch to selected camera
+      setCurrentCameraIndex(index);
+      setIsCameraStarted(false);
+    },
+    [currentCameraIndex],
+  );
+
+  // Get camera icon based on type
+  const getCameraIcon = useCallback((type: CameraType) => {
+    switch (type) {
+      case CameraType.FRONT:
+        return <Camera className="h-4 w-4" />;
+      case CameraType.BACK:
+      case CameraType.BACK_ULTRA_WIDE:
+      case CameraType.BACK_TELEPHOTO:
+        return <Smartphone className="h-4 w-4" />;
+      case CameraType.EXTERNAL:
+        return <Monitor className="h-4 w-4" />;
+      default:
+        return <Camera className="h-4 w-4" />;
+    }
+  }, []);
+
+  // Get appropriate icon for the main capture button
+  const getCaptureButtonIcon = useCallback(() => {
+    if (canProceedToLayout) {
+      return <CheckCircle2 className="h-7 w-7" />;
+    } else if (isAutoSequenceActive || countdown !== null) {
+      return <X className="h-7 w-7" />;
+    } else if (!isCameraStarted) {
+      return <CameraOff className="h-7 w-7" />;
+    } else {
+      return <Camera className="h-7 w-7" />;
+    }
+  }, [canProceedToLayout, countdown, isAutoSequenceActive, isCameraStarted]);
 
   // Update the UI with the rose-teal color scheme
   return (
@@ -366,6 +606,63 @@ export function PhotoShoot({
                 )}
                 style={{ filter: generateFilterStyle(currentFilter) }}
               />
+
+              {/* Camera controls overlay */}
+              <div className="absolute top-4 left-4 flex items-center gap-2">
+                {/* Camera selection dropdown */}
+                {cameras.length > 0 && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button className="flex items-center gap-1 rounded-lg bg-black/50 p-2 text-white hover:bg-black/70">
+                        {cameras[currentCameraIndex] &&
+                          getCameraIcon(cameras[currentCameraIndex].type)}
+                        <span className="hidden text-xs font-medium sm:inline">
+                          {cameras[currentCameraIndex]
+                            ? formatCameraLabel(cameras[currentCameraIndex])
+                            : "Select Camera"}
+                        </span>
+                        <ChevronDown className="h-3 w-3 opacity-70" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start" className="w-56">
+                      {cameras.map((camera, index) => (
+                        <DropdownMenuItem
+                          key={camera.device.deviceId}
+                          className={cn(
+                            "flex items-center gap-2 text-sm",
+                            currentCameraIndex === index &&
+                              "bg-muted font-medium",
+                          )}
+                          onClick={() => selectCamera(index)}
+                        >
+                          {getCameraIcon(camera.type)}
+                          <span className="truncate">
+                            {formatCameraLabel(camera)}
+                          </span>
+                          {currentCameraIndex === index && (
+                            <span className="text-muted-foreground ml-auto text-xs">
+                              {t("active")}
+                            </span>
+                          )}
+                        </DropdownMenuItem>
+                      ))}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
+
+                {/* Mirror toggle button */}
+                <Button
+                  onClick={toggleMirroring}
+                  className="flex h-9 items-center justify-center gap-1 rounded-lg bg-black/50 p-2 text-white hover:bg-black/70"
+                  size="sm"
+                >
+                  <RefreshCcw className="h-4 w-4" />
+                  <span className="hidden text-xs font-medium sm:inline">
+                    Mirror
+                  </span>
+                </Button>
+              </div>
+
               {/* Guide overlay with animated border */}
               <div className="animate-pulse-gentle pointer-events-none absolute inset-4 rounded-lg border-2 border-white/30" />
 
@@ -384,7 +681,7 @@ export function PhotoShoot({
               </AnimatePresence>
 
               <div className="absolute top-4 right-4 flex items-center gap-1 rounded bg-black/50 px-2 py-1 text-white">
-                <CameraIcon className="h-4 w-4" />
+                <ImageIcon className="h-4 w-4" />
                 <span>
                   {capturedImages.length}/{MAX_CAPTURE}
                 </span>
@@ -438,10 +735,10 @@ export function PhotoShoot({
                 variant="outline"
                 size="icon"
                 className="h-10 w-10 rounded-full"
-                onClick={nextTimer}
+                onClick={changeTimer}
                 disabled={timerDisabled}
               >
-                <Timer className="h-4 w-4" />
+                <Clock className="h-4 w-4" />
                 <span className="sr-only">Next timer</span>
               </Button>
               <div className="bg-primary text-primary-foreground absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-medium">
@@ -472,15 +769,7 @@ export function PhotoShoot({
               )}
               size="icon"
             >
-              {canProceedToLayout ? (
-                <ArrowRight className="h-7 w-7" />
-              ) : isAutoSequenceActive ? (
-                <X className="h-7 w-7" />
-              ) : countdown !== null ? (
-                <X className="h-7 w-7" />
-              ) : (
-                <Camera className="h-7 w-7" />
-              )}
+              {getCaptureButtonIcon()}
               <span className="sr-only">Capture</span>
             </Button>
           </motion.div>
@@ -515,7 +804,8 @@ export function PhotoShoot({
         <div className="mt-2 hidden text-xs text-gray-600 lg:block">
           <strong>Delete</strong>: {t("undo")} | <strong>Space</strong>:{" "}
           {t("capture")} | <strong>A</strong>: {t("auto_mode")} |{" "}
-          <strong>Esc</strong>: {t("reset")}
+          <strong>T</strong>: {t("change_timer")} | <strong>M</strong>:{" "}
+          {t("toggle_mirror")} | <strong>Esc</strong>: {t("reset")}
         </div>
       </motion.div>
 
