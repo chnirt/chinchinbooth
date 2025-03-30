@@ -55,11 +55,10 @@ update_or_append() {
     # Replace the entire line using sed (creates a backup on macOS)
     sed -i.bak "s/^$KEY=.*/$KEY=$VALUE/" "$FILE"
   else
-    # If the file exists, check if its last character is a newline
-    if [ -f "$FILE" ]; then
-      lastchar=$(tail -c1 "$FILE")
-      if [ "$lastchar" != "" ] && [ "$lastchar" != "\n" ]; then
-        # Append a newline if not present
+    # Check if the file exists and is non-empty
+    if [ -s "$FILE" ]; then
+      # Ensure the last line is not an empty line before appending
+      if [ "$(tail -c1 "$FILE")" != "" ]; then
         echo "" >> "$FILE"
       fi
     fi

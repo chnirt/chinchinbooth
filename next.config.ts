@@ -3,9 +3,6 @@ import createNextIntlPlugin from "next-intl/plugin";
 
 const nextConfig: NextConfig = {
   /* config options here */
-  env: {
-    APP_VERSION: process.env.APP_VERSION || "dev",
-  },
 };
 
 const withNextIntl = createNextIntlPlugin();
