@@ -221,20 +221,33 @@ export function PhotoShoot({
 
         setCameras(cameraInfos);
 
-        // If we haven't started a camera yet, start with the first one
+        // If we haven't started a camera yet, select the preferred one
         if (!isCameraStarted) {
-          // For mobile devices, prefer back camera if available
+          let preferredCameraIndex = 0; // Default: select the first camera
+
           if (isMobile) {
-            const backCameraIndex = cameraInfos.findIndex(
-              (c) =>
-                c.type === CameraType.BACK ||
-                c.type === CameraType.BACK_ULTRA_WIDE ||
-                c.type === CameraType.BACK_TELEPHOTO,
+            // For mobile devices, prefer the front camera if available
+            const frontCameraIndex = cameraInfos.findIndex(
+              (c) => c.type === CameraType.FRONT,
             );
-            if (backCameraIndex !== -1) {
-              setCurrentCameraIndex(backCameraIndex);
+
+            if (frontCameraIndex !== -1) {
+              preferredCameraIndex = frontCameraIndex;
+            } else {
+              // If no front camera exists, fall back to a back camera
+              const backCameraIndex = cameraInfos.findIndex(
+                (c) =>
+                  c.type === CameraType.BACK ||
+                  c.type === CameraType.BACK_ULTRA_WIDE ||
+                  c.type === CameraType.BACK_TELEPHOTO,
+              );
+              if (backCameraIndex !== -1) {
+                preferredCameraIndex = backCameraIndex;
+              }
             }
           }
+
+          setCurrentCameraIndex(preferredCameraIndex);
         }
       } catch (error) {
         console.error("Camera initialization error:", error);
@@ -245,7 +258,7 @@ export function PhotoShoot({
     initializeCameras();
   }, [detectCameraType, isMobile, t]);
 
-  // Start selected camera
+  // Start the selected camera
   useEffect(() => {
     const startCamera = async () => {
       if (
@@ -264,7 +277,7 @@ export function PhotoShoot({
           selectedCamera.type === CameraType.UNKNOWN;
         setIsMirrored(shouldMirror);
 
-        // Use the currently selected camera
+        // Camera constraints
         const constraints = {
           video: {
             deviceId: { exact: selectedCamera.device.deviceId },
