@@ -7,7 +7,6 @@ import type { StepProgressProps } from "@/types";
 export function StepProgress({ currentStep }: StepProgressProps) {
   return (
     <motion.div
-      aria-label={`Step 1 ${currentStep === 1 ? "active" : "inactive"}`}
       className="my-4 flex items-center justify-center space-x-3"
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
