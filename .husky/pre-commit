@@ -1,0 +1,34 @@
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+# Get the latest tag version
+LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v1.0.0")
+
+# Get the latest commit message
+LAST_COMMIT_MSG=$(git log -1 --pretty=%B)
+
+# Extract MAJOR, MINOR, PATCH from the last tag
+MAJOR=$(echo $LAST_TAG | cut -d. -f1 | tr -d 'v')
+MINOR=$(echo $LAST_TAG | cut -d. -f2)
+PATCH=$(echo $LAST_TAG | cut -d. -f3)
+
+# Determine the new version based on commit message
+if [[ "$LAST_COMMIT_MSG" == *"#major"* ]]; then
+  MAJOR=$((MAJOR + 1))
+  MINOR=0
+  PATCH=0
+elif [[ "$LAST_COMMIT_MSG" == *"#minor"* ]]; then
+  MINOR=$((MINOR + 1))
+  PATCH=0
+else
+  PATCH=$((PATCH + 1))
+fi
+
+# Generate new version tag
+NEW_TAG="v$MAJOR.$MINOR.$PATCH"
+
+# Create and push the new tag
+git tag $NEW_TAG
+git push origin --tags
+
+echo "✅ Created and pushed tag: $NEW_TAG"
