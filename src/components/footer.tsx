@@ -6,7 +6,7 @@ export default function Footer() {
       © {new Date().getFullYear()} @chinchinbooth. All rights reserved.
       <br />
       <span className="text-xs">
-        {/* Version: {process.env.NEXT_PUBLIC_APP_VERSION} */}
+        Version: {process.env.NEXT_PUBLIC_APP_VERSION}
       </span>
     </footer>
   );
