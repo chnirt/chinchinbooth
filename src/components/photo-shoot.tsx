@@ -791,7 +791,7 @@ export function PhotoShoot({
               onClick={toggleMirroring}
               disabled={mirrorDisabled}
               className="flex h-10 w-10 items-center justify-center rounded-full p-0"
-              variant="outline"
+              variant={isMirrored ? "default" : "outline"}
               size="icon"
             >
               <FlipHorizontal className="h-4 w-4" />
