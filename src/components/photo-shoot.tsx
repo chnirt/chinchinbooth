@@ -700,14 +700,14 @@ export function PhotoShoot({
                     initial={{ opacity: 0, scale: 1.5 }}
                     animate={{ opacity: 1, scale: 1 }}
                     exit={{ opacity: 0, scale: 0.5 }}
-                    className="text-primary-foreground absolute right-4 bottom-4 flex h-16 w-16 items-center justify-center rounded-full bg-black/50 shadow-lg"
+                    className="text-primary-foreground absolute right-4 bottom-4 flex h-16 w-16 items-center justify-center rounded-full bg-black/50 shadow-lg hover:bg-black/70"
                   >
                     <span className="text-3xl font-bold">{countdown}</span>
                   </motion.div>
                 )}
               </AnimatePresence>
 
-              <div className="absolute top-4 right-4 flex items-center gap-1 rounded-lg bg-black/50 px-2 py-1 text-white">
+              <div className="absolute top-4 right-4 flex items-center gap-1 rounded-lg bg-black/50 px-2 py-1 text-white hover:bg-black/70">
                 <ImageIcon className="h-4 w-4" />
                 <span>
                   {capturedImages.length}/{MAX_CAPTURE}
