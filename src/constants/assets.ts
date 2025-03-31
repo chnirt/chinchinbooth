@@ -11,6 +11,22 @@ export const FRAMES: Frame[] = [
     ],
   },
   {
+    id: "happy-birthday",
+    name: "Happy Birthday",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/happy-birthday/4/overlay.png",
+        backgroundUrl: "/happy-birthday/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/happy-birthday/8/overlay.png",
+        backgroundUrl: "/happy-birthday/8/bg.png",
+      },
+    ],
+  },
+  {
     id: "good-vibes",
     name: "Good vibes",
     layouts: [
