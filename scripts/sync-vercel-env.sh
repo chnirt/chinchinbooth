@@ -7,7 +7,7 @@ echo "Current NEXT_PUBLIC_APP_VERSION from .env.local: $NEXT_PUBLIC_APP_VERSION"
 
 # Remove the old NEXT_PUBLIC_APP_VERSION variable from Vercel production (if it exists)
 echo "Removing old NEXT_PUBLIC_APP_VERSION from Vercel..."
-vercel env rm NEXT_PUBLIC_APP_VERSION production || echo "No existing NEXT_PUBLIC_APP_VERSION variable found, proceeding..."
+vercel env rm NEXT_PUBLIC_APP_VERSION production -y || echo "No existing NEXT_PUBLIC_APP_VERSION variable found, proceeding..."
 
 # Add the new NEXT_PUBLIC_APP_VERSION variable to Vercel production
 echo "Adding new NEXT_PUBLIC_APP_VERSION to Vercel..."
