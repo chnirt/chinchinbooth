@@ -1,23 +1,27 @@
 "use client";
 
-import * as Select from "@radix-ui/react-select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import type { SupportedLocale } from "@/constants/languages";
 import { useTransition } from "react";
 import { Locale } from "@/i18n/config";
 import { setUserLocale } from "@/services/locale";
 import { CheckIcon, LanguagesIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type Props = {
-  defaultValue: string;
-  items: Array<{ value: string; label: string }>;
-  label: string;
-};
+interface LocaleSwitcherSelectProps {
+  defaultValue: SupportedLocale;
+  items: Array<{ value: SupportedLocale; label: string }>;
+}
 
 export default function LocaleSwitcherSelect({
   defaultValue,
   items,
-  label,
-}: Props) {
+}: LocaleSwitcherSelectProps) {
   const [isPending, startTransition] = useTransition();
 
   function onChange(value: string) {
@@ -28,45 +32,27 @@ export default function LocaleSwitcherSelect({
   }
 
   return (
-    <div className="relative z-30">
-      <Select.Root defaultValue={defaultValue} onValueChange={onChange}>
-        <Select.Trigger
-          aria-label={label}
-          className={cn(
-            "rounded-sm p-2 transition-colors hover:bg-slate-200",
-            isPending && "pointer-events-none opacity-60",
-          )}
-        >
-          <Select.Icon>
-            <LanguagesIcon className="h-5 w-5 text-slate-600 transition-colors group-hover:text-slate-900" />
-          </Select.Icon>
-        </Select.Trigger>
-        <Select.Portal>
-          <Select.Content
-            align="end"
-            className="z-40 overflow-hidden rounded-sm bg-white py-1 shadow-md"
-            position="popper"
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild disabled={isPending}>
+        <LanguagesIcon className="h-5 w-5 text-slate-600 transition-colors group-hover:text-slate-900" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="z-40 min-w-0">
+        {items.map((item) => (
+          <DropdownMenuItem
+            key={item.value}
+            className={cn(
+              "flex items-center gap-2 text-sm",
+              defaultValue === item.value && "bg-muted font-medium",
+            )}
+            onSelect={() => onChange(item.value)}
           >
-            <Select.Viewport>
-              {items.map((item) => (
-                <Select.Item
-                  key={item.value}
-                  className="flex cursor-default items-center px-3 py-2 text-base data-[highlighted]:bg-slate-100"
-                  value={item.value}
-                >
-                  <div className="mr-2 w-[1rem]">
-                    {item.value === defaultValue && (
-                      <CheckIcon className="text-primary h-5 w-5" />
-                    )}
-                  </div>
-                  <span className="text-slate-900">{item.label}</span>
-                </Select.Item>
-              ))}
-            </Select.Viewport>
-            <Select.Arrow className="fill-white text-white" />
-          </Select.Content>
-        </Select.Portal>
-      </Select.Root>
-    </div>
+            <span className="text-base">{item.label}</span>
+            {defaultValue === item.value && (
+              <CheckIcon className="text-primary h-5 w-5" />
+            )}
+          </DropdownMenuItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }

@@ -40,6 +40,8 @@
     "frames": "Khung",
     "active": "Hoạt động",
     "change_timer": "Đổi giờ",
-    "toggle_mirror": "Lật gương"
+    "toggle_mirror": "Lật gương",
+    "all_rights_reserved": "Tất cả các quyền được bảo lưu",
+    "version": "Phiên bản"
   }
 }

@@ -40,6 +40,8 @@
     "frames": "กรอบ",
     "active": "เปิด",
     "change_timer": "ตั้งเวลา",
-    "toggle_mirror": "สลับกระจก"
+    "toggle_mirror": "สลับกระจก",
+    "all_rights_reserved": "สงวนลิขสิทธิ์ทั้งหมด",
+    "version": "เวอร์ชัน"
   }
 }

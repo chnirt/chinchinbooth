@@ -25,7 +25,6 @@ export default function LocaleSwitcher() {
     <LocaleSwitcherSelect
       defaultValue={locale}
       items={LOCALE_OPTIONS}
-      label={LANGUAGES[locale]}
     />
   );
 }

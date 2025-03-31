@@ -40,7 +40,9 @@ export const metadata: Metadata = {
   //   images: ["https://chinchinbooth.vercel.app/og-image.jpg"],
   // },
   other: {
-    "apple-mobile-web-app-title": "ChinChin Booth", // ✅ Add Apple Web App Title
+    "apple-mobile-web-app-title": "ChinChin Booth",
+    viewport:
+      "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no",
   },
 };
 

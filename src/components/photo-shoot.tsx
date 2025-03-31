@@ -5,16 +5,15 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Undo2,
   Camera,
-  RotateCcw,
   X,
   ImageIcon,
   ChevronDown,
   Smartphone,
   Monitor,
-  RefreshCcw,
   CameraOff,
   Clock,
   ArrowRight,
+  FlipHorizontal,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -393,8 +392,6 @@ export function PhotoShoot({
     isCapturing ||
     countdown !== null ||
     isAutoSequenceActive;
-  const resetDisabled =
-    !capturedImages.length || isAutoSequenceActive || countdown !== null;
   const selectCameraDisabled =
     !isCameraStarted ||
     isCapturing ||
@@ -413,13 +410,6 @@ export function PhotoShoot({
       setCapturedImages((prev) => prev.slice(0, -1));
     }
   }, [capturedImages.length, setCapturedImages, undoDisabled]);
-
-  // Reset all captures and stop auto sequence
-  const resetCaptures = useCallback(() => {
-    if (resetDisabled) return;
-    setCapturedImages([]);
-    stopAutoSequence();
-  }, [resetDisabled, setCapturedImages, stopAutoSequence]);
 
   // Start capture (single-shot or auto-capture)
   const startCapture = useCallback(() => {
@@ -518,9 +508,6 @@ export function PhotoShoot({
         case "Delete":
           undoCapture();
           break;
-        case "Escape":
-          resetCaptures();
-          break;
         case "a":
           toggleAutoMode();
           break;
@@ -548,7 +535,6 @@ export function PhotoShoot({
     stopAutoSequence,
     startCapture,
     undoCapture,
-    resetCaptures,
     toggleAutoMode,
     toggleMirroring,
     changeTimer,
@@ -675,19 +661,6 @@ export function PhotoShoot({
                     </DropdownMenuContent>
                   </DropdownMenu>
                 )}
-
-                {/* Mirror toggle button */}
-                <Button
-                  onClick={toggleMirroring}
-                  className="flex h-9 items-center justify-center gap-1 rounded-lg bg-black/50 p-2 text-white hover:bg-black/70"
-                  size="sm"
-                  disabled={mirrorDisabled}
-                >
-                  <RefreshCcw className="h-4 w-4" />
-                  <span className="hidden text-xs font-medium sm:inline">
-                    Mirror
-                  </span>
-                </Button>
               </div>
 
               {/* Guide overlay with animated border */}
@@ -707,7 +680,7 @@ export function PhotoShoot({
                 )}
               </AnimatePresence>
 
-              <div className="absolute top-4 right-4 flex items-center gap-1 rounded-lg bg-black/50 px-2 py-1 text-white hover:bg-black/70">
+              <div className="absolute top-4 right-4 flex items-center gap-1 rounded-lg bg-black/50 px-2 py-1 text-white">
                 <ImageIcon className="h-4 w-4" />
                 <span>
                   {capturedImages.length}/{MAX_CAPTURE}
@@ -815,24 +788,24 @@ export function PhotoShoot({
             </Button>
 
             <Button
-              onClick={resetCaptures}
-              disabled={resetDisabled}
+              onClick={toggleMirroring}
+              disabled={mirrorDisabled}
               className="flex h-10 w-10 items-center justify-center rounded-full p-0"
               variant="outline"
               size="icon"
             >
-              <RotateCcw className="h-4 w-4" />
-              <span className="sr-only">Reset capture</span>
+              <FlipHorizontal className="h-4 w-4" />
+              <span className="sr-only">Mirror image</span>
             </Button>
           </div>
         </div>
 
         {/* Keyboard shortcuts info */}
         <div className="mt-2 hidden text-xs text-gray-600 lg:block">
-          <strong>Delete</strong>: {t("undo")} | <strong>Space</strong>:{" "}
-          {t("capture")} | <strong>A</strong>: {t("auto_mode")} |{" "}
-          <strong>T</strong>: {t("change_timer")} | <strong>M</strong>:{" "}
-          {t("toggle_mirror")} | <strong>Esc</strong>: {t("reset")}
+          <strong>Delete</strong>: {t("undo")} | <strong>T</strong>:{" "}
+          {t("change_timer")} | <strong>Space</strong>: {t("capture")} |{" "}
+          <strong>A</strong>: {t("auto_mode")} | <strong>M</strong>:{" "}
+          {t("toggle_mirror")}
         </div>
       </motion.div>
 

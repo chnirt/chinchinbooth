@@ -40,6 +40,8 @@
     "frames": "Frames",
     "active": "Active",
     "change_timer": "Change timer",
-    "toggle_mirror": "Toggle mirror"
+    "toggle_mirror": "Toggle mirror",
+    "all_rights_reserved": "All rights reserved",
+    "version": "Version"
   }
 }
