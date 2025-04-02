@@ -11,6 +11,38 @@ export const FRAMES: Frame[] = [
     ],
   },
   {
+    id: "starlight",
+    name: "Star light",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/starlight/4/overlay.png",
+        backgroundUrl: null,
+      },
+      {
+        count: 8,
+        overlayUrl: "/starlight/8/overlay.png",
+        backgroundUrl: null,
+      },
+    ],
+  },
+  {
+    id: "power-girls",
+    name: "Power Girls",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/power-girls/4/overlay.png",
+        backgroundUrl: "/power-girls/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/power-girls/8/overlay.png",
+        backgroundUrl: "/power-girls/8/bg.png",
+      },
+    ],
+  },
+  {
     id: "happy-birthday",
     name: "Happy Birthday",
     layouts: [
