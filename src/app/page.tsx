@@ -1,8 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
-
-import { useState, useRef } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import html2canvas from "html2canvas-pro";
 import { Navbar } from "@/components/navbar";
@@ -17,6 +15,7 @@ import {
 } from "@/lib/upload-utils";
 import { toast } from "sonner";
 import Footer from "@/components/footer";
+import confetti from "canvas-confetti";
 
 export default function PhotoBoothApp() {
   const [step, setStep] = useState<"shoot" | "layout">("shoot");
@@ -42,6 +41,37 @@ export default function PhotoBoothApp() {
     setImageUrl(null);
     setStep("shoot");
   };
+
+  const triggerConfetti = useCallback((duration: number = 3000) => {
+    const end = Date.now() + duration; // Default to 3 seconds
+
+    const colors = ["#a786ff", "#fd8bbc", "#eca184", "#f8deb1"];
+
+    const frame = () => {
+      if (Date.now() > end) return;
+
+      confetti({
+        particleCount: 2,
+        angle: 60,
+        spread: 55,
+        startVelocity: 60,
+        origin: { x: 0, y: 0.5 },
+        colors: colors,
+      });
+      confetti({
+        particleCount: 2,
+        angle: 120,
+        spread: 55,
+        startVelocity: 60,
+        origin: { x: 1, y: 0.5 },
+        colors: colors,
+      });
+
+      requestAnimationFrame(frame);
+    };
+
+    frame();
+  }, []);
 
   const downloadComposite = async (layoutType: number) => {
     if (!previewRef.current || isDownloading) return;
@@ -112,6 +142,8 @@ export default function PhotoBoothApp() {
       link.download = fileName;
       link.href = forcedCanvas.toDataURL("image/jpeg", 1.0);
       link.click();
+
+      triggerConfetti();
     } catch (error) {
       console.error("Error generating the image:", error);
     } finally {
@@ -149,6 +181,8 @@ export default function PhotoBoothApp() {
 
       // Update the QR generation count
       updateQRGenerationCount();
+
+      triggerConfetti();
     } catch (error) {
       console.error("Error uploading image:", error);
       toast("Failed to upload. Please try again.");

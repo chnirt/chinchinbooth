@@ -813,7 +813,7 @@ export function PhotoShoot({
       {capturedImages.length > 0 && (
         <div
           ref={capturedImagesRef}
-          className="custom-scrollbar hide-scrollbar flex w-full snap-x gap-1 overflow-x-auto pb-2 md:gap-2"
+          className="custom-scrollbar hide-scrollbar flex w-full snap-x gap-1 overflow-x-auto scroll-smooth pb-2 md:gap-2"
           style={{
             height: cameraContainerRef.current
               ? cameraContainerRef.current.clientHeight / 2.5

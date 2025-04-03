@@ -20,6 +20,7 @@ import { COLOR_PALETTE, GRADIENT_PRESETS } from "@/constants/styles";
 import { FRAMES } from "@/constants/assets";
 import { QRCodeCanvas } from "qrcode.react";
 import { FrameSelector } from "./frame-selector";
+import { SparklesText } from "./magicui/sparkles-text";
 
 export function LayoutSelection({
   capturedImages,
@@ -455,7 +456,10 @@ export function LayoutSelection({
                       : "hover:text-primary text-gray-500",
                   )}
                 >
-                  {t("frames")}
+                  <SparklesText
+                    text={t("frames")}
+                    className="text-sm font-medium"
+                  />
                 </button>
               </div>
             </motion.div>

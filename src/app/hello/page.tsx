@@ -120,7 +120,7 @@ export default function Page() {
     return () => {
       mediaStream?.getTracks().forEach((track) => track.stop());
     };
-  }, [mediaStream]);
+  }, []);
 
   /**
    * startRecord:

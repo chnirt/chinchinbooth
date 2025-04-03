@@ -12,7 +12,7 @@ export const FRAMES: Frame[] = [
   },
   {
     id: "starlight",
-    name: "Star light",
+    name: "Starlight",
     layouts: [
       {
         count: 4,
