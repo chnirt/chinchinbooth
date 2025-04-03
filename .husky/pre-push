@@ -1,5 +1,14 @@
 #!/bin/sh
-. "$(dirname "$0")/_/husky.sh"
 
-echo "🔍 Pre-push: Syncing APP_VERSION to Vercel..."
-sh scripts/sync-vercel-env.sh
+echo "🔄 Running pre-push hooks..."
+
+# Run the version update and sync to Vercel script
+./update_version_and_sync_to_vercel.sh
+
+# Check if the script above failed, if so abort the push
+if [ $? -ne 0 ]; then
+  echo "❌ Version update or Vercel sync failed. Push aborted."
+  exit 1
+fi
+
+echo "✅ Version updated and synced to Vercel. Proceeding with push."
