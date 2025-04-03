@@ -202,7 +202,7 @@ export default function Page() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-gray-100 p-4">
-      <h1 className="mb-4 text-2xl font-bold">Web Photo Booth</h1>
+      <h1 className="mb-4 text-2xl font-bold">Web Photo Boothx</h1>
       <div className="relative">
         <video
           ref={videoRef}
