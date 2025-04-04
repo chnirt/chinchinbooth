@@ -11,6 +11,38 @@ export const FRAMES: Frame[] = [
     ],
   },
   {
+    id: "y2k",
+    name: "Y2K",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/y2k/4/overlay.png",
+        backgroundUrl: "/y2k/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/y2k/8/overlay.png",
+        backgroundUrl: "/y2k/8/bg.png",
+      },
+    ],
+  },
+  {
+    id: "besties",
+    name: "Besties",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/besties/4/overlay.png",
+        backgroundUrl: "/besties/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/besties/8/overlay.png",
+        backgroundUrl: "/besties/8/bg.png",
+      },
+    ],
+  },
+  {
     id: "starlight",
     name: "Starlight",
     layouts: [
@@ -33,12 +65,12 @@ export const FRAMES: Frame[] = [
       {
         count: 4,
         overlayUrl: "/power-girls/4/overlay.png",
-        backgroundUrl: "/power-girls/4/bg.png",
+        backgroundUrl: null,
       },
       {
         count: 8,
         overlayUrl: "/power-girls/8/overlay.png",
-        backgroundUrl: "/power-girls/8/bg.png",
+        backgroundUrl: null,
       },
     ],
   },
