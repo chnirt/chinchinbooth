@@ -8,7 +8,15 @@
     "start": "next start",
     "lint": "next lint",
     "shadcn": "pnpm dlx shadcn@latest add",
-    "prepare": "husky && husky install"
+    "prepare": "husky && husky install",
+    "docker:build": "docker build -t chinchinbooth-docker .",
+    "docker:run": "docker run -d -p 3000:3000 --name chinchinbooth-container chinchinbooth-docker",
+    "docker:stop": "docker stop chinchinbooth-container && docker rm chinchinbooth-container",
+    "docker:clean": "docker container prune -f && docker volume prune -f && docker network prune -f",
+    "docker:logs": "docker logs chinchinbooth-container",
+    "docker:restart": "npm run docker:stop && npm run docker:build && npm run docker:run",
+    "docker:status": "docker ps -a | grep chinchinbooth-container",
+    "docker:image-clean": "docker image prune -f --filter label=chinchinbooth"
   },
   "dependencies": {
     "@radix-ui/react-dialog": "^1.1.6",
