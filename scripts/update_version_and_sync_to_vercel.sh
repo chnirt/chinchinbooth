@@ -46,12 +46,19 @@ else
   # Create and push the new Git tag if it doesn't exist
   echo "🚀 Creating new tag: $NEW_VERSION"
   git tag "$NEW_VERSION"
+  
+  # Create a file to flag that a tag has been created to avoid loop
+  echo "$NEW_VERSION" > .new_tag_created
+
+  # Push the new tag
   git push origin "$NEW_VERSION"
   echo "✅ Created and pushed tag: $NEW_VERSION"
+  
+  # Remove the flag file after pushing the tag
+  rm .new_tag_created
 fi
 
 # Sync version with Vercel
-
 echo "🔄 Syncing NEXT_PUBLIC_APP_VERSION to Vercel environment..."
 
 # Update .env.local with the new version
