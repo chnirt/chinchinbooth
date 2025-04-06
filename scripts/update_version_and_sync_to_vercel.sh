@@ -31,15 +31,13 @@ fi
 
 NEW_VERSION="v$MAJOR.$MINOR.$PATCH"
 
-# Check if the tag already exists in local and remote
-if git tag --list "$NEW_VERSION" || git ls-remote --tags origin "$NEW_VERSION" | grep -q "$NEW_VERSION"; then
+# Ensure the new tag does not already exist before creating it
+if git tag --list "$NEW_VERSION" | grep -q "$NEW_VERSION"; then
   echo "⚠️ Tag $NEW_VERSION already exists. Skipping tag creation."
 else
-  # Create the new Git tag if it doesn't exist
+  # Create and push the new Git tag if it doesn't exist
   echo "🚀 Creating new tag: $NEW_VERSION"
   git tag "$NEW_VERSION"
-  
-  # Push the new tag to remote
   git push origin "$NEW_VERSION"
   echo "✅ Created and pushed tag: $NEW_VERSION"
 fi
