@@ -1,89 +1,47 @@
-#!/bin/sh
+#!/bin/bash
 
-echo "🔄 Updating version based on commit message..."
+# Get the last tag from git
+LAST_TAG=$(git describe --tags --abbrev=0)
 
-# Fetch all tags from remote
-git fetch --tags
-
-# Get the latest tag from all available tags (sort in reverse version order)
-LAST_TAG=$(git tag -l | sort -V | tail -n 1)
-
-# If no tag exists, fallback to v1.0.0
 if [ -z "$LAST_TAG" ]; then
-  LAST_TAG="v1.0.0"
+  echo "No tags found!"
+  exit 1
 fi
 
-# Get the current commit message from .git/COMMIT_EDITMSG
-CURRENT_COMMIT_MSG=$(cat .git/COMMIT_EDITMSG | tr -d '\n' | xargs)
-echo "Current commit message: '$CURRENT_COMMIT_MSG'"
+# Extract MAJOR, MINOR, PATCH from the tag (assuming format vMAJOR.MINOR.PATCH)
+VERSION=$(echo $LAST_TAG | sed 's/^v//')  # Remove 'v' if exists
+IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
 
-# Extract MAJOR, MINOR, and PATCH from the last tag (assumes format vMAJOR.MINOR.PATCH)
-MAJOR=$(echo "$LAST_TAG" | cut -d. -f1 | tr -d 'v')
-MINOR=$(echo "$LAST_TAG" | cut -d. -f2)
-PATCH=$(echo "$LAST_TAG" | cut -d. -f3)
+# Get the commit message
+CURRENT_COMMIT_MSG=$(git log -1 --pretty=%B)
 
 # Determine the new version based on commit message
 if echo " $CURRENT_COMMIT_MSG " | grep -Eiq " #[mM]ajor "; then
-  MAJOR=$((MAJOR + 1))
-  MINOR=0
+  MAJOR=$((MAJOR + 1))  # Increment MAJOR version if 'major' keyword is found
+  MINOR=0                # Reset MINOR and PATCH to 0 after a major update
   PATCH=0
   echo "🛠 Major update detected."
 elif echo " $CURRENT_COMMIT_MSG " | grep -Eiq " #[mM]inor "; then
-  MINOR=$((MINOR + 1))
-  PATCH=0
+  MINOR=$((MINOR + 1))  # Increment MINOR version if 'minor' keyword is found
+  PATCH=0               # Reset PATCH to 0 after a minor update
   echo "🛠 Minor update detected."
 else
-  PATCH=$((PATCH + 1))
+  PATCH=$((PATCH + 1))  # Increment PATCH version for general updates (like bug fixes)
   echo "🛠 Patch update detected."
 fi
 
-NEW_VERSION="v$MAJOR.$MINOR.$PATCH"
+# Generate the new version string
+NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
+echo "Updated version to ${NEW_VERSION}"
 
-# Ensure the new tag does not already exist before creating it
-if git tag --list "$NEW_VERSION" | grep -q "$NEW_VERSION"; then
-  echo "⚠️ Tag $NEW_VERSION already exists. Skipping tag creation."
+# Update NEXT_PUBLIC_APP_VERSION in .env.local
+ENV_FILE=".env.local"
+
+if [ -f "$ENV_FILE" ]; then
+  sed -i '' "s/^NEXT_PUBLIC_APP_VERSION=.*/NEXT_PUBLIC_APP_VERSION=${NEW_VERSION}/" $ENV_FILE
 else
-  # Create and push the new Git tag if it doesn't exist
-  echo "🚀 Creating new tag: $NEW_VERSION"
-  git tag "$NEW_VERSION"
-  
-  # Create a file to flag that a tag has been created to avoid loop
-  echo "$NEW_VERSION" > .new_tag_created
-
-  # Push the new tag
-  git push origin "$NEW_VERSION"
-  echo "✅ Created and pushed tag: $NEW_VERSION"
-  
-  # Remove the flag file after pushing the tag
-  rm .new_tag_created
+  echo "NEXT_PUBLIC_APP_VERSION=${NEW_VERSION}" >> $ENV_FILE
 fi
 
-# Sync version with Vercel
-echo "🔄 Syncing NEXT_PUBLIC_APP_VERSION to Vercel environment..."
-
-# Update .env.local with the new version
-update_or_append() {
-  KEY=$1
-  VALUE=$2
-  FILE=".env.local"
-
-  if [ -f "$FILE" ] && grep -q "^$KEY=" "$FILE"; then
-    sed -i.bak "s/^$KEY=.*/$KEY=$VALUE/" "$FILE"
-  else
-    [ -s "$FILE" ] && [ "$(tail -c1 "$FILE")" != "" ] && echo "" >> "$FILE"
-    echo "$KEY=$VALUE" >> "$FILE"
-  fi
-}
-
-# Update .env.local directly
-update_or_append "NEXT_PUBLIC_APP_VERSION" "$NEW_VERSION"
-
-# Remove the old NEXT_PUBLIC_APP_VERSION variable from Vercel production (if it exists)
-echo "Removing old NEXT_PUBLIC_APP_VERSION from Vercel..."
-vercel env rm NEXT_PUBLIC_APP_VERSION production -y || echo "No existing NEXT_PUBLIC_APP_VERSION variable found, proceeding..."
-
-# Add the new NEXT_PUBLIC_APP_VERSION variable to Vercel production
-echo "Adding new NEXT_PUBLIC_APP_VERSION to Vercel..."
-echo "$NEW_VERSION" | vercel env add NEXT_PUBLIC_APP_VERSION production
-
-echo "✅ Vercel environment updated with NEXT_PUBLIC_APP_VERSION=$NEW_VERSION"
+# Finish
+echo "Version updated successfully."
