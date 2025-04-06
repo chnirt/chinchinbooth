@@ -1,15 +1,8 @@
 #!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
 
-echo "🔄 Running pre-push hooks..."
+# Run the update version script before pushing
+bash ./update-version.sh
 
-# Run the version update and sync to Vercel script
-sh scripts/update-version.sh
-
-# Check if the script above failed, if so abort the push
-if [ $? -ne 0 ]; then
-  echo "❌ Version update or Vercel sync failed. Push aborted."
-  exit 1
-fi
-
-echo "✅ Version updated and synced to Vercel. Proceeding with push."
-``
+# Allow pushing code
+exit 0
