@@ -54,3 +54,9 @@ echo "Adding new NEXT_PUBLIC_APP_VERSION to Vercel..."
 echo "$NEW_VERSION" | vercel env add NEXT_PUBLIC_APP_VERSION production
 
 echo "✅ Vercel environment updated with NEXT_PUBLIC_APP_VERSION=$NEW_VERSION"
+
+# 3. Create a new Git tag
+echo "Creating new Git tag: $NEW_VERSION"
+git tag $NEW_VERSION
+
+echo "✅ Git tag $NEW_VERSION created."
