@@ -2,8 +2,16 @@
 
 echo "🔄 Updating version based on commit message..."
 
-# Retrieve the latest tag version (fallback to v1.0.0)
-LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v1.0.0")
+# Fetch all tags from remote
+git fetch --tags
+
+# Get the latest tag from all available tags (sort in reverse version order)
+LAST_TAG=$(git tag -l | sort -V | tail -n 1)
+
+# If no tag exists, fallback to v1.0.0
+if [ -z "$LAST_TAG" ]; then
+  LAST_TAG="v1.0.0"
+fi
 
 # Get the current commit message from .git/COMMIT_EDITMSG
 CURRENT_COMMIT_MSG=$(cat .git/COMMIT_EDITMSG | tr -d '\n' | xargs)
