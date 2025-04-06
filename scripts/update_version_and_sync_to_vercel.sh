@@ -3,10 +3,10 @@
 echo "🔄 Updating version based on commit message..."
 
 # Retrieve the latest tag version (fallback to v1.0.0)
-LAST_TAG=$(git tag --sort=-v:refname | head -n 1 || echo "v1.0.0")
+LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v1.0.0")
 
-# Get the current commit message from the latest commit
-CURRENT_COMMIT_MSG=$(git log -1 --pretty=%B)
+# Get the current commit message from .git/COMMIT_EDITMSG
+CURRENT_COMMIT_MSG=$(cat .git/COMMIT_EDITMSG | tr -d '\n' | xargs)
 echo "Current commit message: '$CURRENT_COMMIT_MSG'"
 
 # Extract MAJOR, MINOR, and PATCH from the last tag (assumes format vMAJOR.MINOR.PATCH)
@@ -31,15 +31,13 @@ fi
 
 NEW_VERSION="v$MAJOR.$MINOR.$PATCH"
 
-# Check if the tag already exists in local and remote
-if git tag --list "$NEW_VERSION" || git ls-remote --tags origin "$NEW_VERSION" | grep -q "$NEW_VERSION"; then
+# Ensure the new tag does not already exist before creating it
+if git tag --list "$NEW_VERSION" | grep -q "$NEW_VERSION"; then
   echo "⚠️ Tag $NEW_VERSION already exists. Skipping tag creation."
 else
-  # Create the new Git tag if it doesn't exist
+  # Create and push the new Git tag if it doesn't exist
   echo "🚀 Creating new tag: $NEW_VERSION"
   git tag "$NEW_VERSION"
-  
-  # Push the new tag to remote
   git push origin "$NEW_VERSION"
   echo "✅ Created and pushed tag: $NEW_VERSION"
 fi
