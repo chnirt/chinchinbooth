@@ -34,7 +34,7 @@ fi
 NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
 echo "Updated version to ${NEW_VERSION}"
 
-# Update NEXT_PUBLIC_APP_VERSION in .env.local
+# 1. Update NEXT_PUBLIC_APP_VERSION in .env.local
 ENV_FILE=".env.local"
 
 if [ -f "$ENV_FILE" ]; then
@@ -42,6 +42,15 @@ if [ -f "$ENV_FILE" ]; then
 else
   echo "NEXT_PUBLIC_APP_VERSION=${NEW_VERSION}" >> $ENV_FILE
 fi
+echo "✅ NEXT_PUBLIC_APP_VERSION updated in .env.local"
 
-# Finish
-echo "Version updated successfully."
+# 2. Update NEXT_PUBLIC_APP_VERSION on Vercel
+# Remove the old NEXT_PUBLIC_APP_VERSION variable from Vercel production (if it exists)
+echo "Removing old NEXT_PUBLIC_APP_VERSION from Vercel..."
+vercel env rm NEXT_PUBLIC_APP_VERSION production -y || echo "No existing NEXT_PUBLIC_APP_VERSION variable found, proceeding..."
+
+# Add the new NEXT_PUBLIC_APP_VERSION variable to Vercel production
+echo "Adding new NEXT_PUBLIC_APP_VERSION to Vercel..."
+echo "$NEW_VERSION" | vercel env add NEXT_PUBLIC_APP_VERSION production
+
+echo "✅ Vercel environment updated with NEXT_PUBLIC_APP_VERSION=$NEW_VERSION"
