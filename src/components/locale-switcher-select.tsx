@@ -12,6 +12,7 @@ import { Locale } from "@/i18n/config";
 import { setUserLocale } from "@/services/locale";
 import { CheckIcon, LanguagesIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Button } from "./ui/button";
 
 interface LocaleSwitcherSelectProps {
   defaultValue: SupportedLocale;
@@ -34,7 +35,14 @@ export default function LocaleSwitcherSelect({
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild disabled={isPending}>
-        <LanguagesIcon className="h-5 w-5 text-slate-600 transition-colors group-hover:text-slate-900" />
+        <Button
+          variant="ghost"
+          size="icon"
+          className="cursor-pointer rounded-full text-gray-700 transition-colors hover:bg-transparent"
+        >
+          <LanguagesIcon className="h-5 w-5 cursor-pointer text-slate-600 transition-colors group-hover:text-slate-900" />
+          <span className="sr-only">Language Selection</span>
+        </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="z-40 min-w-0">
         {items.map((item) => (
