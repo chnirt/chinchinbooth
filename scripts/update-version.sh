@@ -59,4 +59,7 @@ echo "✅ Vercel environment updated with NEXT_PUBLIC_APP_VERSION=$NEW_VERSION"
 echo "Creating new Git tag: $NEW_VERSION"
 git tag $NEW_VERSION
 
-echo "✅ Git tag $NEW_VERSION created."
+# Push the new tag to the remote repository
+git push origin $NEW_VERSION
+
+echo "✅ Git tag $NEW_VERSION created and pushed."
