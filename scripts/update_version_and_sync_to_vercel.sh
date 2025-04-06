@@ -3,7 +3,7 @@
 echo "🔄 Updating version based on commit message..."
 
 # Retrieve the latest tag version (fallback to v1.0.0)
-LAST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "v1.0.0")
+LAST_TAG=$(git tag --sort=-v:refname | head -n 1 || echo "v1.0.0")
 
 # Get the current commit message from the latest commit
 CURRENT_COMMIT_MSG=$(git log -1 --pretty=%B)
