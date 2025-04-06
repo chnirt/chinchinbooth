@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback } from "react";
+import { useState, useRef, useEffect, useCallback, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Undo2,
@@ -55,6 +55,7 @@ export function PhotoShoot({
   goToLayoutScreen,
 }: PhotoShootProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
+  const streamRef = useRef<MediaStream | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const capturedImagesRef = useRef<HTMLDivElement>(null);
   const cameraContainerRef = useRef<HTMLDivElement>(null);
@@ -203,7 +204,6 @@ export function PhotoShoot({
         );
 
         if (videoDevices.length === 0) {
-          console.log("No camera detected.");
           setCameraError("No cameras detected on your device");
           return;
         }
@@ -257,48 +257,81 @@ export function PhotoShoot({
     initializeCameras();
   }, [detectCameraType, isMobile, t]);
 
+  const selectedCamera = useMemo(
+    () => cameras[currentCameraIndex],
+    [cameras, currentCameraIndex],
+  );
+
+  const startCamera = useCallback(async () => {
+    if (cameras.length === 0 || currentCameraIndex >= cameras.length) return;
+
+    try {
+      // Set mirroring based on camera type
+      const shouldMirror =
+        selectedCamera.type === CameraType.FRONT ||
+        selectedCamera.type === CameraType.UNKNOWN;
+      setIsMirrored(shouldMirror);
+
+      // Camera constraints
+      const constraints = {
+        video: {
+          deviceId: { exact: selectedCamera.device.deviceId },
+          width: { ideal: 1280 },
+          height: { ideal: 960 },
+        },
+      };
+
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      streamRef.current = stream;
+
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+        setIsCameraStarted(true);
+        setCameraError(null);
+      }
+    } catch (error) {
+      console.error("Camera start error:", error);
+      setCameraError(t("errors.camera_access_required"));
+    }
+  }, [cameras.length, currentCameraIndex, selectedCamera, t]);
+
+  const stopCamera = useCallback(() => {
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach((track) => track.stop());
+      streamRef.current = null;
+      setIsCameraStarted(false);
+    }
+
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+  }, []);
+
   // Start the selected camera
   useEffect(() => {
-    const startCamera = async () => {
-      if (
-        isCameraStarted ||
-        cameras.length === 0 ||
-        currentCameraIndex >= cameras.length
-      )
-        return;
+    startCamera();
 
-      try {
-        const selectedCamera = cameras[currentCameraIndex];
-
-        // Set mirroring based on camera type
-        const shouldMirror =
-          selectedCamera.type === CameraType.FRONT ||
-          selectedCamera.type === CameraType.UNKNOWN;
-        setIsMirrored(shouldMirror);
-
-        // Camera constraints
-        const constraints = {
-          video: {
-            deviceId: { exact: selectedCamera.device.deviceId },
-            width: { ideal: 1280 },
-            height: { ideal: 960 },
-          },
-        };
-
-        const stream = await navigator.mediaDevices.getUserMedia(constraints);
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-          setIsCameraStarted(true);
-          setCameraError(null);
-        }
-      } catch (error) {
-        console.error("Camera start error:", error);
-        setCameraError(t("errors.camera_access_required"));
+    const handleVisibility = () => {
+      if (document.visibilityState === "visible") {
+        startCamera();
+      } else {
+        stopCamera();
       }
     };
 
-    startCamera();
-  }, [cameras, currentCameraIndex, isCameraStarted, t]);
+    const handleBeforeUnload = () => {
+      stopCamera();
+    };
+
+    document.addEventListener("visibilitychange", handleVisibility);
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      stopCamera();
+      document.removeEventListener("visibilitychange", handleVisibility);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [startCamera, stopCamera]);
 
   const stopAutoSequence = useCallback(() => {
     setIsAutoSequenceActive(false);
