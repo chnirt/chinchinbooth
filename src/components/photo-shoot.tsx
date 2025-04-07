@@ -30,6 +30,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useMobile } from "@/hooks/use-mobile";
+import "context-filter-polyfill";
 
 // Camera type enum
 enum CameraType {

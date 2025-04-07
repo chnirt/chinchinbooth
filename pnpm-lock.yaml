@@ -41,6 +41,9 @@ dependencies:
   clsx:
     specifier: ^2.1.1
     version: 2.1.1
+  context-filter-polyfill:
+    specifier: ^0.3.22
+    version: 0.3.22
   framer-motion:
     specifier: ^12.5.0
     version: 12.6.2(react-dom@19.1.0)(react@19.1.0)
@@ -2052,6 +2055,10 @@ packages:
   /concat-map@0.0.1:
     resolution: {integrity: sha512-/Srv4dswyQNBfohGpz9o6Yb3Gz3SrUDqBH5rTuhGR7ahtlbYKnVxw2bCFMRljaA7EXHaXZ8wsHdodFvbkhKmqg==}
     dev: true
+
+  /context-filter-polyfill@0.3.22:
+    resolution: {integrity: sha512-0zaP1URpNrqx2kk6pUzXS5f0/65J2Ogy0rhOY+bPkMxaVF9L9DE8DrDfhPcFdAB4R/dYeB5DnWijaM5sBjGKww==}
+    dev: false
 
   /cross-spawn@7.0.6:
     resolution: {integrity: sha512-uV2QOWP2nWzsy2aMp8aRibhi9dlzF5Hgh5SHaB9OiTGEyDTiJJyx0uy51QXdyWbtAHNua4XJzUKca3OzKUd3vA==}
