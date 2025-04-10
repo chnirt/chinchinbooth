@@ -11,6 +11,22 @@ export const FRAMES: Frame[] = [
     ],
   },
   {
+    id: "life-goes-on",
+    name: "Life goes on",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/life-goes-on/4/overlay.png",
+        backgroundUrl: null,
+      },
+      {
+        count: 8,
+        overlayUrl: "/life-goes-on/8/overlay.png",
+        backgroundUrl: null,
+      },
+    ],
+  },
+  {
     id: "y2k",
     name: "Y2K",
     layouts: [
