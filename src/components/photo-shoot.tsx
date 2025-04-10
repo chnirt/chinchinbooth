@@ -72,7 +72,7 @@ export function PhotoShoot({
   const [isCapturing, setIsCapturing] = useState(false);
 
   // Mode toggles and auto sequence state
-  const [isAutoModeEnabled, setIsAutoModeEnabled] = useState(false); // just mode toggle
+  const [isAutoModeEnabled, setIsAutoModeEnabled] = useState(true); // just mode toggle
   const [isAutoSequenceActive, setIsAutoSequenceActive] = useState(false); // whether auto capture sequence is running
 
   // Timer-related state
