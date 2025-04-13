@@ -256,6 +256,7 @@ export function PhotoShoot({
     };
 
     initializeCameras();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [detectCameraType, isMobile, t]);
 
   const selectedCamera = useMemo(
