@@ -256,7 +256,7 @@ export function PhotoShoot({
     };
 
     initializeCameras();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [detectCameraType, isMobile, t]);
 
   const selectedCamera = useMemo(
@@ -776,7 +776,13 @@ export function PhotoShoot({
                 <Clock className="h-4 w-4" />
                 <span className="sr-only">Next timer</span>
               </Button>
-              <div className="bg-primary text-primary-foreground absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-medium">
+              <div
+                className={cn(
+                  "bg-primary text-primary-foreground absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-medium",
+                  timerDisabled &&
+                    "pointer-events-none opacity-50",
+                )}
+              >
                 {selectedTimer}
               </div>
             </div>

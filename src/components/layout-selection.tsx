@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion } from "framer-motion";
 import {
   ArrowLeft,
@@ -89,33 +89,45 @@ export function LayoutSelection({
     setCopied(false);
   }, [imageUrl]);
 
-  const selectLayoutType = (type: number) => {
-    setLayoutType(type);
-    setSelectedIndices([]);
-    setImageUrl(null);
-  };
+  const selectLayoutType = useCallback(
+    (type: number) => {
+      setLayoutType(type);
+      setSelectedIndices([]);
+      setImageUrl(null);
+    },
+    [setImageUrl, setLayoutType, setSelectedIndices],
+  );
 
-  const toggleSelect = (index: number) =>
-    setSelectedIndices((prev) =>
-      prev.includes(index)
-        ? prev.filter((i) => i !== index)
-        : prev.length < layoutType
-          ? [...prev, index]
-          : prev,
-    );
+  const toggleSelect = useCallback(
+    (index: number) =>
+      setSelectedIndices((prev) =>
+        prev.includes(index)
+          ? prev.filter((i) => i !== index)
+          : prev.length < layoutType
+            ? [...prev, index]
+            : prev,
+      ),
+    [layoutType, setSelectedIndices],
+  );
 
-  const handleColorChange = (color: string) => {
-    setFrameColor(color);
-    setSelectedGradient(null);
-    setImageUrl(null);
-  };
+  const handleColorChange = useCallback(
+    (color: string) => {
+      setFrameColor(color);
+      setSelectedGradient(null);
+      setImageUrl(null);
+    },
+    [setImageUrl],
+  );
 
-  const handleGradientChange = (gradient: string) => {
-    setSelectedGradient(gradient);
-    setImageUrl(null);
-  };
+  const handleGradientChange = useCallback(
+    (gradient: string) => {
+      setSelectedGradient(gradient);
+      setImageUrl(null);
+    },
+    [setImageUrl],
+  );
 
-  const copyToClipboard = async () => {
+  const copyToClipboard = useCallback(async () => {
     if (!imageUrl) return;
 
     try {
@@ -125,9 +137,9 @@ export function LayoutSelection({
     } catch (err) {
       console.error("Failed to copy URL:", err);
     }
-  };
+  }, [imageUrl]);
 
-  const shareUrl = async () => {
+  const shareUrl = useCallback(async () => {
     if (!imageUrl) return;
 
     if (navigator.share) {
@@ -143,7 +155,87 @@ export function LayoutSelection({
     } else {
       copyToClipboard();
     }
-  };
+  }, [copyToClipboard, imageUrl]);
+
+  const handleGenerateImage = useCallback(async () => {
+    if (isPWA) {
+      const newTab = window.open("", "_blank");
+      if (!newTab) {
+        alert("Popup blocked 😢");
+        return;
+      }
+
+      // Show loading screen
+      const loadingHTML = `
+        <!DOCTYPE html>
+        <html>
+          <head><title>Loading...</title></head>
+          <body style="background:#000; color:#fff; margin:0; display:flex; align-items:center; justify-content:center; height:100vh;">
+            <h1>Preparing image...</h1>
+          </body>
+        </html>
+      `;
+      const loadingBlob = new Blob([loadingHTML], { type: "text/html" });
+      newTab.location.href = URL.createObjectURL(loadingBlob);
+
+      // Wait for canvas/image generation
+      const dataUrl = await generateImage(layoutType); // Should return data:image/jpeg;base64,...
+
+      // Final image page
+      const imageHTML = `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>Your Image</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <style>
+              body {
+                margin: 0;
+                background: #000;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+              }
+              img {
+                max-width: 100%;
+                max-height: 100%;
+              }
+            </style>
+          </head>
+          <body>
+            <img src="${dataUrl}" alt="Generated Image" />
+          </body>
+        </html>
+      `;
+      const imageBlob = new Blob([imageHTML], { type: "text/html" });
+      newTab.location.href = URL.createObjectURL(imageBlob);
+      return;
+    }
+
+    const dataUrl = await generateImage(layoutType); // gọi hàm xử lý canvas
+
+    if (dataUrl) {
+      if (isMobile) {
+        setImageDataUrl(dataUrl);
+        setShowDownloadDialog(true);
+        return;
+      }
+
+      // Set the download file name based on the layout type
+      // Use "1x4" for a 4-panel layout, and "2x4" for an 8-panel layout
+      const fileName =
+        layoutType === 4
+          ? `chinchinbooth_1x4_${Date.now()}.jpeg`
+          : `chinchinbooth_2x4_${Date.now()}.jpeg`;
+
+      // Create a link to download the final image
+      const link = document.createElement("a");
+      link.download = fileName;
+      link.href = dataUrl;
+      link.click();
+    }
+  }, [generateImage, isMobile, isPWA, layoutType]);
 
   const renderCell = (idx: number) => {
     const cellContent =
@@ -610,33 +702,7 @@ export function LayoutSelection({
           {t("retake")}
         </Button>
         <Button
-          onClick={async () => {
-            const dataUrl = await generateImage(layoutType); // gọi hàm xử lý canvas
-            if (dataUrl) {
-              if (isPWA) {
-                window.open(dataUrl, "_blank");
-                return;
-              }
-              if (isMobile) {
-                setImageDataUrl(dataUrl);
-                setShowDownloadDialog(true);
-                return;
-              }
-
-              // Set the download file name based on the layout type
-              // Use "1x4" for a 4-panel layout, and "2x4" for an 8-panel layout
-              const fileName =
-                layoutType === 4
-                  ? `chinchinbooth_1x4_${Date.now()}.jpeg`
-                  : `chinchinbooth_2x4_${Date.now()}.jpeg`;
-
-              // Create a link to download the final image
-              const link = document.createElement("a");
-              link.download = fileName;
-              link.href = dataUrl;
-              link.click();
-            }
-          }}
+          onClick={handleGenerateImage}
           disabled={!canDownload || isDownloading}
           className={cn(
             "flex items-center justify-center rounded-full px-4 py-2 font-medium",
