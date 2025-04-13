@@ -889,88 +889,80 @@ export function PhotoShoot({
       </motion.div>
 
       {/* Captured images display with standard border */}
-      {capturedImages.length > 0 && (
-        <div
-          ref={capturedImagesRef}
-          className="custom-scrollbar hide-scrollbar flex w-full snap-x gap-1 overflow-x-auto scroll-smooth pb-2 md:gap-2"
-          style={{
-            height: cameraContainerRef.current
-              ? cameraContainerRef.current.clientHeight / 2.5
-              : "auto",
-          }}
-        >
-          <AnimatePresence initial={false} mode="popLayout">
-            {capturedImages.map((img, index) => (
-              <motion.div
-                key={index}
-                className="relative aspect-[4/3] flex-shrink-0 snap-center overflow-hidden rounded-lg border border-gray-200"
-                style={{ height: "100%" }}
-                initial={{
-                  opacity: 0,
-                  scale: 0.7,
-                  y: 20,
-                }}
+      <div
+        ref={capturedImagesRef}
+        className="custom-scrollbar hide-scrollbar flex w-full snap-x gap-1 overflow-x-auto scroll-smooth pb-2 md:gap-2"
+        style={{
+          height: cameraContainerRef.current
+            ? cameraContainerRef.current.clientHeight / 2.5
+            : "auto",
+        }}
+      >
+        <AnimatePresence initial={false} mode="popLayout">
+          {capturedImages.map((img, index) => (
+            <motion.div
+              key={img}
+              className="relative aspect-[4/3] flex-shrink-0 overflow-hidden rounded-lg border border-gray-200"
+              style={{ height: "100%" }}
+              initial={{
+                opacity: 0,
+              }}
+              animate={{
+                opacity: 1,
+                transition: {
+                  type: "spring",
+                  stiffness: 300,
+                  damping: 20,
+                  delay: index * 0.05, // Stagger effect
+                },
+              }}
+              exit={{
+                opacity: 0,
+                transition: {
+                  type: "spring",
+                  stiffness: 300,
+                  damping: 20,
+                  delay: index * 0.03, // Slightly faster stagger for exit
+                },
+              }}
+              layout
+            >
+              {/* Image */}
+              <motion.img
+                src={img || "/placeholder.svg"}
+                alt={`Captured ${index}`}
+                className="h-full w-full object-cover"
+                initial={{ filter: "blur(8px)" }}
                 animate={{
-                  opacity: 1,
+                  filter: "blur(0px)",
+                  transition: { duration: 0.3, delay: 0.1 },
+                }}
+              />
+
+              {/* Image number indicator */}
+              <motion.div
+                className="bg-primary absolute top-1 right-1 flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold text-white"
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{
                   scale: 1,
-                  y: 0,
+                  opacity: 0.9,
                   transition: {
                     type: "spring",
-                    stiffness: 300,
-                    damping: 20,
-                    delay: index * 0.05, // Stagger effect
+                    stiffness: 500,
+                    damping: 25,
+                    delay: 0.2 + index * 0.05,
                   },
                 }}
-                exit={{
-                  opacity: 0,
-                  scale: 0.7,
-                  y: 20,
-                  transition: {
-                    type: "spring",
-                    stiffness: 300,
-                    damping: 20,
-                    delay: index * 0.03, // Slightly faster stagger for exit
-                  },
-                }}
-                layout
               >
-                {/* Image */}
-                <motion.img
-                  src={img || "/placeholder.svg"}
-                  alt={`Captured ${index}`}
-                  className="h-full w-full object-cover"
-                  initial={{ filter: "blur(8px)" }}
-                  animate={{
-                    filter: "blur(0px)",
-                    transition: { duration: 0.3, delay: 0.1 },
-                  }}
-                />
-
-                {/* Image number indicator */}
-                <motion.div
-                  className="bg-primary absolute top-1 right-1 flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold text-white"
-                  initial={{ scale: 0, opacity: 0 }}
-                  animate={{
-                    scale: 1,
-                    opacity: 0.9,
-                    transition: {
-                      type: "spring",
-                      stiffness: 500,
-                      damping: 25,
-                      delay: 0.2 + index * 0.05,
-                    },
-                  }}
-                >
-                  {index + 1}
-                </motion.div>
-
-                {/* Subtle overlay gradient */}
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-50" />
+                {index + 1}
               </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
-      )}
+
+              {/* Subtle overlay gradient */}
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-50" />
+            </motion.div>
+          ))}
+        </AnimatePresence>
+      </div>
     </div>
   );
 }
