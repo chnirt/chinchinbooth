@@ -23,7 +23,7 @@ import { FrameSelector } from "./frame-selector";
 import { SparklesText } from "./magicui/sparkles-text";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { useMobile } from "@/hooks/use-mobile";
-import { usePWA } from "@/hooks/use-PWA";
+import { usePWA } from "@/hooks/use-pwa";
 
 export function LayoutSelection({
   capturedImages,
