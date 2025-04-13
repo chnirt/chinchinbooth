@@ -8,8 +8,6 @@ import {
   RefreshCw,
   Check,
   GripHorizontal,
-  Copy,
-  Share2,
   Smartphone,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -18,19 +16,12 @@ import { useTranslations } from "next-intl";
 import type { LayoutSelectionProps } from "@/types";
 import { COLOR_PALETTE, GRADIENT_PRESETS } from "@/constants/styles";
 import { FRAMES } from "@/constants/assets";
-import { QRCodeCanvas } from "qrcode.react";
 import { FrameSelector } from "./frame-selector";
 import { SparklesText } from "./magicui/sparkles-text";
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from "./ui/dialog";
 import { useMobile } from "@/hooks/use-mobile";
 import { usePWA } from "@/hooks/use-pwa";
-import { ScrollArea } from "./ui/scroll-area";
+import ShareDialog from "./share-dialog";
+import DownloadDialog from "./download-dialog";
 
 export function LayoutSelection({
   capturedImages,
@@ -356,74 +347,6 @@ export function LayoutSelection({
             </div>
           </div>
           {frameOverlay}
-        </div>
-      </div>
-    );
-  };
-
-  // QR Code Section Component
-  const QRCodeSection = () => {
-    if (!imageUrl) return null;
-
-    return (
-      <div className="rounded-lg border border-gray-200 bg-white p-4">
-        <div className="flex flex-col items-center">
-          <div className="mb-3 flex items-center gap-2">
-            <Smartphone className="text-primary h-5 w-5" />
-            <h3 className="text-base font-medium text-gray-800">
-              {t("scan_to_view_on_mobile")}
-            </h3>
-          </div>
-
-          <div className="mb-4 rounded-lg border border-gray-100 bg-white p-4 shadow-sm">
-            <QRCodeCanvas
-              value={imageUrl}
-              size={200}
-              level="H"
-              includeMargin={true}
-              className="max-w-full"
-            />
-          </div>
-
-          <p className="mb-3 max-w-xs text-center text-xs text-gray-500">
-            {t("scan_content")}
-          </p>
-
-          <div className="flex w-full flex-wrap justify-center gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex items-center text-xs"
-              onClick={() => window.open(imageUrl, "_blank")}
-            >
-              <Download className="mr-1 h-3 w-3" />
-              {t("open_link")}
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="flex items-center text-xs"
-              onClick={copyToClipboard}
-            >
-              {copied ? (
-                <Check className="mr-1 h-3 w-3" />
-              ) : (
-                <Copy className="mr-1 h-3 w-3" />
-              )}
-              {copied ? `${t("copied")}!` : t("copy_link")}
-            </Button>
-            {typeof navigator.share === "function" && (
-              <Button
-                variant="outline"
-                size="sm"
-                className="flex items-center text-xs"
-                onClick={shareUrl}
-              >
-                <Share2 className="mr-1 h-3 w-3" />
-                {t("share")}
-              </Button>
-            )}
-          </div>
         </div>
       </div>
     );
@@ -759,57 +682,23 @@ export function LayoutSelection({
       </div>
 
       {/* Download Dialog for iOS users */}
-      <Dialog open={showDownloadDialog} onOpenChange={setShowDownloadDialog}>
-        <DialogContent className="rounded-xl border-0 p-0 shadow-xl sm:max-w-[550px] md:max-w-[650px] lg:max-w-[750px]">
-          <div className="border-b">
-            <DialogHeader className="px-6 pt-6 pb-4">
-              <DialogTitle>{t("save_image")}</DialogTitle>
-            </DialogHeader>
-          </div>
-
-          <ScrollArea className="max-h-[80vh] md:max-h-[90vh]">
-            <div className="space-y-6 px-6 py-5">
-              <img
-                src={imageDataUrl || ""}
-                alt="Generated image"
-                className={cn(
-                  "mx-auto overflow-hidden rounded-md border border-gray-200 shadow-md",
-                  layoutType === 4
-                    ? "aspect-[1/3] w-1/2"
-                    : "aspect-[2/3] w-full",
-                )}
-              />
-              <div className="mt-6 rounded-lg border border-amber-100 bg-amber-50 p-4 text-center">
-                <h4 className="mb-2 font-medium text-amber-800">
-                  {t("save_instructions_title")}:
-                </h4>
-                <ol className="list-decimal space-y-2 pl-5 text-left text-sm text-amber-700">
-                  <li>{t("save_step_1")}</li>
-                  <li>{t("save_step_2")}</li>
-                  <li>{t("save_step_3")}</li>
-                </ol>
-              </div>
-            </div>
-          </ScrollArea>
-
-          <DialogFooter className="border-t bg-gray-50 px-6 py-4 rounded-b-xl">
-            <Button onClick={() => setShowDownloadDialog(false)}>
-              {t("closeButton")}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <DownloadDialog
+        open={showDownloadDialog}
+        onOpenChange={setShowDownloadDialog}
+        imageDataUrl={imageDataUrl}
+        layoutType={layoutType}
+      />
 
       {/* Share Dialog with QR Code */}
-      <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>{t("share_title")}</DialogTitle>
-          </DialogHeader>
-
-          {imageUrl && showShareDialog && <QRCodeSection />}
-        </DialogContent>
-      </Dialog>
+      <ShareDialog
+        open={showShareDialog}
+        onOpenChange={setShowShareDialog}
+        imageUrl={imageUrl}
+        imageDataUrl={imageDataUrl}
+        copied={copied}
+        copyToClipboard={copyToClipboard}
+        shareUrl={shareUrl}
+      />
     </div>
   );
 }
