@@ -23,14 +23,14 @@ export const metadata: Metadata = {
     description: "Capture fun moments, create stickers & WebAR. Try it now!",
     url: "https://chinchinbooth.vercel.app",
     siteName: "ChinChin Booth",
-    // images: [
-    //   {
-    //     url: "https://chinchinbooth.vercel.app/og-image.jpg",
-    //     width: 1200,
-    //     height: 630,
-    //     alt: "ChinChin Booth",
-    //   },
-    // ],
+    images: [
+      {
+        url: "https://chinchinbooth.vercel.app/og-image.jpg",
+        width: 980,
+        height: 980,
+        alt: "ChinChin Booth",
+      },
+    ],
     type: "website",
   },
   // twitter: {
