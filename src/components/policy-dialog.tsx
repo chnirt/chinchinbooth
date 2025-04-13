@@ -31,7 +31,7 @@ export default function PolicyDialog() {
           <span className="sr-only">Privacy Policy</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="overflow-hidden rounded-xl border-0 p-0 shadow-xl sm:max-w-[550px] md:max-w-[650px] lg:max-w-[750px]">
+      <DialogContent className="rounded-xl border-0 p-0 shadow-xl sm:max-w-[550px] md:max-w-[650px] lg:max-w-[750px]">
         {/* Header with gradient matching the app's style */}
         <div className="border-b">
           <DialogHeader className="px-6 pt-6 pb-4">
@@ -156,7 +156,7 @@ export default function PolicyDialog() {
           </div>
         </ScrollArea>
 
-        <DialogFooter className="border-t bg-gray-50 px-6 py-4">
+        <DialogFooter className="border-t bg-gray-50 px-6 py-4 rounded-b-xl">
           <Button onClick={() => setOpen(false)}>{t("closeButton")}</Button>
         </DialogFooter>
       </DialogContent>

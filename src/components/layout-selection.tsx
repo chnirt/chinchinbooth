@@ -21,9 +21,16 @@ import { FRAMES } from "@/constants/assets";
 import { QRCodeCanvas } from "qrcode.react";
 import { FrameSelector } from "./frame-selector";
 import { SparklesText } from "./magicui/sparkles-text";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "./ui/dialog";
 import { useMobile } from "@/hooks/use-mobile";
 import { usePWA } from "@/hooks/use-pwa";
+import { ScrollArea } from "./ui/scroll-area";
 
 export function LayoutSelection({
   capturedImages,
@@ -753,40 +760,43 @@ export function LayoutSelection({
 
       {/* Download Dialog for iOS users */}
       <Dialog open={showDownloadDialog} onOpenChange={setShowDownloadDialog}>
-        <DialogContent className="max-h-screen overflow-y-scroll sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle>{t("save_image")}</DialogTitle>
-          </DialogHeader>
+        <DialogContent className="rounded-xl border-0 p-0 shadow-xl sm:max-w-[550px] md:max-w-[650px] lg:max-w-[750px]">
+          <div className="border-b">
+            <DialogHeader className="px-6 pt-6 pb-4">
+              <DialogTitle>{t("save_image")}</DialogTitle>
+            </DialogHeader>
+          </div>
 
-          <div className="flex flex-col items-center justify-center">
-            <img
-              src={imageDataUrl || ""}
-              alt="Generated image"
-              className={cn(
-                "mx-auto overflow-hidden rounded-md border border-gray-200 shadow-md",
-                layoutType === 4 ? "aspect-[1/3] w-1/2" : "aspect-[2/3] w-full",
-              )}
-            />
-
-            <div className="mt-6 rounded-lg border border-amber-100 bg-amber-50 p-4 text-center">
-              <h4 className="mb-2 font-medium text-amber-800">
-                {t("save_instructions_title")}:
-              </h4>
-              <ol className="list-decimal space-y-2 pl-5 text-left text-sm text-amber-700">
-                <li>{t("save_step_1")}</li>
-                <li>{t("save_step_2")}</li>
-                <li>{t("save_step_3")}</li>
-              </ol>
+          <ScrollArea className="max-h-[80vh] md:max-h-[90vh]">
+            <div className="space-y-6 px-6 py-5">
+              <img
+                src={imageDataUrl || ""}
+                alt="Generated image"
+                className={cn(
+                  "mx-auto overflow-hidden rounded-md border border-gray-200 shadow-md",
+                  layoutType === 4
+                    ? "aspect-[1/3] w-1/2"
+                    : "aspect-[2/3] w-full",
+                )}
+              />
+              <div className="mt-6 rounded-lg border border-amber-100 bg-amber-50 p-4 text-center">
+                <h4 className="mb-2 font-medium text-amber-800">
+                  {t("save_instructions_title")}:
+                </h4>
+                <ol className="list-decimal space-y-2 pl-5 text-left text-sm text-amber-700">
+                  <li>{t("save_step_1")}</li>
+                  <li>{t("save_step_2")}</li>
+                  <li>{t("save_step_3")}</li>
+                </ol>
+              </div>
             </div>
+          </ScrollArea>
 
-            <Button
-              onClick={() => setShowDownloadDialog(false)}
-              className="mt-4"
-              variant="outline"
-            >
+          <DialogFooter className="border-t bg-gray-50 px-6 py-4 rounded-b-xl">
+            <Button onClick={() => setShowDownloadDialog(false)}>
               {t("closeButton")}
             </Button>
-          </div>
+          </DialogFooter>
         </DialogContent>
       </Dialog>
 
