@@ -73,7 +73,7 @@ export default function PhotoBoothApp() {
     frame();
   }, []);
 
-  const downloadComposite = async (layoutType: number) => {
+  const generateImage = async (layoutType: number): Promise<void | string> => {
     if (!previewRef.current || isDownloading) return;
     setIsDownloading(true);
 
@@ -111,6 +111,7 @@ export default function PhotoBoothApp() {
       const forcedCanvas = document.createElement("canvas");
       forcedCanvas.width = desiredWidth;
       forcedCanvas.height = desiredHeight;
+
       const ctx = forcedCanvas.getContext("2d");
       if (!ctx) {
         throw new Error("Unable to get 2D context");
@@ -130,20 +131,10 @@ export default function PhotoBoothApp() {
         desiredHeight, // destination rectangle in the forced canvas
       );
 
-      // Set the download file name based on the layout type
-      // Use "1x4" for a 4-panel layout, and "2x4" for an 8-panel layout
-      const fileName =
-        layoutType === 4
-          ? `chinchinbooth_1x4_${Date.now()}.jpeg`
-          : `chinchinbooth_2x4_${Date.now()}.jpeg`;
-
-      // Create a link to download the final image
-      const link = document.createElement("a");
-      link.download = fileName;
-      link.href = forcedCanvas.toDataURL("image/jpeg", 1.0);
-      link.click();
-
       triggerConfetti();
+
+      const dataUrl = forcedCanvas.toDataURL("image/jpeg", 1.0);
+      return dataUrl;
     } catch (error) {
       console.error("Error generating the image:", error);
     } finally {
@@ -191,11 +182,6 @@ export default function PhotoBoothApp() {
     }
   };
 
-  useEffect(() => {
-    document.addEventListener("contextmenu", (event) => event.preventDefault());
-    document.addEventListener("selectstart", (event) => event.preventDefault());
-  }, []);
-
   return (
     <div className="flex min-h-[100dvh] flex-col overflow-hidden">
       {/* <div className="absolute inset-0 bg-[radial-gradient(circle,_rgba(255,0,0,0.8)_0%,_rgba(255,0,0,0)_70%)]"></div> */}
@@ -240,7 +226,7 @@ export default function PhotoBoothApp() {
               selectedFrame={selectedFrame}
               setSelectedFrame={setSelectedFrame}
               retakePhotos={retakePhotos}
-              downloadComposite={downloadComposite}
+              generateImage={generateImage}
               canDownload={canDownload}
               isDownloading={isDownloading}
               uploadAndGenerateQR={uploadAndGenerateQR}

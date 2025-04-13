@@ -21,6 +21,8 @@ import { FRAMES } from "@/constants/assets";
 import { QRCodeCanvas } from "qrcode.react";
 import { FrameSelector } from "./frame-selector";
 import { SparklesText } from "./magicui/sparkles-text";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
+import { useMobile } from "@/hooks/use-mobile";
 
 export function LayoutSelection({
   capturedImages,
@@ -32,7 +34,7 @@ export function LayoutSelection({
   selectedFrame,
   setSelectedFrame,
   retakePhotos,
-  downloadComposite,
+  generateImage,
   canDownload,
   isDownloading,
   uploadAndGenerateQR,
@@ -40,13 +42,16 @@ export function LayoutSelection({
   imageUrl,
   setImageUrl,
 }: LayoutSelectionProps) {
+  const isMobile = useMobile();
   const [frameColor, setFrameColor] = useState<string>("#FFFFFF");
   const [selectedGradient, setSelectedGradient] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"solid" | "gradient" | "frames">(
     "solid",
   );
   const [copied, setCopied] = useState(false);
-  const [showQRSection, setShowQRSection] = useState(false);
+  const [imageDataUrl, setImageDataUrl] = useState<string | null>(null);
+  const [showShareDialog, setShowShareDialog] = useState(false);
+  const [showDownloadDialog, setShowDownloadDialog] = useState(false);
 
   const t = useTranslations("HomePage");
 
@@ -73,7 +78,7 @@ export function LayoutSelection({
   // Show QR section when imageUrl is available
   useEffect(() => {
     if (imageUrl) {
-      setShowQRSection(true);
+      setShowShareDialog(true);
     }
   }, [imageUrl]);
 
@@ -260,11 +265,8 @@ export function LayoutSelection({
     if (!imageUrl) return null;
 
     return (
-      <motion.div
+      <div
         className="rounded-lg border border-gray-200 bg-white p-4"
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
       >
         <div className="flex flex-col items-center">
           <div className="mb-3 flex items-center gap-2">
@@ -324,7 +326,7 @@ export function LayoutSelection({
             )}
           </div>
         </div>
-      </motion.div>
+      </div>
     );
   };
 
@@ -608,7 +610,29 @@ export function LayoutSelection({
           {t("retake")}
         </Button>
         <Button
-          onClick={() => downloadComposite(layoutType)}
+          onClick={async () => {
+            const dataUrl = await generateImage(layoutType); // gọi hàm xử lý canvas
+            if (dataUrl) {
+              if (isMobile) {
+                setImageDataUrl(dataUrl);
+                setShowDownloadDialog(true);
+                return;
+              }
+
+              // Set the download file name based on the layout type
+              // Use "1x4" for a 4-panel layout, and "2x4" for an 8-panel layout
+              const fileName =
+                layoutType === 4
+                  ? `chinchinbooth_1x4_${Date.now()}.jpeg`
+                  : `chinchinbooth_2x4_${Date.now()}.jpeg`;
+
+              // Create a link to download the final image
+              const link = document.createElement("a");
+              link.download = fileName;
+              link.href = dataUrl;
+              link.click();
+            }
+          }}
           disabled={!canDownload || isDownloading}
           className={cn(
             "flex items-center justify-center rounded-full px-4 py-2 font-medium",
@@ -655,26 +679,59 @@ export function LayoutSelection({
             </>
           )}
         </Button>
-
-        {/* Close QR button - only visible on mobile when QR is shown */}
-        {imageUrl && showQRSection && (
-          <Button
-            onClick={() => setShowQRSection(false)}
-            variant="outline"
-            className="flex items-center justify-center rounded-full px-4 py-2 md:hidden"
-            size="sm"
-          >
-            {t("hide_qr")}
-          </Button>
-        )}
       </div>
 
-      {/* QR Code Modal for Mobile - Only shown when imageUrl exists and on small screens */}
-      {imageUrl && showQRSection && (
-        <div className="flex items-center justify-center">
-          <QRCodeSection />
-        </div>
-      )}
+      {/* Download Dialog for iOS users */}
+      <Dialog open={showDownloadDialog} onOpenChange={setShowDownloadDialog}>
+        <DialogContent className="max-h-screen overflow-y-scroll sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Save Image</DialogTitle>
+          </DialogHeader>
+
+          <div className="flex flex-col items-center justify-center">
+            <img
+              src={imageDataUrl || ""}
+              alt="Generated image"
+              className={cn(
+                "mx-auto overflow-hidden rounded-md border border-gray-200 shadow-md",
+                layoutType === 4 ? "aspect-[1/3] w-1/2" : "aspect-[2/3] w-full",
+              )}
+            />
+
+            <div className="mt-6 rounded-lg border border-amber-100 bg-amber-50 p-4 text-center">
+              <h4 className="mb-2 font-medium text-amber-800">
+                How to save on iOS:
+              </h4>
+              <ol className="list-decimal space-y-2 pl-5 text-left text-sm text-amber-700">
+                <li>Press and hold on the image above</li>
+                <li>
+                  Tap &quot;Save to Photos&quot; from the menu that appears
+                </li>
+                <li>The image will be saved to your photo library</li>
+              </ol>
+            </div>
+
+            <Button
+              onClick={() => setShowDownloadDialog(false)}
+              className="mt-4"
+              variant="outline"
+            >
+              Close
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Share Dialog with QR Code */}
+      <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>Share Your Creation</DialogTitle>
+          </DialogHeader>
+
+          {imageUrl && showShareDialog && <QRCodeSection />}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

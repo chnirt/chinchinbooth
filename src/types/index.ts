@@ -32,7 +32,7 @@ export interface LayoutSelectionProps {
   selectedFrame: string | null;
   setSelectedFrame: React.Dispatch<React.SetStateAction<string | null>>;
   retakePhotos: () => void;
-  downloadComposite: (layoutType: number) => Promise<void>;
+  generateImage: (layoutType: number) => Promise<void | string>;
   canDownload: boolean;
   isDownloading: boolean;
   uploadAndGenerateQR: () => Promise<void>;
