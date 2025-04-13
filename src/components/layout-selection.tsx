@@ -23,6 +23,7 @@ import { FrameSelector } from "./frame-selector";
 import { SparklesText } from "./magicui/sparkles-text";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "./ui/dialog";
 import { useMobile } from "@/hooks/use-mobile";
+import { usePWA } from "@/hooks/use-PWA";
 
 export function LayoutSelection({
   capturedImages,
@@ -43,6 +44,7 @@ export function LayoutSelection({
   setImageUrl,
 }: LayoutSelectionProps) {
   const isMobile = useMobile();
+  const isPWA = usePWA();
   const [frameColor, setFrameColor] = useState<string>("#FFFFFF");
   const [selectedGradient, setSelectedGradient] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"solid" | "gradient" | "frames">(
@@ -265,9 +267,7 @@ export function LayoutSelection({
     if (!imageUrl) return null;
 
     return (
-      <div
-        className="rounded-lg border border-gray-200 bg-white p-4"
-      >
+      <div className="rounded-lg border border-gray-200 bg-white p-4">
         <div className="flex flex-col items-center">
           <div className="mb-3 flex items-center gap-2">
             <Smartphone className="text-primary h-5 w-5" />
@@ -613,6 +613,10 @@ export function LayoutSelection({
           onClick={async () => {
             const dataUrl = await generateImage(layoutType); // gọi hàm xử lý canvas
             if (dataUrl) {
+              if (isPWA) {
+                window.open(dataUrl, "_blank");
+                return;
+              }
               if (isMobile) {
                 setImageDataUrl(dataUrl);
                 setShowDownloadDialog(true);
