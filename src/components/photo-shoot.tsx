@@ -14,6 +14,7 @@ import {
   Clock,
   ArrowRight,
   FlipHorizontal,
+  Blend,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -83,6 +84,9 @@ export function PhotoShoot({
   const [cameras, setCameras] = useState<CameraInfo[]>([]);
   const [currentCameraIndex, setCurrentCameraIndex] = useState(0);
 
+  // Add a new state variable for filter gallery visibility after the other state declarations
+  const [showFilters, setShowFilters] = useState(false);
+
   const t = useTranslations("HomePage");
 
   const isMaxCaptureReached = capturedImages.length >= MAX_CAPTURE;
@@ -97,6 +101,11 @@ export function PhotoShoot({
     if (timerDisabled) return;
     setSelectedTimerIndex((prev) => (prev + 1) % TIMER_OPTIONS.length);
   }, [timerDisabled]);
+
+  // Add a toggle function after the other function declarations
+  const toggleFilters = useCallback(() => {
+    setShowFilters((prev) => !prev);
+  }, []);
 
   // Detect camera type based on label and capabilities
   const detectCameraType = useCallback(
@@ -421,18 +430,23 @@ export function PhotoShoot({
   const captureDisabled =
     !canProceedToLayout &&
     (!isCameraStarted || isMaxCaptureReached || isCapturing);
-  const autoDisabled =
-    !isCameraStarted ||
-    isMaxCaptureReached ||
-    isCapturing ||
-    countdown !== null ||
-    isAutoSequenceActive;
+  // const autoDisabled =
+  //   !isCameraStarted ||
+  //   isMaxCaptureReached ||
+  //   isCapturing ||
+  //   countdown !== null ||
+  //   isAutoSequenceActive;
   const selectCameraDisabled =
     !isCameraStarted ||
     isCapturing ||
     countdown !== null ||
     isAutoSequenceActive;
   const mirrorDisabled =
+    !isCameraStarted ||
+    isCapturing ||
+    countdown !== null ||
+    isAutoSequenceActive;
+  const filtersDisabled =
     !isCameraStarted ||
     isCapturing ||
     countdown !== null ||
@@ -457,12 +471,11 @@ export function PhotoShoot({
   }, [isAutoModeEnabled, isMaxCaptureReached, selectedTimer]);
 
   const toggleAutoMode = useCallback(() => {
-    if (autoDisabled) return;
     setIsAutoModeEnabled((prev) => !prev);
     if (isAutoSequenceActive) {
       stopAutoSequence();
     }
-  }, [autoDisabled, isAutoSequenceActive, stopAutoSequence]);
+  }, [isAutoSequenceActive, stopAutoSequence]);
 
   // Ref to ensure captureImage is only called once when countdown reaches 0
   const hasCapturedRef = useRef(false);
@@ -543,14 +556,17 @@ export function PhotoShoot({
         case "Delete":
           undoCapture();
           break;
-        case "a":
-          toggleAutoMode();
+          // case "a":
+          //   toggleAutoMode();
           break;
         case "m":
           toggleMirroring();
           break;
         case "t":
           changeTimer();
+          break;
+        case "f":
+          toggleFilters();
           break;
         default:
           break;
@@ -573,6 +589,7 @@ export function PhotoShoot({
     toggleAutoMode,
     toggleMirroring,
     changeTimer,
+    toggleFilters,
   ]);
 
   const selectCamera = useCallback(
@@ -724,20 +741,30 @@ export function PhotoShoot({
             </div>
           </motion.div>
 
-          {/* Filter Gallery - Redesigned with fixed Normal button */}
+          {/* Filter Gallery with Toggle Button */}
           <motion.div
             className="w-full"
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.4, delay: 0.2 }}
           >
-            <div className="rounded-lg bg-white">
-              <FilterGallery
-                onFilterChange={handleFilterChange}
-                currentFilter={currentFilter}
-                sampleImageUrl="/placeholder.jpg"
-              />
-            </div>
+            <AnimatePresence>
+              {showFilters && (
+                <motion.div
+                  className="rounded-lg bg-white"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  <FilterGallery
+                    onFilterChange={handleFilterChange}
+                    currentFilter={currentFilter}
+                    sampleImageUrl="/placeholder.jpg"
+                  />
+                </motion.div>
+              )}
+            </AnimatePresence>
           </motion.div>
         </div>
       )}
@@ -779,8 +806,7 @@ export function PhotoShoot({
               <div
                 className={cn(
                   "bg-primary text-primary-foreground absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-medium",
-                  timerDisabled &&
-                    "pointer-events-none opacity-50",
+                  timerDisabled && "pointer-events-none opacity-50",
                 )}
               >
                 {selectedTimer}
@@ -817,7 +843,7 @@ export function PhotoShoot({
 
           {/* Right side controls */}
           <div className="flex items-center gap-2">
-            <Button
+            {/* <Button
               onClick={toggleAutoMode}
               disabled={autoDisabled}
               className="flex h-10 w-10 items-center justify-center rounded-full p-0 font-bold"
@@ -826,7 +852,7 @@ export function PhotoShoot({
             >
               <span className="text-sm font-bold">A</span>
               <span className="sr-only">Toggle auto mode</span>
-            </Button>
+            </Button> */}
 
             <Button
               onClick={toggleMirroring}
@@ -838,6 +864,17 @@ export function PhotoShoot({
               <FlipHorizontal className="h-4 w-4" />
               <span className="sr-only">Mirror image</span>
             </Button>
+
+            <Button
+              onClick={toggleFilters}
+              disabled={filtersDisabled}
+              className="flex h-10 w-10 items-center justify-center rounded-full p-0 font-bold"
+              variant={showFilters ? "default" : "outline"}
+              size="icon"
+            >
+              <Blend className="h-4 w-4" />
+              <span className="sr-only">Toggle blend</span>
+            </Button>
           </div>
         </div>
 
@@ -845,8 +882,9 @@ export function PhotoShoot({
         <div className="mt-2 hidden text-xs text-gray-600 lg:block">
           <strong>Delete</strong>: {t("undo")} | <strong>T</strong>:{" "}
           {t("change_timer")} | <strong>Space</strong>: {t("capture")} |{" "}
-          <strong>A</strong>: {t("auto_mode")} | <strong>M</strong>:{" "}
-          {t("toggle_mirror")}
+          {/* <strong>A</strong>: {t("auto_mode")} |  */}
+          <strong>M</strong>: {t("toggle_mirror")} | <strong>F</strong>:{" "}
+          {t("toggle_filters")}
         </div>
       </motion.div>
 
