@@ -755,7 +755,7 @@ export function LayoutSelection({
       <Dialog open={showDownloadDialog} onOpenChange={setShowDownloadDialog}>
         <DialogContent className="max-h-screen overflow-y-scroll sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Save Image</DialogTitle>
+            <DialogTitle>{t("save_image")}</DialogTitle>
           </DialogHeader>
 
           <div className="flex flex-col items-center justify-center">
@@ -770,14 +770,12 @@ export function LayoutSelection({
 
             <div className="mt-6 rounded-lg border border-amber-100 bg-amber-50 p-4 text-center">
               <h4 className="mb-2 font-medium text-amber-800">
-                How to save on iOS:
+                {t("save_instructions_title")}:
               </h4>
               <ol className="list-decimal space-y-2 pl-5 text-left text-sm text-amber-700">
-                <li>Press and hold on the image above</li>
-                <li>
-                  Tap &quot;Save to Photos&quot; from the menu that appears
-                </li>
-                <li>The image will be saved to your photo library</li>
+                <li>{t("save_step_1")}</li>
+                <li>{t("save_step_2")}</li>
+                <li>{t("save_step_3")}</li>
               </ol>
             </div>
 
@@ -786,7 +784,7 @@ export function LayoutSelection({
               className="mt-4"
               variant="outline"
             >
-              Close
+              {t("closeButton")}
             </Button>
           </div>
         </DialogContent>
@@ -796,7 +794,7 @@ export function LayoutSelection({
       <Dialog open={showShareDialog} onOpenChange={setShowShareDialog}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>
-            <DialogTitle>Share Your Creation</DialogTitle>
+            <DialogTitle>{t("share_title")}</DialogTitle>
           </DialogHeader>
 
           {imageUrl && showShareDialog && <QRCodeSection />}

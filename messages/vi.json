@@ -66,6 +66,13 @@
     "ourTechnology3": "Không cần kết nối internet cho các chức năng cơ bản",
     "contactUs": "Liên Hệ Với Chúng Tôi",
     "contactUsDescription": "Nếu bạn có bất kỳ câu hỏi nào về các thực tiễn quyền riêng tư của chúng tôi, vui lòng liên hệ với chúng tôi qua email:",
-    "closeButton": "Đóng"
+    "closeButton": "Đóng",
+    "toggle_filters": "Bật/tắt bộ lọc",
+    "save_image": "Lưu ảnh",
+    "save_instructions_title": "Cách lưu ảnh trên iOS:",
+    "save_step_1": "Nhấn và giữ vào ảnh bên trên",
+    "save_step_2": "Chọn \"Lưu vào Ảnh\" từ menu hiện ra",
+    "save_step_3": "Ảnh sẽ được lưu vào thư viện của bạn",
+    "share_title": "Chia sẻ tác phẩm của bạn"
   }
 }

@@ -66,6 +66,13 @@
     "ourTechnology3": "No internet connection is required for core functionality",
     "contactUs": "Contact Us",
     "contactUsDescription": "If you have any questions about our privacy practices, please contact us at:",
-    "closeButton": "Close"
+    "closeButton": "Close",
+    "toggle_filters": "Toggle filters",
+    "save_image": "Save Image",
+    "save_instructions_title": "How to save on iOS",
+    "save_step_1": "Press and hold on the image above",
+    "save_step_2": "Tap \"Save to Photos\" from the menu that appears",
+    "save_step_3": "The image will be saved to your photo library",
+    "share_title": "Share Your Creation"
   }
 }
