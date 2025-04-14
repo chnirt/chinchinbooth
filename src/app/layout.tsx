@@ -17,10 +17,12 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "ChinChin Booth - Unique Photo Booth",
-  description: "Capture fun moments, create stickers & WebAR. Try it now!",
+  description:
+    "Capture fun moments and create photo strips with ChinChin Booth. Try it now!",
   openGraph: {
     title: "ChinChin Booth - Unique Photo Booth",
-    description: "Capture fun moments, create stickers & WebAR. Try it now!",
+    description:
+      "Capture fun moments and create photo strips with ChinChin Booth. Try it now!",
     url: "https://chinchinbooth.vercel.app",
     siteName: "ChinChin Booth",
     images: [
@@ -32,17 +34,21 @@ export const metadata: Metadata = {
       },
     ],
     type: "website",
+    locale: "en_US",
   },
-  // twitter: {
-  //   card: "summary_large_image",
-  //   title: "ChinChin Booth - Unique Photo Booth",
-  //   description: "Capture fun moments, create stickers & WebAR. Try it now!",
-  //   images: ["https://chinchinbooth.vercel.app/og-image.jpg"],
-  // },
+  twitter: {
+    card: "summary_large_image",
+    title: "ChinChin Booth - Unique Photo Booth",
+    description:
+      "Capture fun moments and create photo strips with ChinChin Booth. Try it now!",
+    images: ["https://chinchinbooth.vercel.app/og-image.jpg"],
+  },
   other: {
     "apple-mobile-web-app-title": "ChinChin Booth",
     viewport:
       "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no",
+    keywords:
+      "photo booth, online camera, photo strips, selfie booth, fun photo app",
   },
 };
 
