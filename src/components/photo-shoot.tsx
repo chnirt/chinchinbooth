@@ -85,7 +85,7 @@ export function PhotoShoot({
   const [currentCameraIndex, setCurrentCameraIndex] = useState(0);
 
   // Add a new state variable for filter gallery visibility after the other state declarations
-  const [showFilters, setShowFilters] = useState(false);
+  const [showFilters, setShowFilters] = useState(true);
 
   const t = useTranslations("HomePage");
 
@@ -209,6 +209,7 @@ export function PhotoShoot({
         await navigator.mediaDevices.getUserMedia({ video: true });
 
         const devices = await navigator.mediaDevices.enumerateDevices();
+        console.log("🚀 ~ initializeCameras ~ devices:", devices);
         const videoDevices = devices.filter(
           (device) => device.kind === "videoinput",
         );
