@@ -17,9 +17,11 @@
     "docker:restart": "npm run docker:stop && npm run docker:build && npm run docker:run",
     "docker:status": "docker ps -a | grep chinchinbooth-container",
     "docker:image-clean": "docker image prune -f --filter label=chinchinbooth",
-    "update-version": "sh scripts/update-version.sh"
+    "update-version": "sh scripts/update-version.sh",
+    "bundle-analyzer": "ANALYZE=true pnpm build"
   },
   "dependencies": {
+    "@next/bundle-analyzer": "^15.3.1",
     "@radix-ui/react-dialog": "^1.1.6",
     "@radix-ui/react-dropdown-menu": "^2.1.6",
     "@radix-ui/react-scroll-area": "^1.2.3",

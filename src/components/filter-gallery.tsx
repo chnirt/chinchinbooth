@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import type { FilterValues } from "@/types/filters";
 import { FILTER_COLLECTIONS } from "@/constants/filters";
+import Image from "next/image";
 
 // Generate filter style string from filter values
 export const generateFilterStyle = (filter: FilterValues) => {
@@ -219,15 +220,17 @@ export function FilterGallery({
                             : "border-gray-200",
                         )}
                       >
-                        <div
-                          className="h-full w-full"
-                          style={{
-                            backgroundImage: `url(${sampleImageUrl})`,
-                            backgroundSize: "cover",
-                            backgroundPosition: "center",
-                            filter: generateFilterStyle(filter.filter),
-                          }}
-                        />
+                        <div className="relative h-full w-full">
+                          <Image
+                            src={sampleImageUrl}
+                            alt="Preview"
+                            fill
+                            className="object-cover"
+                            style={{
+                              filter: generateFilterStyle(filter.filter),
+                            }}
+                          />
+                        </div>
 
                         {/* Selection indicator */}
                         {currentFilterId === filter.id && (

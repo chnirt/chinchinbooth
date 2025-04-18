@@ -10,6 +10,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
+import Image from "next/image";
 
 interface DownloadDialogProps {
   open: boolean;
@@ -37,7 +38,7 @@ export default function DownloadDialog({
 
         <ScrollArea className="max-h-[80vh] md:max-h-[90vh]">
           <div className="space-y-6 px-6 py-5">
-            <img
+            <Image
               src={imageDataUrl || ""}
               alt="Generated image"
               className={cn(

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { motion } from "framer-motion";
 import { Check, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -23,32 +23,28 @@ export function FrameSelector({
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const selectFrame = async (frameId: string | null) => {
-    // Reset any previous errors
-    setError(null);
+  const selectFrame = useCallback(
+    async (frameId: string | null) => {
+      setError(null);
+      setImageUrl(null);
 
-    // Clear image URL when changing frames
-    setImageUrl(null);
+      if (frameId === selectedFrame) {
+        setSelectedFrame(null);
+        return;
+      }
 
-    // If selecting the same frame, deselect it
-    if (frameId === selectedFrame) {
-      setSelectedFrame(null);
-      return;
-    }
-
-    setIsLoading(true);
-
-    try {
-      await handleFrameSelection(frameId, (selectedFrameId) => {
-        setSelectedFrame(selectedFrameId);
-      });
-    } catch (err) {
-      setError("Failed to select frame. Please try again.");
-      console.error("Frame selection error:", err);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      setIsLoading(true);
+      try {
+        await handleFrameSelection(frameId, setSelectedFrame);
+      } catch (err) {
+        setError("Failed to select frame. Please try again.");
+        console.error("Frame selection error:", err);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [selectedFrame, setSelectedFrame, setImageUrl],
+  );
 
   return (
     <div className={cn("space-y-3", className)}>
@@ -62,14 +58,15 @@ export function FrameSelector({
       )}
 
       <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-        {FRAMES.map((frame) => {
-          const isSelected = selectedFrame === frame.id;
+        {FRAMES.map(({ id, name }) => {
+          const isSelected = selectedFrame === id;
 
           return (
             <motion.button
-              key={frame.id}
-              onClick={() => selectFrame(frame.id)}
+              key={id}
+              onClick={() => selectFrame(id)}
               disabled={isLoading}
+              whileTap={{ scale: 0.95 }}
               className={cn(
                 "relative flex h-16 w-full flex-col items-center justify-center rounded-md border-2 transition-all",
                 isSelected ? "border-primary shadow-sm" : "border-gray-200",
@@ -77,13 +74,12 @@ export function FrameSelector({
               )}
             >
               {isSelected && (
-                <div className="absolute top-1 right-1 flex h-3 w-3 items-center justify-center rounded-full border border-gray-200 bg-white">
-                  <Check className="text-primary h-2 w-2" />
+                <div className="absolute top-1 right-1 rounded-full border border-gray-200 bg-white p-0.5">
+                  <Check className="h-2 w-2 text-primary" />
                 </div>
               )}
-
               <span className="mt-1 text-xs font-medium text-gray-800">
-                {frame.name}
+                {name}
               </span>
             </motion.button>
           );

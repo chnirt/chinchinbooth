@@ -1,21 +1,31 @@
 "use client";
 
 import { useState, useRef, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import html2canvas from "html2canvas-pro";
+import { motion, AnimatePresence, Variants } from "framer-motion";
 import { Navbar } from "@/components/navbar";
 import { StepProgress } from "@/components/step-progress";
-import { PhotoShoot } from "@/components/photo-shoot";
-import { LayoutSelection } from "@/components/layout-selection";
+import dynamic from "next/dynamic";
 import { MAX_CAPTURE } from "@/constants";
 import {
   uploadToCloudinary,
-  // checkDailyQRLimit,
   updateQRGenerationCount,
 } from "@/lib/upload-utils";
 import { toast } from "sonner";
 import Footer from "@/components/footer";
 import confetti from "canvas-confetti";
+
+const PhotoShoot = dynamic(() =>
+  import("../components/photo-shoot").then((mod) => mod.PhotoShoot),
+);
+const LayoutSelection = dynamic(() =>
+  import("../components/layout-selection").then((mod) => mod.LayoutSelection),
+);
+
+const transitionVariants: Variants = {
+  initial: (direction) => ({ opacity: 0, x: direction > 0 ? 20 : -20 }),
+  animate: { opacity: 1, x: 0 },
+  exit: (direction) => ({ opacity: 0, x: direction > 0 ? -20 : 20 }),
+};
 
 export default function PhotoBoothApp() {
   const [step, setStep] = useState<"shoot" | "layout">("shoot");
@@ -31,9 +41,7 @@ export default function PhotoBoothApp() {
   const canProceedToLayout = capturedImages.length === MAX_CAPTURE;
   const canDownload = selectedIndices.length === layoutType;
 
-  const handleStepChange = () => {
-    setStep("layout");
-  };
+  const handleStepChange = () => setStep("layout");
 
   const retakePhotos = () => {
     setCapturedImages([]);
@@ -43,20 +51,18 @@ export default function PhotoBoothApp() {
   };
 
   const triggerConfetti = useCallback((duration: number = 3000) => {
-    const end = Date.now() + duration; // Default to 3 seconds
-
+    const end = Date.now() + duration;
     const colors = ["#a786ff", "#fd8bbc", "#eca184", "#f8deb1"];
 
     const frame = () => {
       if (Date.now() > end) return;
-
       confetti({
         particleCount: 2,
         angle: 60,
         spread: 55,
         startVelocity: 60,
         origin: { x: 0, y: 0.5 },
-        colors: colors,
+        colors,
       });
       confetti({
         particleCount: 2,
@@ -64,9 +70,8 @@ export default function PhotoBoothApp() {
         spread: 55,
         startVelocity: 60,
         origin: { x: 1, y: 0.5 },
-        colors: colors,
+        colors,
       });
-
       requestAnimationFrame(frame);
     };
 
@@ -78,63 +83,41 @@ export default function PhotoBoothApp() {
     setIsDownloading(true);
 
     try {
-      // Set default desired output dimensions for an 8-panel layout (2 columns x 4 rows)
-      // 8-panel composite: 1200 x 1800 pixels (assumes preview includes padding/gaps)
-      let desiredWidth = 1200; // pixels
-      let desiredHeight = 1800; // pixels
-
-      // For a 4-panel layout (vertical strip), use these dimensions
-      if (layoutType === 4) {
-        desiredWidth = 600; // pixels
-        desiredHeight = 1800; // pixels
-      }
-
-      // Get the current displayed size of the element
+      const desiredWidth = layoutType === 4 ? 600 : 1200;
+      const desiredHeight = 1800;
       const rect = previewRef.current.getBoundingClientRect();
-      const currentWidth = rect.width;
-      const currentHeight = rect.height;
+      const scaleFactor = desiredWidth / rect.width;
 
-      // Calculate the scale factor based on the desired width
-      const scaleFactor = desiredWidth / currentWidth;
+      const html2canvas = (await import("html2canvas-pro")).default;
 
-      // Render the element with html2canvas at its current size, then scale it up
       const canvas = await html2canvas(previewRef.current, {
         allowTaint: true,
         useCORS: true,
         backgroundColor: null,
-        width: currentWidth, // original width
-        height: currentHeight, // original height
-        scale: scaleFactor, // scale factor to achieve desired width
+        width: rect.width,
+        height: rect.height,
+        scale: scaleFactor,
       });
 
-      // Create a new canvas with fixed dimensions
       const forcedCanvas = document.createElement("canvas");
       forcedCanvas.width = desiredWidth;
       forcedCanvas.height = desiredHeight;
-
       const ctx = forcedCanvas.getContext("2d");
-      if (!ctx) {
-        throw new Error("Unable to get 2D context");
-      }
-
-      // Draw the generated canvas onto the new canvas,
-      // scaling it to fill the entire forced canvas area
+      if (!ctx) throw new Error("Unable to get 2D context");
       ctx.drawImage(
-        canvas, // source canvas
+        canvas,
         0,
         0,
         canvas.width,
-        canvas.height, // source rectangle (full canvas)
+        canvas.height,
         0,
         0,
         desiredWidth,
-        desiredHeight, // destination rectangle in the forced canvas
+        desiredHeight,
       );
 
       triggerConfetti();
-
-      const dataUrl = forcedCanvas.toDataURL("image/jpeg", 1.0);
-      return dataUrl;
+      return forcedCanvas.toDataURL("image/jpeg", 1.0);
     } catch (error) {
       console.error("Error generating the image:", error);
     } finally {
@@ -142,23 +125,19 @@ export default function PhotoBoothApp() {
     }
   };
 
-  // Update the uploadAndGenerateQR function to use the utility functions
   const uploadAndGenerateQR = async () => {
-    // if (checkDailyQRLimit()) {
-    //   toast("You have reached the daily limit for generating QR codes.");
-    //   return;
-    // }
-
     if (!previewRef.current || isUploading) return;
     setIsUploading(true);
     setImageUrl(null);
 
     try {
+      const html2canvas = (await import("html2canvas-pro")).default;
+
       const canvas = await html2canvas(previewRef.current, {
         allowTaint: true,
         useCORS: true,
         backgroundColor: null,
-        scale: 2,
+        scale: 1.5,
       });
 
       const fileToUpload = await new Promise<Blob>((resolve) => {
@@ -169,10 +148,7 @@ export default function PhotoBoothApp() {
 
       const secureUrl = await uploadToCloudinary(fileToUpload);
       setImageUrl(secureUrl);
-
-      // Update the QR generation count
       updateQRGenerationCount();
-
       triggerConfetti();
     } catch (error) {
       console.error("Error uploading image:", error);
@@ -184,38 +160,27 @@ export default function PhotoBoothApp() {
 
   return (
     <div className="flex min-h-[100dvh] flex-col overflow-hidden">
-      {/* <div className="absolute inset-0 bg-[radial-gradient(circle,_rgba(255,0,0,0.8)_0%,_rgba(255,0,0,0)_70%)]"></div> */}
-
       <Navbar />
-
       <StepProgress currentStep={step === "shoot" ? 1 : 2} />
-
-      <AnimatePresence mode="wait">
-        {step === "shoot" ? (
-          <motion.div
-            key="shoot"
-            className="flex-1 overflow-hidden"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: -20 }}
-            transition={{ duration: 0.4 }}
-          >
+      <AnimatePresence custom={step === "shoot" ? -1 : 1} mode="wait">
+        <motion.div
+          key={step}
+          className="flex-1 overflow-hidden"
+          custom={step === "shoot" ? -1 : 1}
+          variants={transitionVariants}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          transition={{ duration: 0.3 }}
+        >
+          {step === "shoot" ? (
             <PhotoShoot
               capturedImages={capturedImages}
               setCapturedImages={setCapturedImages}
               canProceedToLayout={canProceedToLayout}
               goToLayoutScreen={handleStepChange}
             />
-          </motion.div>
-        ) : (
-          <motion.div
-            key="layout"
-            className="flex-1 overflow-hidden"
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
-            transition={{ duration: 0.4 }}
-          >
+          ) : (
             <LayoutSelection
               capturedImages={capturedImages}
               previewRef={previewRef}
@@ -234,10 +199,9 @@ export default function PhotoBoothApp() {
               imageUrl={imageUrl}
               setImageUrl={setImageUrl}
             />
-          </motion.div>
-        )}
+          )}
+        </motion.div>
       </AnimatePresence>
-
       <Footer />
     </div>
   );

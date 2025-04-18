@@ -8,12 +8,12 @@ export function StepProgress({ currentStep }: StepProgressProps) {
   return (
     <motion.div
       className="my-4 flex items-center justify-center space-x-3"
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, delay: 0.2 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
     >
       {/* Step 1 */}
-      <motion.div
+      <div
         className={cn(
           "flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium transition-all duration-300",
           currentStep === 1
@@ -22,22 +22,22 @@ export function StepProgress({ currentStep }: StepProgressProps) {
         )}
       >
         1
-      </motion.div>
+      </div>
 
       {/* Connection line */}
-      <div className="relative h-0.5 w-12 bg-gray-200">
+      <div className="relative h-0.5 w-12 bg-gray-200 overflow-hidden rounded-full">
         <motion.div
-          className="bg-primary absolute inset-0"
-          initial={{ width: "0%" }}
+          className="absolute inset-0 bg-primary"
+          initial={false}
           animate={{
             width: currentStep === 1 ? "0%" : "100%",
           }}
-          transition={{ duration: 0.5, ease: "easeInOut" }}
+          transition={{ duration: 0.4, ease: "easeInOut" }}
         />
       </div>
 
       {/* Step 2 */}
-      <motion.div
+      <div
         className={cn(
           "flex h-6 w-6 items-center justify-center rounded-full text-xs font-medium transition-all duration-300",
           currentStep === 2
@@ -46,7 +46,7 @@ export function StepProgress({ currentStep }: StepProgressProps) {
         )}
       >
         2
-      </motion.div>
+      </div>
     </motion.div>
   );
 }

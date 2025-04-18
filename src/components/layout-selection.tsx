@@ -22,6 +22,7 @@ import { useMobile } from "@/hooks/use-mobile";
 import { usePWA } from "@/hooks/use-pwa";
 import ShareDialog from "./share-dialog";
 import DownloadDialog from "./download-dialog";
+import Image from "next/image";
 
 export function LayoutSelection({
   capturedImages,
@@ -238,7 +239,7 @@ export function LayoutSelection({
   const renderCell = (idx: number) => {
     const cellContent =
       selectedIndices[idx] !== undefined ? (
-        <img
+        <Image
           src={capturedImages[selectedIndices[idx]] || "/placeholder.svg"}
           alt={`Slot ${idx}`}
           className="h-full w-full object-cover"
@@ -277,7 +278,7 @@ export function LayoutSelection({
         (p) => p.count === layoutType,
       )?.backgroundUrl ? (
         <div className="pointer-events-none absolute inset-0 z-0">
-          <img
+          <Image
             src={
               FRAMES.find((f) => f.id === selectedFrame)?.layouts?.find(
                 (p) => p.count === layoutType,
@@ -296,7 +297,7 @@ export function LayoutSelection({
         (p) => p.count === layoutType,
       )?.overlayUrl ? (
         <div className="pointer-events-none absolute inset-0 z-20">
-          <img
+          <Image
             src={
               FRAMES.find((f) => f.id === selectedFrame)?.layouts?.find(
                 (p) => p.count === layoutType,
@@ -411,7 +412,7 @@ export function LayoutSelection({
                     )}
                     whileTap={{ scale: 0.98 }}
                   >
-                    <img
+                    <Image
                       src={img || "/placeholder.svg"}
                       alt={`Photo ${index}`}
                       className="h-full w-full object-cover"

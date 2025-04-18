@@ -46,7 +46,7 @@ export const metadata: Metadata = {
   other: {
     "apple-mobile-web-app-title": "ChinChin Booth",
     viewport:
-      "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no",
+      "width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes",
     keywords:
       "photo booth, online camera, photo strips, selfie booth, fun photo app",
   },

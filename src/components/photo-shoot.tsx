@@ -209,7 +209,7 @@ export function PhotoShoot({
         await navigator.mediaDevices.getUserMedia({ video: true });
 
         const devices = await navigator.mediaDevices.enumerateDevices();
-        console.log("🚀 ~ initializeCameras ~ devices:", devices);
+
         const videoDevices = devices.filter(
           (device) => device.kind === "videoinput",
         );
@@ -667,7 +667,14 @@ export function PhotoShoot({
                   isMirrored ? "-scale-x-100" : "",
                 )}
                 style={{ filter: generateFilterStyle(currentFilter) }}
-              />
+              >
+                <track
+                  kind="captions"
+                  src=""
+                  label="Live camera (no captions)"
+                  default
+                />
+              </video>
 
               {/* Camera controls overlay */}
               <div className="absolute top-4 left-4 flex items-center gap-2">
@@ -678,7 +685,14 @@ export function PhotoShoot({
                       asChild
                       disabled={selectCameraDisabled}
                     >
-                      <Button className="flex items-center gap-1 rounded-lg bg-black/50 p-2 text-white hover:bg-black/70">
+                      <Button
+                        aria-label={
+                          cameras[currentCameraIndex]
+                            ? formatCameraLabel(cameras[currentCameraIndex])
+                            : "Select Camera"
+                        }
+                        className="flex items-center gap-1 rounded-lg bg-black/50 p-2 text-white hover:bg-black/70"
+                      >
                         {cameras[currentCameraIndex] &&
                           getCameraIcon(cameras[currentCameraIndex].type)}
                         <span className="hidden text-xs font-medium sm:inline">
