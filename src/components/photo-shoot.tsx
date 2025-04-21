@@ -667,14 +667,7 @@ export function PhotoShoot({
                   isMirrored ? "-scale-x-100" : "",
                 )}
                 style={{ filter: generateFilterStyle(currentFilter) }}
-              >
-                <track
-                  kind="captions"
-                  src=""
-                  label="Live camera (no captions)"
-                  default
-                />
-              </video>
+              />
 
               {/* Camera controls overlay */}
               <div className="absolute top-4 left-4 flex items-center gap-2">
