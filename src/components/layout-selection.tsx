@@ -22,7 +22,6 @@ import { useMobile } from "@/hooks/use-mobile";
 import { usePWA } from "@/hooks/use-pwa";
 import ShareDialog from "./share-dialog";
 import DownloadDialog from "./download-dialog";
-import Image from "next/image";
 
 export function LayoutSelection({
   capturedImages,
@@ -42,6 +41,7 @@ export function LayoutSelection({
   imageUrl,
   setImageUrl,
 }: LayoutSelectionProps) {
+  console.log("🚀 ~ imageUrl:", imageUrl);
   const isMobile = useMobile();
   const isPWA = usePWA();
   const [frameColor, setFrameColor] = useState<string>("#FFFFFF");
@@ -239,7 +239,7 @@ export function LayoutSelection({
   const renderCell = (idx: number) => {
     const cellContent =
       selectedIndices[idx] !== undefined ? (
-        <Image
+        <img
           src={capturedImages[selectedIndices[idx]] || "/placeholder.svg"}
           alt={`Slot ${idx}`}
           className="h-full w-full object-cover"
@@ -278,7 +278,7 @@ export function LayoutSelection({
         (p) => p.count === layoutType,
       )?.backgroundUrl ? (
         <div className="pointer-events-none absolute inset-0 z-0">
-          <Image
+          <img
             src={
               FRAMES.find((f) => f.id === selectedFrame)?.layouts?.find(
                 (p) => p.count === layoutType,
@@ -297,7 +297,7 @@ export function LayoutSelection({
         (p) => p.count === layoutType,
       )?.overlayUrl ? (
         <div className="pointer-events-none absolute inset-0 z-20">
-          <Image
+          <img
             src={
               FRAMES.find((f) => f.id === selectedFrame)?.layouts?.find(
                 (p) => p.count === layoutType,
@@ -412,7 +412,7 @@ export function LayoutSelection({
                     )}
                     whileTap={{ scale: 0.98 }}
                   >
-                    <Image
+                    <img
                       src={img || "/placeholder.svg"}
                       alt={`Photo ${index}`}
                       className="h-full w-full object-cover"
@@ -695,7 +695,6 @@ export function LayoutSelection({
         open={showShareDialog}
         onOpenChange={setShowShareDialog}
         imageUrl={imageUrl}
-        imageDataUrl={imageDataUrl}
         copied={copied}
         copyToClipboard={copyToClipboard}
         shareUrl={shareUrl}

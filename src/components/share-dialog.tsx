@@ -15,7 +15,6 @@ interface ShareDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   imageUrl: string | null;
-  imageDataUrl: string | null;
   copied: boolean;
   copyToClipboard: () => void;
   shareUrl: () => void;
@@ -25,7 +24,6 @@ export default function ShareDialog({
   open,
   onOpenChange,
   imageUrl,
-  imageDataUrl,
   copied,
   copyToClipboard,
   shareUrl,
@@ -72,9 +70,7 @@ export default function ShareDialog({
           <Button
             variant="outline"
             onClick={
-              imageDataUrl
-                ? () => window.open(imageDataUrl, "_blank")
-                : undefined
+              imageUrl ? () => window.open(imageUrl, "_blank") : undefined
             }
           >
             <Download className="mr-1 h-3 w-3" />
