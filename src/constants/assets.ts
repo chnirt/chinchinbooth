@@ -11,6 +11,22 @@ export const FRAMES: Frame[] = [
     ],
   },
   {
+    id: "hoa-binh",
+    name: "Hoa Binh",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/hoa-binh/4/overlay.png",
+        backgroundUrl: "/hoa-binh/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/hoa-binh/8/overlay.png",
+        backgroundUrl: "/hoa-binh/8/bg.png",
+      },
+    ],
+  },
+  {
     id: "vietnam",
     name: "Vietnam",
     layouts: [
