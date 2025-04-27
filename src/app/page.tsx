@@ -133,11 +133,13 @@ export default function PhotoBoothApp() {
     try {
       const html2canvas = (await import("html2canvas-pro")).default;
 
+      const scaleValue = 2;
+
       const canvas = await html2canvas(previewRef.current, {
         allowTaint: true,
         useCORS: true,
         backgroundColor: null,
-        scale: 1.5,
+        scale: scaleValue,
       });
 
       const fileToUpload = await new Promise<Blob>((resolve) => {
