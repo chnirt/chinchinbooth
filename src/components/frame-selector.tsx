@@ -68,7 +68,7 @@ export function FrameSelector({
               disabled={isLoading}
               whileTap={{ scale: 0.95 }}
               className={cn(
-                "relative flex h-16 w-full flex-col items-center justify-center rounded-md border-2 transition-all",
+                "relative flex h-10 w-full flex-col items-center justify-center rounded-md border-2 transition-all",
                 isSelected ? "border-primary shadow-sm" : "border-gray-200",
                 isLoading && "opacity-50",
               )}
