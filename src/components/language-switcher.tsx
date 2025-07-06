@@ -14,6 +14,7 @@ function getFlagEmoji(locale: SupportedLocale): string {
     vi: "🇻🇳",
     km: "🇰🇭",
     th: "🇹🇭",
+    id: "🇮🇩",
   };
   return flags[locale] || "";
 }
@@ -21,10 +22,5 @@ function getFlagEmoji(locale: SupportedLocale): string {
 export default function LocaleSwitcher() {
   const locale = useLocale() as SupportedLocale;
 
-  return (
-    <LocaleSwitcherSelect
-      defaultValue={locale}
-      items={LOCALE_OPTIONS}
-    />
-  );
+  return <LocaleSwitcherSelect defaultValue={locale} items={LOCALE_OPTIONS} />;
 }

@@ -11,6 +11,38 @@ export const FRAMES: Frame[] = [
     ],
   },
   {
+    id: "hello-thailand",
+    name: "Hello Thailand",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/hello-thailand/4/overlay.png",
+        backgroundUrl: "/hello-thailand/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/hello-thailand/8/overlay.png",
+        backgroundUrl: "/hello-thailand/8/bg.png",
+      },
+    ],
+  },
+  {
+    id: "permission-to-dance",
+    name: "Permission To Dance",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/permission-to-dance/4/overlay.png",
+        backgroundUrl: "/permission-to-dance/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/permission-to-dance/8/overlay.png",
+        backgroundUrl: "/permission-to-dance/8/bg.png",
+      },
+    ],
+  },
+  {
     id: "hoa-binh",
     name: "Hoa Binh",
     layouts: [
