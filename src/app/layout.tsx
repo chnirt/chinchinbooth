@@ -49,6 +49,7 @@ export const metadata: Metadata = {
       "width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes",
     keywords:
       "photo booth, online camera, photo strips, selfie booth, fun photo app",
+    "google-site-verification": "CmR9FlhehVglX9dkwNSyFEp4f62ytM9PzxcFwkhfyIU",
   },
 };
 
