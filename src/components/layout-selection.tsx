@@ -41,13 +41,12 @@ export function LayoutSelection({
   imageUrl,
   setImageUrl,
 }: LayoutSelectionProps) {
-  console.log("🚀 ~ imageUrl:", imageUrl);
   const isMobile = useMobile();
   const isPWA = usePWA();
-  const [frameColor, setFrameColor] = useState<string>("#FFFFFF");
+  const [frameColor, setFrameColor] = useState<string | null>("#FFFFFF");
   const [selectedGradient, setSelectedGradient] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<"solid" | "gradient" | "frames">(
-    "solid",
+    "frames",
   );
   const [copied, setCopied] = useState(false);
   const [imageDataUrl, setImageDataUrl] = useState<string | null>(null);
@@ -114,16 +113,29 @@ export function LayoutSelection({
       setFrameColor(color);
       setSelectedGradient(null);
       setImageUrl(null);
+      setSelectedFrame(null);
     },
-    [setImageUrl],
+    [setImageUrl, setSelectedFrame],
   );
 
   const handleGradientChange = useCallback(
     (gradient: string) => {
+      setFrameColor(null);
       setSelectedGradient(gradient);
       setImageUrl(null);
+      setSelectedFrame(null);
     },
-    [setImageUrl],
+    [setImageUrl, setSelectedFrame],
+  );
+
+  const handleFrameChange = useCallback(
+    (frameId: string | null) => {
+      setFrameColor(null);
+      setSelectedGradient(null);
+      setImageUrl(null);
+      setSelectedFrame(frameId);
+    },
+    [setImageUrl, setSelectedFrame],
   );
 
   const copyToClipboard = useCallback(async () => {
@@ -311,7 +323,7 @@ export function LayoutSelection({
 
     const backgroundStyle = selectedGradient
       ? { background: selectedGradient }
-      : { backgroundColor: frameColor };
+      : { backgroundColor: frameColor || "#FFFFFF" };
 
     if (layoutType === 4) {
       return (
@@ -451,6 +463,21 @@ export function LayoutSelection({
             >
               <div className="mb-3 flex border-b border-gray-200">
                 <button
+                  onClick={() => setActiveTab("frames")}
+                  className={cn(
+                    "px-4 py-2 text-sm font-medium transition-colors",
+                    activeTab === "frames"
+                      ? "border-primary text-primary border-b-2"
+                      : "hover:text-primary text-gray-500",
+                  )}
+                >
+                  <SparklesText
+                    text={t("frames")}
+                    className="text-sm font-medium"
+                    colors={{ first: "#EE6983", second: "#850E35" }}
+                  />
+                </button>
+                <button
                   onClick={() => setActiveTab("solid")}
                   className={cn(
                     "px-4 py-2 text-sm font-medium transition-colors",
@@ -471,20 +498,6 @@ export function LayoutSelection({
                   )}
                 >
                   {t("gradients")}
-                </button>
-                <button
-                  onClick={() => setActiveTab("frames")}
-                  className={cn(
-                    "px-4 py-2 text-sm font-medium transition-colors",
-                    activeTab === "frames"
-                      ? "border-primary text-primary border-b-2"
-                      : "hover:text-primary text-gray-500",
-                  )}
-                >
-                  <SparklesText
-                    text={t("frames")}
-                    className="text-sm font-medium"
-                  />
                 </button>
               </div>
             </motion.div>
@@ -555,7 +568,7 @@ export function LayoutSelection({
               {activeTab === "frames" && (
                 <FrameSelector
                   selectedFrame={selectedFrame}
-                  setSelectedFrame={setSelectedFrame}
+                  setSelectedFrame={handleFrameChange}
                   setImageUrl={setImageUrl || (() => {})}
                 />
               )}
@@ -567,7 +580,7 @@ export function LayoutSelection({
                 {/* Color Picker */}
                 <input
                   type="color"
-                  value={frameColor}
+                  value={frameColor ?? "#FFFFFF"}
                   onChange={(e) => handleColorChange(e.target.value)}
                   className="h-6 w-6 cursor-pointer"
                   title="Pick a color"
@@ -578,14 +591,16 @@ export function LayoutSelection({
                   style={
                     selectedGradient
                       ? { background: selectedGradient }
-                      : { backgroundColor: frameColor }
+                      : { backgroundColor: frameColor || "#FFFFFF" }
                   }
                 ></div>
 
                 <span className="text-xs text-gray-700">
                   {selectedGradient
                     ? `Gradient: ${GRADIENT_PRESETS.find((g) => g.value === selectedGradient)?.name || "Custom"}`
-                    : `Color: ${frameColor}`}
+                    : frameColor
+                      ? `Color: ${frameColor}`
+                      : null}
                 </span>
               </div>
             )}
