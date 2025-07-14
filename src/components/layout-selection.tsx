@@ -474,7 +474,7 @@ export function LayoutSelection({
                   <SparklesText
                     text={t("frames")}
                     className="text-sm font-medium"
-                    colors={{ first: "#EE6983", second: "#850E35" }}
+                    colors={{ first: "#FFAAAA", second: "#FF7777" }}
                   />
                 </button>
                 <button

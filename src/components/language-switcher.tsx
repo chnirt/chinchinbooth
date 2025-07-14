@@ -15,6 +15,7 @@ function getFlagEmoji(locale: SupportedLocale): string {
     km: "🇰🇭",
     th: "🇹🇭",
     id: "🇮🇩",
+    tl: "🇵🇭",
   };
   return flags[locale] || "";
 }
