@@ -11,6 +11,70 @@ export const FRAMES: Frame[] = [
     ],
   },
   {
+    id: "relax",
+    name: "Relax",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/relax/4/overlay.png",
+        backgroundUrl: "/relax/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/relax/8/overlay.png",
+        backgroundUrl: "/relax/8/bg.png",
+      },
+    ],
+  },
+  {
+    id: "letter",
+    name: "Letter",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/letter/4/overlay.png",
+        backgroundUrl: "/letter/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/letter/8/overlay.png",
+        backgroundUrl: "/letter/8/bg.png",
+      },
+    ],
+  },
+  {
+    id: "fancy",
+    name: "Fancy",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/fancy/4/overlay.png",
+        backgroundUrl: "/fancy/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/fancy/8/overlay.png",
+        backgroundUrl: "/fancy/8/bg.png",
+      },
+    ],
+  },
+  {
+    id: "connect",
+    name: "Connect",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/connect/4/overlay.png",
+        backgroundUrl: "/connect/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/connect/8/overlay.png",
+        backgroundUrl: "/connect/8/bg.png",
+      },
+    ],
+  },
+  {
     id: "hello-thailand",
     name: "Hello Thailand",
     layouts: [
