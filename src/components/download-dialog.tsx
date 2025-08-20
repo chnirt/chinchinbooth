@@ -6,10 +6,10 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
+import { useEffect, useRef } from "react";
 
 interface DownloadDialogProps {
   open: boolean;
@@ -25,6 +25,27 @@ export default function DownloadDialog({
   layoutType = 4,
 }: DownloadDialogProps) {
   const t = useTranslations("HomePage");
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      const scrollDownTimer = setTimeout(() => {
+        if (scrollAreaRef.current) {
+          scrollAreaRef.current.scrollTo({ top: 100, behavior: "smooth" });
+        }
+      }, 500);
+      const scrollUpTimer = setTimeout(() => {
+        if (scrollAreaRef.current) {
+          scrollAreaRef.current.scrollTo({ top: 0, behavior: "smooth" });
+        }
+      }, 2000);
+
+      return () => {
+        clearTimeout(scrollDownTimer);
+        clearTimeout(scrollUpTimer);
+      };
+    });
+  }, [open]);
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -35,7 +56,10 @@ export default function DownloadDialog({
           </DialogHeader>
         </div>
 
-        <ScrollArea className="max-h-[80vh] md:max-h-[90vh]">
+        <div
+          ref={scrollAreaRef}
+          className="max-h-[75vh] overflow-hidden overflow-y-scroll md:max-h-[85vh]"
+        >
           <div className="space-y-6 px-6 py-5">
             <img
               src={imageDataUrl || ""}
@@ -56,7 +80,7 @@ export default function DownloadDialog({
               </ol>
             </div>
           </div>
-        </ScrollArea>
+        </div>
 
         <DialogFooter className="rounded-b-xl border-t bg-gray-50 px-6 py-4">
           <Button onClick={() => onOpenChange(false)}>

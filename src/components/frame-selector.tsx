@@ -91,7 +91,35 @@ export function FrameSelector({
       <div className="flex gap-2 overflow-x-auto px-1 py-2">
         {FRAMES.map(({ id, name, layouts }) => {
           const isSelected = selectedFrame === id;
-          const currentLayout = layouts[0];
+
+          // Frame background
+          const frameBackground = layouts?.find((p) => p.count === layoutType)
+            ?.backgroundUrl ? (
+            <div className="pointer-events-none absolute inset-0 z-0">
+              <img
+                src={
+                  layouts?.find((p) => p.count === layoutType)?.backgroundUrl ||
+                  ""
+                }
+                alt="Frame Background"
+                className="h-full w-full object-contain"
+              />
+            </div>
+          ) : null;
+
+          // Frame overlay
+          const frameOverlay = layouts?.find((p) => p.count === layoutType)
+            ?.overlayUrl ? (
+            <div className="pointer-events-none absolute inset-0 z-20">
+              <img
+                src={
+                  layouts?.find((p) => p.count === layoutType)?.overlayUrl || ""
+                }
+                alt="Frame Overlay"
+                className="h-full w-full object-contain"
+              />
+            </div>
+          ) : null;
 
           return (
             <motion.button
@@ -101,29 +129,16 @@ export function FrameSelector({
               whileTap={{ scale: 0.95 }}
               initial={false}
               className={cn(
-                "relative flex min-w-[80px] flex-col items-center justify-center overflow-hidden rounded-md border-2 bg-white transition-all",
+                "relative flex flex-col items-center justify-center overflow-hidden rounded-md border-2 bg-white transition-all",
                 isSelected ? "border-primary shadow-sm" : "border-gray-200",
                 isLoading && "opacity-50",
                 layoutType === 4
-                  ? "aspect-[1/3]"
-                  : "aspect-[2/3] min-w-[160px]",
+                  ? "aspect-[1/3] min-w-1/4"
+                  : "aspect-[2/3] min-w-1/3",
               )}
             >
-              <img
-                src={currentLayout.backgroundUrl || "/frame.png"}
-                alt={`${name} background`}
-                className="absolute inset-0 h-full w-full object-cover"
-                loading="lazy"
-                decoding="async"
-              />
-
-              <img
-                src={currentLayout.overlayUrl || "/frame.png"}
-                alt={`${name} overlay`}
-                className="pointer-events-none absolute inset-0 h-full w-full object-contain"
-                loading="lazy"
-                decoding="async"
-              />
+              {frameBackground}
+              {frameOverlay}
 
               {isSelected && (
                 <div className="absolute top-1 right-1 z-20 rounded-full border border-gray-200 bg-white p-0.5">
