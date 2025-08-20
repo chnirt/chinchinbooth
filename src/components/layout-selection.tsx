@@ -570,6 +570,7 @@ export function LayoutSelection({
                   selectedFrame={selectedFrame}
                   setSelectedFrame={handleFrameChange}
                   setImageUrl={setImageUrl || (() => {})}
+                  layoutType={layoutType}
                 />
               )}
             </div>
