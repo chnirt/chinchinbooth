@@ -91,9 +91,7 @@ export function FrameSelector({
       <div className="flex gap-2 overflow-x-auto px-1 py-2">
         {FRAMES.map(({ id, name, layouts }) => {
           const isSelected = selectedFrame === id;
-          const currentLayout = layouts?.find(
-            (layout) => layout.count === layoutType,
-          );
+          const currentLayout = layouts[0];
 
           return (
             <motion.button
@@ -111,25 +109,21 @@ export function FrameSelector({
                   : "aspect-[2/3] min-w-[160px]",
               )}
             >
-              {currentLayout?.backgroundUrl && (
-                <img
-                  src={currentLayout.backgroundUrl}
-                  alt={`${name} background`}
-                  className="absolute inset-0 h-full w-full object-cover"
-                  loading="lazy"
-                  decoding="async"
-                />
-              )}
+              <img
+                src={currentLayout.backgroundUrl || "/frame.png"}
+                alt={`${name} background`}
+                className="absolute inset-0 h-full w-full object-cover"
+                loading="lazy"
+                decoding="async"
+              />
 
-              {currentLayout?.overlayUrl && (
-                <img
-                  src={currentLayout.overlayUrl}
-                  alt={`${name} overlay`}
-                  className="pointer-events-none absolute inset-0 h-full w-full object-contain"
-                  loading="lazy"
-                  decoding="async"
-                />
-              )}
+              <img
+                src={currentLayout.overlayUrl || "/frame.png"}
+                alt={`${name} overlay`}
+                className="pointer-events-none absolute inset-0 h-full w-full object-contain"
+                loading="lazy"
+                decoding="async"
+              />
 
               {isSelected && (
                 <div className="absolute top-1 right-1 z-20 rounded-full border border-gray-200 bg-white p-0.5">
