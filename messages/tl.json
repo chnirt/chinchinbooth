@@ -22,6 +22,7 @@
     "download": "I-download",
     "select_more": "Pumili pa ng {count} larawan",
     "empty": "Walang laman",
+    "select_photo": "Pumili ng larawan",
     "select_prompt": "Pumili ng {count} larawan ({selectedCount}/{count})",
     "stickers": "Sticker",
     "sticker_tips": "Mga tip sa sticker",

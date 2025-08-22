@@ -9,6 +9,7 @@ import {
   Check,
   GripHorizontal,
   Smartphone,
+  ImagePlus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -22,6 +23,7 @@ import { useMobile } from "@/hooks/use-mobile";
 import { usePWA } from "@/hooks/use-pwa";
 import ShareDialog from "./share-dialog";
 import DownloadDialog from "./download-dialog";
+import { PhotoDrawer } from "./photo-drawer";
 
 export function LayoutSelection({
   capturedImages,
@@ -52,6 +54,7 @@ export function LayoutSelection({
   const [imageDataUrl, setImageDataUrl] = useState<string | null>(null);
   const [showShareDialog, setShowShareDialog] = useState(false);
   const [showDownloadDialog, setShowDownloadDialog] = useState(false);
+  const [showPhotoDrawer, setShowPhotoDrawer] = useState(false);
 
   const t = useTranslations("HomePage");
 
@@ -258,7 +261,11 @@ export function LayoutSelection({
         />
       ) : (
         <div className="flex h-full w-full flex-col items-center justify-center text-gray-400">
-          <span className="text-xs">Empty</span>
+          {!isMobile ? (
+            <span className="text-xs">Empty</span>
+          ) : (
+            <ImagePlus className="h-4 w-4" />
+          )}
         </div>
       );
 
@@ -267,15 +274,20 @@ export function LayoutSelection({
     const emptyClass = "border-dashed border-gray-200 bg-gray-50/50";
 
     return (
-      <div
+      <button
         key={idx}
-        className={cn(
-          baseClass,
-          selectedIndices[idx] === undefined && emptyClass,
-        )}
+        onClick={() => setShowPhotoDrawer(true)}
+        disabled={!isMobile}
       >
-        {cellContent}
-      </div>
+        <div
+          className={cn(
+            baseClass,
+            selectedIndices[idx] === undefined && emptyClass,
+          )}
+        >
+          {cellContent}
+        </div>
+      </button>
     );
   };
 
@@ -402,41 +414,43 @@ export function LayoutSelection({
               </Button>
             </div>
 
-            <p className="mb-2 text-xs text-gray-600">
-              {t("select_prompt", {
-                count: layoutType,
-                selectedCount: selectedIndices.length,
-              })}
-            </p>
+            <div className="hidden md:flex md:flex-col">
+              <p className="mb-2 text-xs text-gray-600">
+                {t("select_prompt", {
+                  count: layoutType,
+                  selectedCount: selectedIndices.length,
+                })}
+              </p>
 
-            <div className="grid grid-cols-2 gap-2 rounded-lg border border-gray-200 bg-white p-2 sm:grid-cols-3">
-              {capturedImages.map((img, index) => {
-                const isSelected = selectedIndices.includes(index);
-                const selectionIndex = selectedIndices.indexOf(index) + 1;
+              <div className="grid grid-cols-2 gap-2 rounded-lg border border-gray-200 bg-white p-2 sm:grid-cols-3">
+                {capturedImages.map((img, index) => {
+                  const isSelected = selectedIndices.includes(index);
+                  const selectionIndex = selectedIndices.indexOf(index) + 1;
 
-                return (
-                  <motion.div
-                    key={index}
-                    onClick={() => toggleSelect(index)}
-                    className={cn(
-                      "relative aspect-[4/3] cursor-pointer overflow-hidden rounded-lg border-2 transition-all duration-200",
-                      isSelected ? "border-primary z-10" : "border-gray-200",
-                    )}
-                    whileTap={{ scale: 0.98 }}
-                  >
-                    <img
-                      src={img || "/placeholder.svg"}
-                      alt={`Photo ${index}`}
-                      className="h-full w-full object-cover"
-                    />
-                    {isSelected && (
-                      <div className="bg-primary text-primary-foreground absolute top-1 right-1 flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold">
-                        {selectionIndex}
-                      </div>
-                    )}
-                  </motion.div>
-                );
-              })}
+                  return (
+                    <motion.div
+                      key={index}
+                      onClick={() => toggleSelect(index)}
+                      className={cn(
+                        "relative aspect-[4/3] cursor-pointer overflow-hidden rounded-lg border-2 transition-all duration-200",
+                        isSelected ? "border-primary z-10" : "border-gray-200",
+                      )}
+                      whileTap={{ scale: 0.98 }}
+                    >
+                      <img
+                        src={img || "/placeholder.svg"}
+                        alt={`Photo ${index}`}
+                        className="h-full w-full object-cover"
+                      />
+                      {isSelected && (
+                        <div className="bg-primary text-primary-foreground absolute top-1 right-1 flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold">
+                          {selectionIndex}
+                        </div>
+                      )}
+                    </motion.div>
+                  );
+                })}
+              </div>
             </div>
           </motion.div>
 
@@ -714,6 +728,15 @@ export function LayoutSelection({
         copied={copied}
         copyToClipboard={copyToClipboard}
         shareUrl={shareUrl}
+      />
+
+      <PhotoDrawer
+        open={showPhotoDrawer}
+        onOpenChange={setShowPhotoDrawer}
+        layoutType={layoutType}
+        capturedImages={capturedImages}
+        selectedIndices={selectedIndices}
+        toggleSelect={toggleSelect}
       />
     </div>
   );

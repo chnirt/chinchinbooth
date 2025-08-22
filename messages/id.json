@@ -22,6 +22,7 @@
     "download": "Unduh",
     "select_more": "Pilih {count} foto lagi",
     "empty": "Kosong",
+    "select_photo": "Pilih foto",
     "select_prompt": "Pilih {count} foto ({selectedCount}/{count})",
     "stickers": "Stiker",
     "sticker_tips": "Tips Menggunakan Stiker",

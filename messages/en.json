@@ -22,6 +22,7 @@
     "download": "Download",
     "select_more": "Select {count} more photos",
     "empty": "Empty",
+    "select_photo": "Select photo",
     "select_prompt": "Select {count} photos ({selectedCount}/{count})",
     "stickers": "Stickers",
     "sticker_tips": "Sticker Tips",

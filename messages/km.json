@@ -22,6 +22,7 @@
     "download": "ទាញយក",
     "select_more": "ជ្រើសរើស {count} រូបភាពទៀត",
     "empty": "ទទេ",
+    "select_photo": "ជ្រើសរើសរូបភាព",
     "select_prompt": "ជ្រើសរើស {count} រូបភាព ({selectedCount}/{count})",
     "stickers": "ស្ទីកគ័រ",
     "sticker_tips": "គន្លឹះអំពីស្ទីកគ័រ",

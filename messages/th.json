@@ -22,6 +22,7 @@
     "download": "ดาวน์โหลด",
     "select_more": "เลือกอีก {count} ภาพ",
     "empty": "ว่างเปล่า",
+    "select_photo": "เลือกภาพถ่าย",
     "select_prompt": "เลือก {count} ภาพ ({selectedCount}/{count})",
     "stickers": "สติกเกอร์",
     "sticker_tips": "เคล็ดลับสติกเกอร์",

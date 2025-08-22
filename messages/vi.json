@@ -22,6 +22,7 @@
     "download": "Tải xuống",
     "select_more": "Chọn thêm {count} ảnh",
     "empty": "Trống",
+    "select_photo": "Chọn ảnh",
     "select_prompt": "Chọn {count} ảnh ({selectedCount}/{count})",
     "stickers": "Sticker",
     "sticker_tips": "Mẹo sử dụng sticker",
