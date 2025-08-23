@@ -10,6 +10,102 @@ export const FRAMES: Frame[] = [
       { count: 8, overlayUrl: null, backgroundUrl: null },
     ],
   },
+   {
+    id: "retro-spark",
+    name: "Retro Spark",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/retro-spark/4/overlay.png",
+        backgroundUrl: "/retro-spark/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/retro-spark/8/overlay.png",
+        backgroundUrl: "/retro-spark/8/bg.png",
+      },
+    ],
+  },
+  {
+    id: "true-love",
+    name: "True Love",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/true-love/4/overlay.png",
+        backgroundUrl: "/true-love/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/true-love/8/overlay.png",
+        backgroundUrl: "/true-love/8/bg.png",
+      },
+    ],
+  },
+  {
+    id: "bunny",
+    name: "Bunny",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/bunny/4/overlay.png",
+        backgroundUrl: "/bunny/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/bunny/8/overlay.png",
+        backgroundUrl: "/bunny/8/bg.png",
+      },
+    ],
+  },
+  {
+    id: "mario",
+    name: "Mario",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/mario/4/overlay.png",
+        backgroundUrl: "/mario/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/mario/8/overlay.png",
+        backgroundUrl: "/mario/8/bg.png",
+      },
+    ],
+  },
+  {
+    id: "bloomy",
+    name: "Bloomy",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/bloomy/4/overlay.png",
+        backgroundUrl: "/bloomy/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/bloomy/8/overlay.png",
+        backgroundUrl: "/bloomy/8/bg.png",
+      },
+    ],
+  },
+  {
+    id: "wavy-star",
+    name: "Wavy Star",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/wavy-star/4/overlay.png",
+        backgroundUrl: "/wavy-star/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/wavy-star/8/overlay.png",
+        backgroundUrl: "/wavy-star/8/bg.png",
+      },
+    ],
+  },
   {
     id: "relax",
     name: "Relax",
