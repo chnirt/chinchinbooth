@@ -3,7 +3,7 @@
 import { useState, useRef, useCallback } from "react";
 import { motion, AnimatePresence, Variants } from "framer-motion";
 import { Navbar } from "@/components/navbar";
-import { StepProgress } from "@/components/step-progress";
+// import { StepProgress } from "@/components/step-progress";
 import dynamic from "next/dynamic";
 import { MAX_CAPTURE } from "@/constants";
 import {
@@ -163,7 +163,7 @@ export default function PhotoBoothApp() {
   return (
     <div className="flex min-h-[100dvh] flex-col overflow-hidden">
       <Navbar />
-      <StepProgress currentStep={step === "shoot" ? 1 : 2} />
+      {/* <StepProgress currentStep={step === "shoot" ? 1 : 2} /> */}
       <AnimatePresence custom={step === "shoot" ? -1 : 1} mode="wait">
         <motion.div
           key={step}
