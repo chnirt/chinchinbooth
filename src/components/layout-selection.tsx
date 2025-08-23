@@ -276,17 +276,14 @@ export function LayoutSelection({
     return (
       <button
         key={idx}
+        className={cn(
+          baseClass,
+          selectedIndices[idx] === undefined && emptyClass,
+        )}
         onClick={() => setShowPhotoDrawer(true)}
         disabled={!isMobile}
       >
-        <div
-          className={cn(
-            baseClass,
-            selectedIndices[idx] === undefined && emptyClass,
-          )}
-        >
-          {cellContent}
-        </div>
+        {cellContent}
       </button>
     );
   };
