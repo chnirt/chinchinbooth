@@ -32,6 +32,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useMobile } from "@/hooks/use-mobile";
 import "context-filter-polyfill";
+import UploadPhotoButton from "./upload-photo-button";
 
 // Camera type enum
 enum CameraType {
@@ -425,6 +426,11 @@ export function PhotoShoot({
     setCapturedImages,
   ]);
 
+  const uploadDisabled =
+    !isCameraStarted ||
+    isCapturing ||
+    countdown !== null ||
+    isAutoSequenceActive;
   // Create disable variable for Undo button
   const undoDisabled =
     !capturedImages.length || isAutoSequenceActive || countdown !== null;
@@ -640,6 +646,12 @@ export function PhotoShoot({
     }
   }, [canProceedToLayout, countdown, isAutoSequenceActive, isCameraStarted]);
 
+  const handleImageUpload = (imageData: string | ArrayBuffer | null) => {
+    if (typeof imageData === "string") {
+      setCapturedImages((prev) => [...prev, imageData]);
+    }
+  };
+
   // Update the UI with the rose-teal color scheme
   return (
     <div className="mx-auto flex max-w-xl flex-col items-center space-y-4 p-3 select-none">
@@ -789,6 +801,11 @@ export function PhotoShoot({
         <div className="flex w-full items-center justify-center gap-3">
           {/* Left side controls */}
           <div className="flex items-center gap-2">
+            <UploadPhotoButton
+              onImageUpload={handleImageUpload}
+              disabled={uploadDisabled}
+            />
+
             <Button
               onClick={undoCapture}
               disabled={undoDisabled}
