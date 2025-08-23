@@ -7,7 +7,7 @@ import {
   Download,
   RefreshCw,
   Check,
-  // GripHorizontal,
+  GripHorizontal,
   Smartphone,
   ImagePlus,
 } from "lucide-react";
@@ -356,7 +356,7 @@ export function LayoutSelection({
     }
 
     return (
-      <div className={cn(commonClasses, "relative")}>
+      <div className={cn("relative", commonClasses)}>
         <div
           ref={previewRef}
           className="flex aspect-[2/3] flex-col gap-[calc(2.5%*3/2)] p-[5%]"
@@ -432,10 +432,10 @@ export function LayoutSelection({
                       key={index}
                       onClick={() => toggleSelect(index)}
                       className={cn(
-                        "relative aspect-[4/3] cursor-pointer overflow-hidden rounded-lg border-2 transition-all duration-200",
+                        "relative aspect-[4/3] flex-1 cursor-pointer overflow-hidden rounded-lg border-2 transition-all duration-200",
                         isSelected ? "border-primary z-10" : "border-gray-200",
                       )}
-                      whileTap={{ scale: 0.98 }}
+                      // whileTap={{ scale: 0.98 }}
                     >
                       <img
                         src={img || "/placeholder.svg"}
@@ -636,7 +636,7 @@ export function LayoutSelection({
           </div>
 
           {/* Preview tips */}
-          {/* <div className="mt-3 rounded-md bg-gray-50 p-3">
+          <div className="mt-3 hidden rounded-md bg-gray-50 p-3 md:flex">
             <div className="flex items-start gap-2">
               <GripHorizontal className="mt-0.5 h-4 w-4 text-gray-500" />
               <div>
@@ -648,7 +648,7 @@ export function LayoutSelection({
                 </p>
               </div>
             </div>
-          </div> */}
+          </div>
         </motion.div>
       </div>
 

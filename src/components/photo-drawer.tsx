@@ -46,8 +46,8 @@ export function PhotoDrawer({
           </DrawerDescription>
         </DrawerHeader>
 
-        <div className="px-4 pb-4">
-          <div className="grid grid-cols-2 gap-2 rounded-lg border border-gray-200 bg-white p-2 sm:grid-cols-3 overflow-y-auto max-h-80">
+        <div className="overflow-y-auto px-4 pb-4">
+          <div className="grid grid-cols-2 gap-2 bg-white p-2 sm:grid-cols-3">
             {capturedImages.map((img, index) => {
               const isSelected = selectedIndices.includes(index);
               const selectionIndex = selectedIndices.indexOf(index) + 1;

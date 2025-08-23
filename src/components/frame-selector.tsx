@@ -129,8 +129,8 @@ export function FrameSelector({
               whileTap={{ scale: 0.95 }}
               initial={false}
               className={cn(
-                "relative flex flex-col items-center justify-center overflow-hidden rounded-md border-2 bg-white transition-all",
-                isSelected ? "border-primary shadow-sm" : "border-gray-200",
+                "relative flex flex-col items-center justify-center overflow-hidden rounded-md ring-2 bg-white transition-all",
+                isSelected ? "ring-primary shadow-sm" : "ring-gray-200",
                 isLoading && "opacity-50",
                 layoutType === 4
                   ? "aspect-[1/3] min-w-1/4"
