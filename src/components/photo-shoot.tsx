@@ -86,7 +86,7 @@ export function PhotoShoot({
   const [currentCameraIndex, setCurrentCameraIndex] = useState(0);
 
   // Add a new state variable for filter gallery visibility after the other state declarations
-  const [showFilters, setShowFilters] = useState(true);
+  const [showFilters, setShowFilters] = useState(!true);
 
   const t = useTranslations("HomePage");
 
@@ -430,7 +430,8 @@ export function PhotoShoot({
     !isCameraStarted ||
     isCapturing ||
     countdown !== null ||
-    isAutoSequenceActive;
+    isAutoSequenceActive ||
+    isMaxCaptureReached;
   // Create disable variable for Undo button
   const undoDisabled =
     !capturedImages.length || isAutoSequenceActive || countdown !== null;
