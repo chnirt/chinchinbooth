@@ -88,67 +88,69 @@ export function FrameSelector({
         })}
       </div> */}
 
-      {FRAMES.map(({ id, name, layouts }) => {
-        const isSelected = selectedFrame === id;
+      <div className="flex gap-2 overflow-x-auto px-1 py-2">
+        {FRAMES.map(({ id, name, layouts }) => {
+          const isSelected = selectedFrame === id;
 
-        // Lưu layout đã tìm
-        const layout = layouts?.find((p) => p.count === layoutType);
+          // Lưu layout đã tìm
+          const layout = layouts?.find((p) => p.count === layoutType);
 
-        // Frame background
-        const frameBackground = layout?.backgroundUrl ? (
-          <div className="pointer-events-none absolute inset-0 z-0">
-            <img
-              src={layout.backgroundUrl}
-              alt="Frame Background"
-              loading="lazy"
-              className="h-full w-full object-contain"
-            />
-          </div>
-        ) : null;
-
-        // Frame overlay
-        const frameOverlay = layout?.overlayUrl ? (
-          <div className="pointer-events-none absolute inset-0 z-20">
-            <img
-              src={layout.overlayUrl}
-              alt="Frame Overlay"
-              loading="lazy"
-              className="h-full w-full object-contain"
-            />
-          </div>
-        ) : null;
-
-        return (
-          <motion.button
-            key={id}
-            onClick={() => selectFrame(id)}
-            disabled={isLoading}
-            whileTap={{ scale: 0.95 }}
-            initial={false}
-            className={cn(
-              "relative flex flex-col items-center justify-center overflow-hidden rounded-md bg-white ring-2 transition-all",
-              isSelected ? "ring-primary shadow-sm" : "ring-gray-200",
-              isLoading && "opacity-50",
-              layoutType === 4
-                ? "aspect-[1/3] min-w-1/4"
-                : "aspect-[2/3] min-w-1/3",
-            )}
-          >
-            {frameBackground}
-            {frameOverlay}
-
-            {isSelected && (
-              <div className="absolute top-1 right-1 z-20 rounded-full border border-gray-200 bg-white p-0.5">
-                <Check className="text-primary h-2 w-2" />
-              </div>
-            )}
-
-            <div className="bg-opacity-60 relative z-20 mt-auto w-full truncate bg-black py-1 text-center text-xs font-semibold text-white">
-              {name}
+          // Frame background
+          const frameBackground = layout?.backgroundUrl ? (
+            <div className="pointer-events-none absolute inset-0 z-0">
+              <img
+                src={layout.backgroundUrl}
+                alt="Frame Background"
+                loading="lazy"
+                className="h-full w-full object-contain"
+              />
             </div>
-          </motion.button>
-        );
-      })}
+          ) : null;
+
+          // Frame overlay
+          const frameOverlay = layout?.overlayUrl ? (
+            <div className="pointer-events-none absolute inset-0 z-20">
+              <img
+                src={layout.overlayUrl}
+                alt="Frame Overlay"
+                loading="lazy"
+                className="h-full w-full object-contain"
+              />
+            </div>
+          ) : null;
+
+          return (
+            <motion.button
+              key={id}
+              onClick={() => selectFrame(id)}
+              disabled={isLoading}
+              whileTap={{ scale: 0.95 }}
+              initial={false}
+              className={cn(
+                "relative flex flex-col items-center justify-center overflow-hidden rounded-md bg-white ring-2 transition-all",
+                isSelected ? "ring-primary shadow-sm" : "ring-gray-200",
+                isLoading && "opacity-50",
+                layoutType === 4
+                  ? "aspect-[1/3] min-w-1/4"
+                  : "aspect-[2/3] min-w-1/3",
+              )}
+            >
+              {frameBackground}
+              {frameOverlay}
+
+              {isSelected && (
+                <div className="absolute top-1 right-1 z-20 rounded-full border border-gray-200 bg-white p-0.5">
+                  <Check className="text-primary h-2 w-2" />
+                </div>
+              )}
+
+              <div className="bg-opacity-60 relative z-20 mt-auto w-full truncate bg-black py-1 text-center text-xs font-semibold text-white">
+                {name}
+              </div>
+            </motion.button>
+          );
+        })}
+      </div>
     </div>
   );
 }

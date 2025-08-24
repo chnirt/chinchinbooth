@@ -792,53 +792,19 @@ export function PhotoShoot({
 
       <canvas ref={canvasRef} className="hidden" />
 
-      {/* Camera controls with consistent button styling */}
+      {/* Camera controls with reorganized layout */}
       <motion.div
-        className="space-y-2"
+        className="space-y-3"
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.4, delay: 0.3 }}
       >
-        <div className="flex w-full items-center justify-center gap-3">
-          {/* Left side controls */}
-          <div className="flex items-center gap-2">
-            <UploadPhotoButton
-              onImageUpload={handleImageUpload}
-              disabled={uploadDisabled}
-            />
-
-            <Button
-              onClick={undoCapture}
-              disabled={undoDisabled}
-              className="flex h-10 w-10 items-center justify-center rounded-full p-0"
-              variant="outline"
-              size="icon"
-            >
-              <Undo2 className="h-4 w-4" />
-              <span className="sr-only">Undo capture</span>
-            </Button>
-
-            <div className="relative">
-              <Button
-                variant="outline"
-                size="icon"
-                className="h-10 w-10 rounded-full"
-                onClick={changeTimer}
-                disabled={timerDisabled}
-              >
-                <Clock className="h-4 w-4" />
-                <span className="sr-only">Next timer</span>
-              </Button>
-              <div
-                className={cn(
-                  "bg-primary text-primary-foreground absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full text-[10px] font-medium",
-                  timerDisabled && "pointer-events-none opacity-50",
-                )}
-              >
-                {selectedTimer}
-              </div>
-            </div>
-          </div>
+        <div className="flex w-full items-center justify-center gap-6">
+          {/* Upload Photo Button */}
+          <UploadPhotoButton
+            onImageUpload={handleImageUpload}
+            disabled={uploadDisabled}
+          />
 
           {/* Center - Main capture button */}
           <motion.div whileTap={{ scale: 0.95 }}>
@@ -867,48 +833,68 @@ export function PhotoShoot({
             </Button>
           </motion.div>
 
-          {/* Right side controls */}
-          <div className="flex items-center gap-2">
-            {/* <Button
-              onClick={toggleAutoMode}
-              disabled={autoDisabled}
-              className="flex h-10 w-10 items-center justify-center rounded-full p-0 font-bold"
-              variant={isAutoModeEnabled ? "default" : "outline"}
-              size="icon"
-            >
-              <span className="text-sm font-bold">A</span>
-              <span className="sr-only">Toggle auto mode</span>
-            </Button> */}
+          {/* Filter Toggle Button */}
+          <Button
+            onClick={toggleFilters}
+            disabled={filtersDisabled}
+            className="flex h-10 w-10 items-center justify-center rounded-full p-0 font-bold"
+            variant={showFilters ? "default" : "outline"}
+            size="icon"
+          >
+            <Blend className="h-4 w-4" />
+            <span className="sr-only">Toggle filters</span>
+          </Button>
+        </div>
 
-            <Button
-              onClick={toggleMirroring}
-              disabled={mirrorDisabled}
-              className="flex h-10 w-10 items-center justify-center rounded-full p-0"
-              variant={isMirrored ? "default" : "outline"}
-              size="icon"
-            >
-              <FlipHorizontal className="h-4 w-4" />
-              <span className="sr-only">Mirror image</span>
-            </Button>
+        <div className="flex w-full items-center justify-center gap-2 border-t border-gray-100 pt-2">
+          <Button
+            onClick={undoCapture}
+            disabled={undoDisabled}
+            className="flex h-8 w-8 items-center justify-center rounded-full bg-transparent p-0"
+            variant="outline"
+            size="icon"
+          >
+            <Undo2 className="h-3 w-3" />
+            <span className="sr-only">Undo capture</span>
+          </Button>
 
+          <div className="relative">
             <Button
-              onClick={toggleFilters}
-              disabled={filtersDisabled}
-              className="flex h-10 w-10 items-center justify-center rounded-full p-0 font-bold"
-              variant={showFilters ? "default" : "outline"}
+              variant="outline"
               size="icon"
+              className="h-8 w-8 rounded-full bg-transparent"
+              onClick={changeTimer}
+              disabled={timerDisabled}
             >
-              <Blend className="h-4 w-4" />
-              <span className="sr-only">Toggle blend</span>
+              <Clock className="h-3 w-3" />
+              <span className="sr-only">Next timer</span>
             </Button>
+            <div
+              className={cn(
+                "bg-primary text-primary-foreground absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full text-[8px] font-medium",
+                timerDisabled && "pointer-events-none opacity-50",
+              )}
+            >
+              {selectedTimer}
+            </div>
           </div>
+
+          <Button
+            onClick={toggleMirroring}
+            disabled={mirrorDisabled}
+            className="flex h-8 w-8 items-center justify-center rounded-full p-0"
+            variant={isMirrored ? "default" : "outline"}
+            size="icon"
+          >
+            <FlipHorizontal className="h-3 w-3" />
+            <span className="sr-only">Mirror image</span>
+          </Button>
         </div>
 
         {/* Keyboard shortcuts info */}
         <div className="mt-2 hidden text-xs text-gray-600 lg:block">
           <strong>Delete</strong>: {t("undo")} | <strong>T</strong>:{" "}
           {t("change_timer")} | <strong>Space</strong>: {t("capture")} |{" "}
-          {/* <strong>A</strong>: {t("auto_mode")} |  */}
           <strong>M</strong>: {t("toggle_mirror")} | <strong>F</strong>:{" "}
           {t("toggle_filters")}
         </div>
