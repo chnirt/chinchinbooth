@@ -6,6 +6,7 @@ import { Check, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FRAMES } from "@/constants/assets";
 import { handleFrameSelection } from "@/lib/frame-utils";
+import Image from "next/image";
 
 interface FrameSelectorProps {
   selectedFrame: string | null;
@@ -77,7 +78,7 @@ export function FrameSelector({
             >
               {isSelected && (
                 <div className="absolute top-1 right-1 rounded-full border border-gray-200 bg-white p-0.5">
-                  <Check className="h-2 w-2 text-primary" />
+                  <Check className="text-primary h-2 w-2" />
                 </div>
               )}
               <span className="mt-1 text-xs font-medium text-gray-800">
@@ -98,11 +99,12 @@ export function FrameSelector({
           // Frame background
           const frameBackground = layout?.backgroundUrl ? (
             <div className="pointer-events-none absolute inset-0 z-0">
-              <img
+              <Image
                 src={layout.backgroundUrl}
                 alt="Frame Background"
                 loading="lazy"
-                className="h-full w-full object-contain"
+                fill
+                sizes="(max-width: 600px) 100vw, 50vw"
               />
             </div>
           ) : null;
@@ -110,11 +112,12 @@ export function FrameSelector({
           // Frame overlay
           const frameOverlay = layout?.overlayUrl ? (
             <div className="pointer-events-none absolute inset-0 z-20">
-              <img
+              <Image
                 src={layout.overlayUrl}
                 alt="Frame Overlay"
                 loading="lazy"
-                className="h-full w-full object-contain"
+                fill
+                sizes="(max-width: 600px) 100vw, 50vw"
               />
             </div>
           ) : null;
@@ -127,7 +130,7 @@ export function FrameSelector({
               whileTap={{ scale: 0.95 }}
               initial={false}
               className={cn(
-                "relative flex flex-col items-center justify-center overflow-hidden rounded-md bg-white ring-2 transition-all",
+                "relative flex flex-1 flex-col items-center justify-center overflow-hidden rounded-md bg-white ring-2 transition-all",
                 isSelected ? "ring-primary shadow-sm" : "ring-gray-200",
                 isLoading && "opacity-50",
                 layoutType === 4
