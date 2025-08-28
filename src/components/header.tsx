@@ -34,7 +34,6 @@ export default function Header({
       <div className="flex items-center gap-4">
         <Button
           className="flex h-8 w-8 items-center justify-center rounded-full p-0 font-bold"
-          variant="ghost"
           size="icon"
           onClick={download}
           disabled={downloadDisabled}

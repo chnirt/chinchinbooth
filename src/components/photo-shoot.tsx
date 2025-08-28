@@ -14,7 +14,6 @@ import {
   Clock,
   ArrowRight,
   FlipHorizontal,
-  Blend,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -33,6 +32,7 @@ import {
 import { useMobile } from "@/hooks/use-mobile";
 import "context-filter-polyfill";
 import UploadPhotoButton from "./upload-photo-button";
+import Image from "next/image";
 
 // Camera type enum
 enum CameraType {
@@ -659,9 +659,7 @@ export function PhotoShoot({
   };
 
   useEffect(() => {
-    if (isMobile) {
-      setShowFilters(false);
-    }
+    setShowFilters(!isMobile);
   }, [isMobile]);
 
   // Update the UI with the rose-teal color scheme
@@ -849,10 +847,18 @@ export function PhotoShoot({
             onClick={toggleFilters}
             disabled={filtersDisabled}
             className="flex h-10 w-10 items-center justify-center rounded-full p-0 font-bold"
-            variant={showFilters ? "default" : "outline"}
+            // variant={showFilters ? "default" : "outline"}
+            variant="ghost"
             size="icon"
           >
-            <Blend className="h-4 w-4" />
+            {/* <Blend className="h-4 w-4" /> */}
+            <Image
+              className="dark:invert"
+              src="/color-filters.png"
+              alt="Filter"
+              width={24}
+              height={24}
+            />
             <span className="sr-only">Toggle filters</span>
           </Button>
         </div>
