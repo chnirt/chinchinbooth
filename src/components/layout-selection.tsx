@@ -799,7 +799,7 @@ export function LayoutSelection({
         }
       >
         {drawerType === "frames" ? (
-          <div className="h-full overflow-y-auto p-4">{renderFrames()}</div>
+          <div className="overflow-y-auto p-4">{renderFrames()}</div>
         ) : null}
         {drawerType === "layouts" ? (
           <div className="flex justify-center p-4">{renderLayoutType()}</div>

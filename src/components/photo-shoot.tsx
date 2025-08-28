@@ -86,7 +86,7 @@ export function PhotoShoot({
   const [currentCameraIndex, setCurrentCameraIndex] = useState(0);
 
   // Add a new state variable for filter gallery visibility after the other state declarations
-  const [showFilters, setShowFilters] = useState(!true);
+  const [showFilters, setShowFilters] = useState(true);
 
   const t = useTranslations("HomePage");
 
@@ -322,6 +322,11 @@ export function PhotoShoot({
 
   // Start the selected camera
   useEffect(() => {
+    if (!navigator.mediaDevices) {
+      console.warn("Camera is not supported");
+      return;
+    }
+
     startCamera();
 
     const handleVisibility = () => {
@@ -652,6 +657,12 @@ export function PhotoShoot({
       setCapturedImages((prev) => [...prev, imageData]);
     }
   };
+
+  useEffect(() => {
+    if (isMobile) {
+      setShowFilters(false);
+    }
+  }, [isMobile]);
 
   // Update the UI with the rose-teal color scheme
   return (

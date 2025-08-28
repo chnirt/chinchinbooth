@@ -12,4 +12,5 @@ export const DEFAULT_FILTERS = {
 
 // Timer options
 export const TIMER_OPTIONS = [1, 3, 5, 10] as const;
-export const DEFAULT_TIMER_INDEX = 1; // Default to 3 seconds (index 1)
+export const DEFAULT_TIMER_INDEX =
+  process.env.NODE_ENV === "development" ? 0 : 1; // Default to 3 seconds (index 1)

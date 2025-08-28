@@ -84,12 +84,14 @@ export default function ShareDialog({
             )}
             {copied ? `${t("copied")}!` : t("copy_link")}
           </Button>
-          {typeof navigator.share === "function" && (
-            <Button variant="outline" onClick={shareUrl}>
-              <Share2 className="mr-1 h-3 w-3" />
-              {t("share")}
-            </Button>
-          )}
+          {typeof window !== "undefined" &&
+            navigator &&
+            typeof navigator.share === "function" && (
+              <Button variant="outline" onClick={shareUrl}>
+                <Share2 className="mr-1 h-3 w-3" />
+                {t("share")}
+              </Button>
+            )}
         </DialogFooter>
       </DialogContent>
     </Dialog>
