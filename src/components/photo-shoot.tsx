@@ -939,27 +939,18 @@ export function PhotoShoot({
             <motion.div
               key={img}
               className="relative aspect-[4/3] flex-shrink-0 rounded-lg border border-gray-200"
-              style={{ height: "100%" }}
-              initial={{
-                opacity: 0,
-              }}
-              animate={{
-                opacity: 1,
-                transition: {
-                  type: "spring",
-                  stiffness: 300,
-                  damping: 20,
-                  delay: index * 0.05, // Stagger effect
-                },
-              }}
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
               exit={{
                 opacity: 0,
-                transition: {
-                  type: "spring",
-                  stiffness: 300,
-                  damping: 20,
-                  delay: index * 0.03, // Slightly faster stagger for exit
-                },
+                scale: 0.95,
+                transition: { duration: 0.3, ease: "easeInOut" },
+              }}
+              transition={{
+                type: "spring",
+                stiffness: 150,
+                damping: 20,
+                delay: index * 0.03,
               }}
               layout
             >
@@ -985,13 +976,14 @@ export function PhotoShoot({
                 size="icon"
                 className="absolute -top-2 -right-2 z-30 h-5 w-5 rounded-full opacity-80 hover:opacity-100"
                 aria-label={`Delete image ${index + 1}`}
+                disabled={captureDisabled}
               >
                 <X className="h-3 w-3" />
               </Button>
 
               {/* Image number indicator */}
               <motion.div
-                className="bg-primary absolute bottom-1 left-1 flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold text-white shadow-md opacity-80"
+                className="bg-primary absolute bottom-1 left-1 flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold text-white opacity-80 shadow-md"
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{
                   scale: 1,
