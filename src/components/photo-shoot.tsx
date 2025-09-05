@@ -927,23 +927,22 @@ export function PhotoShoot({
       {/* Captured images display with standard border */}
       <div
         ref={capturedImagesRef}
-        className="custom-scrollbar hide-scrollbar flex w-full snap-x gap-2 overflow-x-auto scroll-smooth p-2 md:gap-4"
+        className="custom-scrollbar hide-scrollbar flex w-full snap-x gap-1 overflow-x-auto scroll-smooth md:gap-2"
         style={{
           height: cameraContainerRef.current
             ? cameraContainerRef.current.clientHeight / 2.5
             : "auto",
         }}
       >
-        <AnimatePresence>
+        <AnimatePresence initial={false} mode="popLayout">
           {capturedImages.map((img, index) => (
             <motion.div
               key={img}
-              className="relative aspect-[4/3] flex-shrink-0 rounded-lg border border-gray-200"
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
+              className="relative aspect-[4/3] flex-shrink-0 overflow-hidden rounded-lg border border-gray-200"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               exit={{
                 opacity: 0,
-                scale: 0.95,
                 transition: { duration: 0.3, ease: "easeInOut" },
               }}
               transition={{
@@ -974,7 +973,7 @@ export function PhotoShoot({
                   )
                 }
                 size="icon"
-                className="absolute -top-2 -right-2 z-30 h-5 w-5 rounded-full opacity-80 hover:opacity-100"
+                className="absolute top-1 right-1 h-6 w-6 rounded-full opacity-80 hover:opacity-100"
                 aria-label={`Delete image ${index + 1}`}
                 disabled={captureDisabled}
               >
@@ -983,7 +982,7 @@ export function PhotoShoot({
 
               {/* Image number indicator */}
               <motion.div
-                className="bg-primary absolute bottom-1 left-1 flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold text-white opacity-80 shadow-md"
+                className="bg-primary absolute bottom-1 left-1 flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold text-white opacity-80"
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{
                   scale: 1,
