@@ -9,8 +9,111 @@ export const FRAMES: Frame[] = [
       { count: 4, overlayUrl: null, backgroundUrl: null },
       { count: 8, overlayUrl: null, backgroundUrl: null },
     ],
+    isNew: true,
   },
-   {
+  {
+    id: "rouge-étoile",
+    name: "Rouge Étoile",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: null,
+        backgroundUrl: "/rouge-étoile/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: null,
+        backgroundUrl: "/rouge-étoile/8/bg.png",
+      },
+    ],
+    isNew: true,
+  },
+  {
+    id: "amethyst-dream",
+    name: "Amethyst Dream",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/amethyst-dream/4/overlay.png",
+        backgroundUrl: "/amethyst-dream/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/amethyst-dream/8/overlay.png",
+        backgroundUrl: "/amethyst-dream/8/bg.png",
+      },
+    ],
+    isNew: true,
+  },
+  {
+    id: "green-pop",
+    name: "Green Pop",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/green-pop/4/overlay.png",
+        backgroundUrl: "/green-pop/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/green-pop/8/overlay.png",
+        backgroundUrl: "/green-pop/8/bg.png",
+      },
+    ],
+    isNew: true,
+  },
+  {
+    id: "opal-glow",
+    name: "Opal Glow",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/opal-glow/4/overlay.png",
+        backgroundUrl: "/opal-glow/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/opal-glow/8/overlay.png",
+        backgroundUrl: "/opal-glow/8/bg.png",
+      },
+    ],
+    isNew: true,
+  },
+  {
+    id: "pixel-chic",
+    name: "Pixel Chic",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/pixel-chic/4/overlay.png",
+        backgroundUrl: "/pixel-chic/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/pixel-chic/8/overlay.png",
+        backgroundUrl: "/pixel-chic/8/bg.png",
+      },
+    ],
+    isNew: true,
+  },
+  {
+    id: "meow-cha",
+    name: "Meow Cha",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/meow-cha/4/overlay.png",
+        backgroundUrl: "/meow-cha/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/meow-cha/8/overlay.png",
+        backgroundUrl: "/meow-cha/8/bg.png",
+      },
+    ],
+    isNew: true,
+  },
+  {
     id: "retro-spark",
     name: "Retro Spark",
     layouts: [
@@ -257,12 +360,12 @@ export const FRAMES: Frame[] = [
       {
         count: 4,
         overlayUrl: "/life-goes-on/4/overlay.png",
-        backgroundUrl: null,
+        backgroundUrl: "/life-goes-on/4/bg.png",
       },
       {
         count: 8,
         overlayUrl: "/life-goes-on/8/overlay.png",
-        backgroundUrl: null,
+        backgroundUrl: "/life-goes-on/8/bg.png",
       },
     ],
   },
@@ -321,12 +424,12 @@ export const FRAMES: Frame[] = [
       {
         count: 4,
         overlayUrl: "/power-girls/4/overlay.png",
-        backgroundUrl: null,
+        backgroundUrl: "/power-girls/4/bg.png",
       },
       {
         count: 8,
         overlayUrl: "/power-girls/8/overlay.png",
-        backgroundUrl: null,
+        backgroundUrl: "/power-girls/8/bg.png",
       },
     ],
   },

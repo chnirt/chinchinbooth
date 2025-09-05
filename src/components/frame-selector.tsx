@@ -90,7 +90,7 @@ export function FrameSelector({
       </div> */}
 
       <div className="flex gap-2 overflow-x-auto px-1 py-2">
-        {FRAMES.map(({ id, name, layouts }) => {
+        {FRAMES.map(({ id, name, layouts, isNew }) => {
           const isSelected = selectedFrame === id;
 
           // Lưu layout đã tìm
@@ -141,13 +141,23 @@ export function FrameSelector({
               {frameBackground}
               {frameOverlay}
 
+              {isNew && (
+                <Image
+                  className="absolute inset-0 top-1 left-1 z-20 dark:invert"
+                  src="/new.png"
+                  alt="Filter"
+                  width={20}
+                  height={20}
+                />
+              )}
+
               {isSelected && (
-                <div className="absolute top-1 right-1 z-20 rounded-full border border-gray-200 bg-white p-0.5">
+                <div className="absolute top-1 right-1 z-30 rounded-full border border-gray-200 bg-white p-0.5">
                   <Check className="text-primary h-2 w-2" />
                 </div>
               )}
 
-              <div className="bg-opacity-60 relative z-20 mt-auto w-full truncate bg-black py-1 text-center text-xs font-semibold text-white">
+              <div className="bg-opacity-60 relative z-30 mt-auto w-full truncate bg-black py-1 text-center text-xs font-semibold text-white">
                 {name}
               </div>
             </motion.button>

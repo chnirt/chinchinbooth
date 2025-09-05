@@ -20,6 +20,7 @@ export interface Frame {
   id: string;
   name: string;
   layouts: Layout[];
+  isNew?: boolean;
 }
 
 export interface LayoutSelectionProps {
