@@ -9,7 +9,6 @@ export const FRAMES: Frame[] = [
       { count: 4, overlayUrl: null, backgroundUrl: null },
       { count: 8, overlayUrl: null, backgroundUrl: null },
     ],
-    isNew: true,
   },
   {
     id: "rouge-étoile",
