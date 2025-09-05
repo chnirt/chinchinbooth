@@ -1,15 +1,18 @@
 import React, { useRef, ChangeEvent } from "react";
 import { Button } from "./ui/button";
 import { ImagePlus } from "lucide-react";
+import { toast } from "sonner";
 
 interface UploadPhotoButtonProps {
-  onImageUpload: (imageData: string | ArrayBuffer | null) => void;
+  onImageUpload: (imageData: (string | ArrayBuffer | null)[]) => void;
   disabled?: boolean | undefined;
+  maxFiles: number;
 }
 
 export default function UploadPhotoButton({
   onImageUpload,
   disabled,
+  maxFiles,
 }: UploadPhotoButtonProps) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -18,16 +21,43 @@ export default function UploadPhotoButton({
   };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
+    const files = e.target.files;
+    if (!files) return;
+
+    if (maxFiles <= 0) {
+      toast(`The upload limit is not set properly.`);
+      e.target.value = "";
+      return;
+    }
+
+    if (files.length > maxFiles) {
+      toast(
+        `You can only upload up to ${maxFiles} ${maxFiles === 1 ? "image" : "images"}.`,
+      );
+      e.target.value = "";
+      return;
+    }
+
+    const imagesData: string[] = [];
+    let loadedCount = 0;
+
+    for (let i = 0; i < files.length; i++) {
       const reader = new FileReader();
       reader.onload = (event) => {
-        const imageData = event.target?.result;
-        if (imageData !== undefined) {
-          onImageUpload(imageData);
+        const result = event.target?.result;
+        if (result !== undefined && typeof result === "string") {
+          imagesData.push(result);
+          loadedCount++;
+          if (loadedCount === files.length) {
+            onImageUpload(imagesData);
+            e.target.value = "";
+          }
         }
       };
-      reader.readAsDataURL(file); // đọc file thành base64
+      reader.onerror = () => {
+        toast(`Failed to read file: ${files[i].name}`);
+      };
+      reader.readAsDataURL(files[i]);
     }
   };
 
@@ -50,6 +80,7 @@ export default function UploadPhotoButton({
         ref={fileInputRef}
         onChange={handleFileChange}
         className="hidden"
+        multiple
       />
     </>
   );

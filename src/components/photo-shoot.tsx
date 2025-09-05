@@ -652,9 +652,15 @@ export function PhotoShoot({
     }
   }, [canProceedToLayout, countdown, isAutoSequenceActive, isCameraStarted]);
 
-  const handleImageUpload = (imageData: string | ArrayBuffer | null) => {
-    if (typeof imageData === "string") {
-      setCapturedImages((prev) => [...prev, imageData]);
+  const handleImageUpload = (
+    imageDataArray: (string | ArrayBuffer | null)[],
+  ) => {
+    // Filter to include only strings (base64 data)
+    const validImages = imageDataArray.filter(
+      (data): data is string => typeof data === "string",
+    );
+    if (validImages.length > 0) {
+      setCapturedImages((prev) => [...prev, ...validImages]);
     }
   };
 
@@ -813,6 +819,7 @@ export function PhotoShoot({
           <UploadPhotoButton
             onImageUpload={handleImageUpload}
             disabled={uploadDisabled}
+            maxFiles={MAX_CAPTURE - capturedImages.length}
           />
 
           {/* Center - Main capture button */}
@@ -920,7 +927,7 @@ export function PhotoShoot({
       {/* Captured images display with standard border */}
       <div
         ref={capturedImagesRef}
-        className="custom-scrollbar hide-scrollbar flex w-full snap-x gap-1 overflow-x-auto scroll-smooth pb-2 md:gap-2"
+        className="custom-scrollbar hide-scrollbar flex w-full snap-x gap-2 overflow-x-auto scroll-smooth p-2 md:gap-4"
         style={{
           height: cameraContainerRef.current
             ? cameraContainerRef.current.clientHeight / 2.5
@@ -931,7 +938,7 @@ export function PhotoShoot({
           {capturedImages.map((img, index) => (
             <motion.div
               key={img}
-              className="relative aspect-[4/3] flex-shrink-0 overflow-hidden rounded-lg border border-gray-200"
+              className="relative aspect-[4/3] flex-shrink-0 rounded-lg border border-gray-200"
               style={{ height: "100%" }}
               initial={{
                 opacity: 0,
@@ -968,9 +975,23 @@ export function PhotoShoot({
                 }}
               />
 
+              {/* Delete button at top-right with better styling */}
+              <Button
+                onClick={() =>
+                  setCapturedImages((prev) =>
+                    prev.filter((_, i) => i !== index),
+                  )
+                }
+                size="icon"
+                className="absolute -top-2 -right-2 z-30 h-5 w-5 rounded-full opacity-80 hover:opacity-100"
+                aria-label={`Delete image ${index + 1}`}
+              >
+                <X className="h-3 w-3" />
+              </Button>
+
               {/* Image number indicator */}
               <motion.div
-                className="bg-primary absolute top-1 right-1 flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold text-white"
+                className="bg-primary absolute bottom-1 left-1 flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold text-white shadow-md opacity-80"
                 initial={{ scale: 0, opacity: 0 }}
                 animate={{
                   scale: 1,
