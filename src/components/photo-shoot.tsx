@@ -934,7 +934,7 @@ export function PhotoShoot({
             : "auto",
         }}
       >
-        <AnimatePresence initial={false} mode="popLayout">
+        <AnimatePresence>
           {capturedImages.map((img, index) => (
             <motion.div
               key={img}
