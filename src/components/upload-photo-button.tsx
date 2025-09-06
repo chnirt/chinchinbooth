@@ -2,6 +2,7 @@ import React, { useRef, ChangeEvent } from "react";
 import { Button } from "./ui/button";
 import { ImagePlus } from "lucide-react";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 interface UploadPhotoButtonProps {
   onImageUpload: (imageData: (string | ArrayBuffer | null)[]) => void;
@@ -14,6 +15,8 @@ export default function UploadPhotoButton({
   disabled,
   maxFiles,
 }: UploadPhotoButtonProps) {
+  const t = useTranslations("HomePage");
+
   const fileInputRef = useRef<HTMLInputElement | null>(null);
 
   const handleButtonClick = () => {
@@ -25,14 +28,21 @@ export default function UploadPhotoButton({
     if (!files) return;
 
     if (maxFiles <= 0) {
-      toast(`The upload limit is not set properly.`);
+      // toast(`The upload limit is not set properly.`);
+      toast(t("uploadLimitNotSet"));
       e.target.value = "";
       return;
     }
 
     if (files.length > maxFiles) {
+      // toast(
+      //   `You can only upload up to ${maxFiles} ${maxFiles === 1 ? "image" : "images"}.`,
+      // );
       toast(
-        `You can only upload up to ${maxFiles} ${maxFiles === 1 ? "image" : "images"}.`,
+        t("uploadMaxFiles", {
+          maxFiles,
+          fileLabel: maxFiles === 1 ? t("fileLabel_one") : t("fileLabel_other"),
+        }),
       );
       e.target.value = "";
       return;

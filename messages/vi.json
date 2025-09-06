@@ -78,6 +78,10 @@
     "save_step_1": "Nhấn và giữ vào ảnh bên trên",
     "save_step_2": "Chọn \"Lưu vào Ảnh\" từ menu hiện ra",
     "save_step_3": "Ảnh sẽ được lưu vào thư viện của bạn",
-    "share_title": "Chia sẻ tác phẩm của bạn"
+    "share_title": "Chia sẻ tác phẩm của bạn",
+    "uploadLimitNotSet": "Giới hạn tải lên chưa được thiết lập đúng.",
+    "uploadMaxFiles": "Bạn chỉ có thể tải lên tối đa {maxFiles} {fileLabel}.",
+    "fileLabel_one": "hình ảnh",
+    "fileLabel_other": "hình ảnh"
   }
 }

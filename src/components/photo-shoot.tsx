@@ -506,6 +506,11 @@ export function PhotoShoot({
 
     if (countdown > 0) {
       hasCapturedRef.current = false;
+
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+
       timerRef.current = setTimeout(() => {
         setCountdown((prev) => (prev !== null ? prev - 1 : null));
       }, 1000);
@@ -520,7 +525,7 @@ export function PhotoShoot({
         timerRef.current = null;
       }
     };
-  }, [captureImage, countdown]);
+  }, [countdown, captureImage]);
 
   // Handle filter change
   const handleFilterChange = (filter: FilterValues) => {
@@ -663,6 +668,15 @@ export function PhotoShoot({
       setCapturedImages((prev) => [...prev, ...validImages]);
     }
   };
+
+  const cancelCountdown = useCallback(() => {
+    setCountdown(null);
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+      timerRef.current = null;
+    }
+    hasCapturedRef.current = false;
+  }, []);
 
   useEffect(() => {
     setShowFilters(!isMobile);
@@ -832,7 +846,7 @@ export function PhotoShoot({
                     ? stopAutoSequence
                     : countdown === null
                       ? startCapture
-                      : () => setCountdown(null)
+                      : cancelCountdown
               }
               disabled={captureDisabled}
               className={cn(
@@ -934,7 +948,7 @@ export function PhotoShoot({
             : "auto",
         }}
       >
-        <AnimatePresence initial={false} mode="popLayout">
+        <AnimatePresence>
           {capturedImages.map((img, index) => (
             <motion.div
               key={img}

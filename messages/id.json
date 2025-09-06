@@ -78,6 +78,10 @@
     "save_step_1": "Tekan dan tahan foto di atas",
     "save_step_2": "Pilih \"Simpan ke Foto\" dari menu yang muncul",
     "save_step_3": "Foto akan disimpan ke perpustakaan Anda",
-    "share_title": "Bagikan karya Anda"
+    "share_title": "Bagikan karya Anda",
+    "uploadLimitNotSet": "Batas unggahan tidak diatur dengan benar.",
+    "uploadMaxFiles": "Anda hanya dapat mengunggah hingga {maxFiles} {fileLabel}.",
+    "fileLabel_one": "gambar",
+    "fileLabel_other": "gambar"
   }
 }

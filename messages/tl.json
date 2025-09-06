@@ -78,6 +78,10 @@
     "save_step_1": "Pindutin at hawakan ang larawan sa itaas",
     "save_step_2": "Piliin ang \"I-save sa Photos\" mula sa menu",
     "save_step_3": "Ang larawan ay mase-save sa iyong gallery",
-    "share_title": "Ibahagi ang iyong obra"
+    "share_title": "Ibahagi ang iyong obra",
+    "uploadLimitNotSet": "Hindi maayos na nakaset ang limitasyon sa pag-upload.",
+    "uploadMaxFiles": "Maaari ka lamang mag-upload ng hanggang {maxFiles} {fileLabel}.",
+    "fileLabel_one": "larawan",
+    "fileLabel_other": "mga larawan"
   }
 }

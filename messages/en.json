@@ -78,6 +78,10 @@
     "save_step_1": "Press and hold on the image above",
     "save_step_2": "Tap \"Save to Photos\" from the menu that appears",
     "save_step_3": "The image will be saved to your photo library",
-    "share_title": "Share Your Creation"
+    "share_title": "Share Your Creation",
+    "uploadLimitNotSet": "The upload limit is not set properly.",
+    "uploadMaxFiles": "You can only upload up to {maxFiles} {fileLabel}.",
+    "fileLabel_one": "image",
+    "fileLabel_other": "images"
   }
 }
