@@ -11,6 +11,40 @@ export const FRAMES: Frame[] = [
     ],
   },
   {
+    id: "lanterns",
+    name: "Lanterns",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/lanterns/4/overlay.png",
+        backgroundUrl: "/lanterns/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/lanterns/8/overlay.png",
+        backgroundUrl: "/lanterns/8/bg.png",
+      },
+    ],
+    isNew: true,
+  },
+  {
+    id: "moon-feast",
+    name: "Moon Feast",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/moon-feast/4/overlay.png",
+        backgroundUrl: "/moon-feast/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/moon-feast/8/overlay.png",
+        backgroundUrl: "/moon-feast/8/bg.png",
+      },
+    ],
+    isNew: true,
+  },
+  {
     id: "rouge-étoile",
     name: "Rouge Étoile",
     layouts: [
