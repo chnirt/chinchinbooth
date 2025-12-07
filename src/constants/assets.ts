@@ -10,7 +10,24 @@ export const FRAMES: Frame[] = [
       { count: 8, overlayUrl: null, backgroundUrl: null },
     ],
   },
-   {
+  {
+    id: "snowy-scarlet",
+    name: "Snowy Scarlet",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/snowy-scarlet/4/overlay.png",
+        backgroundUrl: "/snowy-scarlet/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/snowy-scarlet/8/overlay.png",
+        backgroundUrl: "/snowy-scarlet/8/bg.png",
+      },
+    ],
+    isNew: true,
+  },
+  {
     id: "trick-or-treat",
     name: "Trick Or Treat",
     layouts: [
@@ -27,7 +44,7 @@ export const FRAMES: Frame[] = [
     ],
     isNew: true,
   },
-   {
+  {
     id: "halloween",
     name: "Halloween",
     layouts: [
