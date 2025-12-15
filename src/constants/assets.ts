@@ -11,6 +11,40 @@ export const FRAMES: Frame[] = [
     ],
   },
   {
+    id: "christmas-tree",
+    name: "Christmas Tree",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/christmas-tree/4/overlay.png",
+        backgroundUrl: "/christmas-tree/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/christmas-tree/8/overlay.png",
+        backgroundUrl: "/christmas-tree/8/bg.png",
+      },
+    ],
+    isNew: true,
+  },
+  {
+    id: "christmas-snow",
+    name: "Christmas Snow",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/christmas-snow/4/overlay.png",
+        backgroundUrl: "/christmas-snow/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/christmas-snow/8/overlay.png",
+        backgroundUrl: "/christmas-snow/8/bg.png",
+      },
+    ],
+    isNew: true,
+  },
+  {
     id: "snowy-scarlet",
     name: "Snowy Scarlet",
     layouts: [
