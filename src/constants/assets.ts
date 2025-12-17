@@ -45,6 +45,23 @@ export const FRAMES: Frame[] = [
     isNew: true,
   },
   {
+    id: "evergreen-bliss",
+    name: "Evergreen Bliss",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/evergreen-bliss/4/overlay.png",
+        backgroundUrl: null,
+      },
+      {
+        count: 8,
+        overlayUrl: "/evergreen-bliss/8/overlay.png",
+        backgroundUrl: null,
+      },
+    ],
+    isNew: true,
+  },
+  {
     id: "snowy-scarlet",
     name: "Snowy Scarlet",
     layouts: [
