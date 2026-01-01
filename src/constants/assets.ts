@@ -11,6 +11,23 @@ export const FRAMES: Frame[] = [
     ],
   },
   {
+    id: "twinkle-twinkle",
+    name: "Twinkle Twinkle",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/twinkle-twinkle/4/overlay.png",
+        backgroundUrl: "/twinkle-twinkle/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/twinkle-twinkle/8/overlay.png",
+        backgroundUrl: "/twinkle-twinkle/8/bg.png",
+      },
+    ],
+    isNew: true,
+  },
+  {
     id: "christmas-tree",
     name: "Christmas Tree",
     layouts: [
