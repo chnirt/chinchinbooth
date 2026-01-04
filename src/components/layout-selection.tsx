@@ -667,6 +667,8 @@ export function LayoutSelection({
               downloadDisabled={!canDownload || isDownloading}
               share={uploadAndGenerateQR}
               shareDisabled={!canDownload || isUploading}
+              isDownloading={isDownloading}
+              isUploading={isUploading}
             />
           </div>
 

@@ -1,6 +1,7 @@
 import React from "react";
 import { ArrowLeft, Download, Share } from "lucide-react";
 import { Button } from "./ui/button";
+import { Spinner } from "./ui/spinner";
 
 interface HeaderProps {
   retake: () => void;
@@ -8,6 +9,8 @@ interface HeaderProps {
   downloadDisabled?: boolean;
   share: () => void;
   shareDisabled?: boolean;
+  isDownloading?: boolean;
+  isUploading?: boolean;
 }
 
 export default function Header({
@@ -16,6 +19,8 @@ export default function Header({
   downloadDisabled = false,
   share,
   shareDisabled = false,
+  isDownloading = false,
+  isUploading = false,
 }: HeaderProps) {
   return (
     <div className="flex items-center justify-between">
@@ -38,7 +43,11 @@ export default function Header({
           onClick={download}
           disabled={downloadDisabled}
         >
-          <Download className="h-5 w-5" />
+          {isDownloading ? (
+            <Spinner className="h-5 w-5" />
+          ) : (
+            <Download className="h-5 w-5" />
+          )}
           <span className="sr-only">Download</span>
         </Button>
         <Button
@@ -48,7 +57,11 @@ export default function Header({
           onClick={share}
           disabled={shareDisabled}
         >
-          <Share className="h-5 w-5" />
+          {isUploading ? (
+            <Spinner className="h-5 w-5" />
+          ) : (
+            <Share className="h-5 w-5" />
+          )}
           <span className="sr-only">Share</span>
         </Button>
       </div>
