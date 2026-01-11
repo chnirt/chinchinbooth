@@ -11,6 +11,23 @@ export const FRAMES: Frame[] = [
     ],
   },
   {
+    id: "zootopia",
+    name: "Zootopia",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/zootopia/4/overlay.png",
+        backgroundUrl: "/zootopia/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/zootopia/8/overlay.png",
+        backgroundUrl: "/zootopia/8/bg.png",
+      },
+    ],
+    isNew: true,
+  },
+  {
     id: "twinkle-twinkle",
     name: "Twinkle Twinkle",
     layouts: [
