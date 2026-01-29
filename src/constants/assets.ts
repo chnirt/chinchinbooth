@@ -11,6 +11,55 @@ export const FRAMES: Frame[] = [
     ],
   },
   {
+    id: "pixel-chic",
+    name: "Pixel Chic",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/pixel-chic/4/overlay.png",
+        backgroundUrl: "/pixel-chic/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/pixel-chic/8/overlay.png",
+        backgroundUrl: "/pixel-chic/8/bg.png",
+      },
+    ],
+    isNew: true,
+  },
+  {
+    id: "true-love",
+    name: "True Love",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/true-love/4/overlay.png",
+        backgroundUrl: "/true-love/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/true-love/8/overlay.png",
+        backgroundUrl: "/true-love/8/bg.png",
+      },
+    ],
+  },
+  {
+    id: "sweet-heart",
+    name: "Sweet Heart",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/sweet-heart/4/overlay.png",
+        backgroundUrl: "/sweet-heart/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/sweet-heart/8/overlay.png",
+        backgroundUrl: "/sweet-heart/8/bg.png",
+      },
+    ],
+  },
+  {
     id: "zootopia",
     name: "Zootopia",
     layouts: [
@@ -248,23 +297,7 @@ export const FRAMES: Frame[] = [
     ],
     isNew: true,
   },
-  {
-    id: "pixel-chic",
-    name: "Pixel Chic",
-    layouts: [
-      {
-        count: 4,
-        overlayUrl: "/pixel-chic/4/overlay.png",
-        backgroundUrl: "/pixel-chic/4/bg.png",
-      },
-      {
-        count: 8,
-        overlayUrl: "/pixel-chic/8/overlay.png",
-        backgroundUrl: "/pixel-chic/8/bg.png",
-      },
-    ],
-    isNew: true,
-  },
+
   {
     id: "meow-cha",
     name: "Meow Cha",
@@ -295,22 +328,6 @@ export const FRAMES: Frame[] = [
         count: 8,
         overlayUrl: "/retro-spark/8/overlay.png",
         backgroundUrl: "/retro-spark/8/bg.png",
-      },
-    ],
-  },
-  {
-    id: "true-love",
-    name: "True Love",
-    layouts: [
-      {
-        count: 4,
-        overlayUrl: "/true-love/4/overlay.png",
-        backgroundUrl: "/true-love/4/bg.png",
-      },
-      {
-        count: 8,
-        overlayUrl: "/true-love/8/overlay.png",
-        backgroundUrl: "/true-love/8/bg.png",
       },
     ],
   },
@@ -663,22 +680,6 @@ export const FRAMES: Frame[] = [
         count: 8,
         overlayUrl: "/summer/8/overlay.png",
         backgroundUrl: "/summer/8/bg.png",
-      },
-    ],
-  },
-  {
-    id: "sweet-heart",
-    name: "Sweet Heart",
-    layouts: [
-      {
-        count: 4,
-        overlayUrl: "/sweet-heart/4/overlay.png",
-        backgroundUrl: "/sweet-heart/4/bg.png",
-      },
-      {
-        count: 8,
-        overlayUrl: "/sweet-heart/8/overlay.png",
-        backgroundUrl: "/sweet-heart/8/bg.png",
       },
     ],
   },
