@@ -11,6 +11,74 @@ export const FRAMES: Frame[] = [
     ],
   },
   {
+    id: "hpny",
+    name: "Happy New Year",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/hpny/4/overlay.png",
+        backgroundUrl: "/hpny/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/hpny/8/overlay.png",
+        backgroundUrl: "/hpny/8/bg.png",
+      },
+    ],
+    isNew: true,
+  },
+  {
+    id: "sweet-air",
+    name: "Sweet Air",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/sweet-air/4/overlay.png",
+        backgroundUrl: "/sweet-air/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/sweet-air/8/overlay.png",
+        backgroundUrl: "/sweet-air/8/bg.png",
+      },
+    ],
+    isNew: true,
+  },
+  {
+    id: "love-ticket",
+    name: "Love Ticket",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/love-ticket/4/overlay.png",
+        backgroundUrl: "/love-ticket/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/love-ticket/8/overlay.png",
+        backgroundUrl: "/love-ticket/8/bg.png",
+      },
+    ],
+    isNew: true,
+  },
+  {
+    id: "february-love",
+    name: "February Love",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/february-love/4/overlay.png",
+        backgroundUrl: "/february-love/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/february-love/8/overlay.png",
+        backgroundUrl: "/february-love/8/bg.png",
+      },
+    ],
+    isNew: true,
+  },
+  {
     id: "pixel-chic",
     name: "Pixel Chic",
     layouts: [
