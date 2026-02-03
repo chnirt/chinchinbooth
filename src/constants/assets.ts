@@ -51,12 +51,12 @@ export const FRAMES: Frame[] = [
       {
         count: 4,
         overlayUrl: "/love-ticket/4/overlay.png",
-        backgroundUrl: "/love-ticket/4/bg.png",
+        backgroundUrl: null,
       },
       {
         count: 8,
         overlayUrl: "/love-ticket/8/overlay.png",
-        backgroundUrl: "/love-ticket/8/bg.png",
+        backgroundUrl: null,
       },
     ],
     isNew: true,
