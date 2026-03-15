@@ -11,6 +11,40 @@ export const FRAMES: Frame[] = [
     ],
   },
   {
+    id: "love-song",
+    name: "Love Song",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/love-song/4/overlay.png",
+        backgroundUrl: "/love-song/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/love-song/8/overlay.png",
+        backgroundUrl: "/love-song/8/bg.png",
+      },
+    ],
+    isNew: true,
+  },
+  {
+    id: "arirang",
+    name: "Arirang",
+    layouts: [
+      {
+        count: 4,
+        overlayUrl: "/arirang/4/overlay.png",
+        backgroundUrl: "/arirang/4/bg.png",
+      },
+      {
+        count: 8,
+        overlayUrl: "/arirang/8/overlay.png",
+        backgroundUrl: "/arirang/8/bg.png",
+      },
+    ],
+    isNew: true,
+  },
+  {
     id: "hpny",
     name: "Happy New Year",
     layouts: [
