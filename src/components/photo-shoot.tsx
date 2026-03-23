@@ -88,6 +88,8 @@ export function PhotoShoot({
   // Add a new state variable for filter gallery visibility after the other state declarations
   const [showFilters, setShowFilters] = useState(true);
 
+  const [isFlashing, setIsFlashing] = useState(false);
+
   const t = useTranslations("HomePage");
 
   const isMaxCaptureReached = capturedImages.length >= MAX_CAPTURE;
@@ -395,6 +397,10 @@ export function PhotoShoot({
       isCapturing
     )
       return;
+
+    // Trigger Black Flash Effect
+    setIsFlashing(true);
+    setTimeout(() => setIsFlashing(false), 80); // Quick flash like iPhone
 
     setIsCapturing(true);
     const canvas = canvasRef.current;
@@ -710,6 +716,19 @@ export function PhotoShoot({
                 )}
                 style={{ filter: generateFilterStyle(currentFilter) }}
               />
+
+              {/* Black Flash Overlay */}
+              <AnimatePresence>
+                {isFlashing && (
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.05 }}
+                    className="pointer-events-none absolute inset-0 z-50 bg-black"
+                  />
+                )}
+              </AnimatePresence>
 
               {/* Camera controls overlay */}
               <div className="absolute top-4 left-4 flex items-center gap-2">
