@@ -99,11 +99,11 @@ export function FrameSelector({
           // Frame background
           const frameBackground = layout?.backgroundUrl ? (
             <div className="pointer-events-none absolute inset-0 z-0">
-              <Image
+              <img
                 src={layout.backgroundUrl}
                 alt="Frame Background"
                 loading="lazy"
-                fill
+                // fill
                 sizes="(max-width: 600px) 100vw, 50vw"
               />
             </div>
@@ -112,11 +112,11 @@ export function FrameSelector({
           // Frame overlay
           const frameOverlay = layout?.overlayUrl ? (
             <div className="pointer-events-none absolute inset-0 z-20">
-              <Image
+              <img
                 src={layout.overlayUrl}
                 alt="Frame Overlay"
                 loading="lazy"
-                fill
+                // fill
                 sizes="(max-width: 600px) 100vw, 50vw"
               />
             </div>
@@ -142,10 +142,12 @@ export function FrameSelector({
               {frameOverlay}
 
               {isNew && (
-                <Image
+                <img
                   className="absolute inset-0 top-1 left-1 z-20 dark:invert"
-                  src="/new.png"
+                  // src="/new.png"
+                  src="https://res.cloudinary.com/chnirt/image/upload/v1774600750/chinchinbooth/eabjvvktzoaj3eeiro5q.png"
                   alt="Filter"
+                  loading="lazy"
                   width={20}
                   height={20}
                 />

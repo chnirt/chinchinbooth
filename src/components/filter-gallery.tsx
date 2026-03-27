@@ -221,10 +221,11 @@ export function FilterGallery({
                         )}
                       >
                         <div className="relative h-full w-full">
-                          <Image
+                          <img
                             src={sampleImageUrl}
                             alt="Preview"
-                            fill
+                            loading="lazy"
+                            // fill
                             className="object-cover"
                             style={{
                               filter: generateFilterStyle(filter.filter),

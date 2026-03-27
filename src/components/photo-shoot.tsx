@@ -892,10 +892,12 @@ export function PhotoShoot({
             size="icon"
           >
             {/* <Blend className="h-4 w-4" /> */}
-            <Image
+            <img
               className="dark:invert"
-              src="/color-filters.png"
+              // src="/color-filters.png"
+              src="https://res.cloudinary.com/chnirt/image/upload/v1774600978/chinchinbooth/vnknm16hm07w1yn7cmgs.png"
               alt="Filter"
+              loading="lazy"
               width={24}
               height={24}
             />
