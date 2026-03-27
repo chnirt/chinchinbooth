@@ -13,6 +13,7 @@ import {
 import { toast } from "sonner";
 import Footer from "@/components/footer";
 import confetti from "canvas-confetti";
+import { Analytics } from '@vercel/analytics/next';
 
 const PhotoShoot = dynamic(() =>
   import("../components/photo-shoot").then((mod) => mod.PhotoShoot),
@@ -205,6 +206,7 @@ export default function PhotoBoothApp() {
         </motion.div>
       </AnimatePresence>
       <Footer />
+      <Analytics />
     </div>
   );
 }
