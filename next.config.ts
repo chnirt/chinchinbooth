@@ -14,3 +14,5 @@ const withNextIntl = createNextIntlPlugin();
 
 // Wrap the Next.js config with both bundle analyzer and the intl plugin.
 module.exports = bundleAnalyzer(withNextIntl(nextConfig));
+
+import('@opennextjs/cloudflare').then(m => m.initOpenNextCloudflareForDev());
