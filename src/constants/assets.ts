@@ -16,13 +16,15 @@ export const FRAMES: Frame[] = [
     layouts: [
       {
         count: 4,
-        overlayUrl: "/love-song/4/overlay.png",
-        backgroundUrl: "/love-song/4/bg.png",
+        // overlayUrl: "/love-song/4/overlay.png",
+        // backgroundUrl: "/love-song/4/bg.png",
+        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774584207/chinchinbooth/love-song/4/hfdysyk15cnqctmrgjjv.png",
+        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774584173/chinchinbooth/love-song/4/os08lqz9xkwjumt7huu2.png",
       },
       {
         count: 8,
-        overlayUrl: "/love-song/8/overlay.png",
-        backgroundUrl: "/love-song/8/bg.png",
+        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774584248/chinchinbooth/love-song/8/ehog9bzm4y1bshamg4wv.png",
+        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774584234/chinchinbooth/love-song/8/wibxluuvckfaxlhai3ac.png",
       },
     ],
     isNew: true,
@@ -33,13 +35,17 @@ export const FRAMES: Frame[] = [
     layouts: [
       {
         count: 4,
-        overlayUrl: "/arirang/4/overlay.png",
-        backgroundUrl: "/arirang/4/bg.png",
+        // overlayUrl: "/arirang/4/overlay.png",
+        // backgroundUrl: "/arirang/4/bg.png",
+        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774583772/chinchinbooth/arirang/4/sdrrnsxcwxlexlj84vzg.png",
+        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774583768/chinchinbooth/arirang/4/kuknvxluw0yvyp1r4pmy.png",
       },
       {
         count: 8,
-        overlayUrl: "/arirang/8/overlay.png",
-        backgroundUrl: "/arirang/8/bg.png",
+        // overlayUrl: "/arirang/8/overlay.png",
+        // backgroundUrl: "/arirang/8/bg.png",
+        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774583819/chinchinbooth/arirang/8/x7ffoxloo0duf72wcfcl.png",
+        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774583816/chinchinbooth/arirang/8/v0jz3bkyadqh787vtzsh.png",
       },
     ],
     isNew: true,
