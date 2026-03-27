@@ -6,7 +6,6 @@ import { Check, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FRAMES } from "@/constants/assets";
 import { handleFrameSelection } from "@/lib/frame-utils";
-import Image from "next/image";
 
 interface FrameSelectorProps {
   selectedFrame: string | null;

@@ -6,7 +6,6 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import type { FilterValues } from "@/types/filters";
 import { FILTER_COLLECTIONS } from "@/constants/filters";
-import Image from "next/image";
 
 // Generate filter style string from filter values
 export const generateFilterStyle = (filter: FilterValues) => {

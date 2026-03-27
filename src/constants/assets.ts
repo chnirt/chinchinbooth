@@ -195,13 +195,17 @@ export const FRAMES: Frame[] = [
     layouts: [
       {
         count: 4,
-        overlayUrl: "/zootopia/4/overlay.png",
-        backgroundUrl: "/zootopia/4/bg.png",
+        // overlayUrl: "/zootopia/4/overlay.png",
+        // backgroundUrl: "/zootopia/4/bg.png",
+        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774601213/chinchinbooth/zootopia/4/tuskw4utbjkszquj8yjk.png",
+        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774601208/chinchinbooth/zootopia/4/yvfpjprxxoyvirp3rdp8.png",
       },
       {
         count: 8,
-        overlayUrl: "/zootopia/8/overlay.png",
-        backgroundUrl: "/zootopia/8/bg.png",
+        // overlayUrl: "/zootopia/8/overlay.png",
+        // backgroundUrl: "/zootopia/8/bg.png",
+        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774601223/chinchinbooth/zootopia/8/mhczy2os8lvx6xf3kye1.png",
+        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774601217/chinchinbooth/zootopia/8/tmd8flmjcuvghoj5cmpi.png",
       },
     ],
     isNew: true,
@@ -212,13 +216,17 @@ export const FRAMES: Frame[] = [
     layouts: [
       {
         count: 4,
-        overlayUrl: "/twinkle-twinkle/4/overlay.png",
-        backgroundUrl: "/twinkle-twinkle/4/bg.png",
+        // overlayUrl: "/twinkle-twinkle/4/overlay.png",
+        // backgroundUrl: "/twinkle-twinkle/4/bg.png",
+        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774601380/chinchinbooth/twinkle-twinkle/4/fwsgre1ahv4ylmapj1y4.png",
+        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774601359/chinchinbooth/twinkle-twinkle/4/kgdtstox8ktljx017wfr.png",
       },
       {
         count: 8,
-        overlayUrl: "/twinkle-twinkle/8/overlay.png",
-        backgroundUrl: "/twinkle-twinkle/8/bg.png",
+        // overlayUrl: "/twinkle-twinkle/8/overlay.png",
+        // backgroundUrl: "/twinkle-twinkle/8/bg.png",
+        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774601391/chinchinbooth/twinkle-twinkle/8/uyrj5wx8f7ogaco3vwbw.png",
+        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774601388/chinchinbooth/twinkle-twinkle/8/ek2hjanszuwgtfaxgkw2.png",
       },
     ],
     isNew: true,
@@ -263,12 +271,14 @@ export const FRAMES: Frame[] = [
     layouts: [
       {
         count: 4,
-        overlayUrl: "/evergreen-bliss/4/overlay.png",
+        // overlayUrl: "/evergreen-bliss/4/overlay.png",
+        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774601739/chinchinbooth/evergreen-bliss/4/mlhprwbs8oocm9f0ysal.png",
         backgroundUrl: null,
       },
       {
         count: 8,
-        overlayUrl: "/evergreen-bliss/8/overlay.png",
+        // overlayUrl: "/evergreen-bliss/8/overlay.png",
+        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774601745/chinchinbooth/evergreen-bliss/8/ni8jkphwwtanxlppxwat.png",
         backgroundUrl: null,
       },
     ],
@@ -280,13 +290,17 @@ export const FRAMES: Frame[] = [
     layouts: [
       {
         count: 4,
-        overlayUrl: "/snowy-scarlet/4/overlay.png",
-        backgroundUrl: "/snowy-scarlet/4/bg.png",
+        // overlayUrl: "/snowy-scarlet/4/overlay.png",
+        // backgroundUrl: "/snowy-scarlet/4/bg.png",
+        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774601819/chinchinbooth/snowy-scarlet/4/kdaoezghse2a2mgwbbsu.png",
+        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774601816/chinchinbooth/snowy-scarlet/4/h7w4paq2ukaiuk3afgex.png",
       },
       {
         count: 8,
-        overlayUrl: "/snowy-scarlet/8/overlay.png",
-        backgroundUrl: "/snowy-scarlet/8/bg.png",
+        // overlayUrl: "/snowy-scarlet/8/overlay.png",
+        // backgroundUrl: "/snowy-scarlet/8/bg.png",
+        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774601834/chinchinbooth/snowy-scarlet/8/fvpuctkpthffc2zgzw3f.png",
+        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774601829/chinchinbooth/snowy-scarlet/8/caneway0ctfdoetpiw9d.png",
       },
     ],
     isNew: true,

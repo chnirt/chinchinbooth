@@ -32,7 +32,6 @@ import {
 import { useMobile } from "@/hooks/use-mobile";
 import "context-filter-polyfill";
 import UploadPhotoButton from "./upload-photo-button";
-import Image from "next/image";
 
 // Camera type enum
 enum CameraType {
@@ -829,7 +828,8 @@ export function PhotoShoot({
                   <FilterGallery
                     onFilterChange={handleFilterChange}
                     currentFilter={currentFilter}
-                    sampleImageUrl="/placeholder.jpg"
+                    // sampleImageUrl="/placeholder.jpg"
+                    sampleImageUrl="https://res.cloudinary.com/chnirt/image/upload/v1774601550/chinchinbooth/yvcvkzo0ihf0j402v5yo.jpg"
                   />
                 </motion.div>
               )}
