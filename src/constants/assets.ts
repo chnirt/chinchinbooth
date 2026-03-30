@@ -11,6 +11,75 @@ export const FRAMES: Frame[] = [
     ],
   },
   {
+    id: "pinku-yume",
+    name: "Pinku Yume",
+    layouts: [
+      {
+        count: 4,
+        // overlayUrl: "/pinku-yume/4/overlay.png",
+        // backgroundUrl: "/pinku-yume/4/bg.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774886489/chinchinbooth/pinku-yume/4/vu2sg21cwziuupz0nvq9.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774886488/chinchinbooth/pinku-yume/4/hqjttaehjculqejrvpg0.png",
+      },
+      {
+        count: 8,
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774886549/chinchinbooth/pinku-yume/8/gpwpgz1ryihiw9ds6ubr.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774886548/chinchinbooth/pinku-yume/8/wcu1sk4noy1qtecukreq.png",
+      },
+    ],
+    isNew: true,
+  },
+  {
+    id: "dainty-green",
+    name: "Dainty Green",
+    layouts: [
+      {
+        count: 4,
+        // overlayUrl: "/dainty-green/4/overlay.png",
+        // backgroundUrl: "/dainty-green/4/bg.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774886222/chinchinbooth/dainty-green/4/hwx6cva7490w8lw6pcoy.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774886226/chinchinbooth/dainty-green/4/m81b3g2weedjtmwyo8no.png",
+      },
+      {
+        count: 8,
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774886234/chinchinbooth/dainty-green/8/jq37qkfpqwtglyldnjac.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774886233/chinchinbooth/dainty-green/8/zlgs7xt6s5oyshe2ct4s.png",
+      },
+    ],
+    isNew: true,
+  },
+  {
+    id: "dainty-pink",
+    name: "Dainty Pink",
+    layouts: [
+      {
+        count: 4,
+        // overlayUrl: "/dainty-pink/4/overlay.png",
+        // backgroundUrl: "/dainty-pink/4/bg.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774886008/chinchinbooth/dainty-pink/4/e686hfjzguabnbrdsngr.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774886010/chinchinbooth/dainty-pink/4/cu49tozido58kxpcgol4.png",
+      },
+      {
+        count: 8,
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774886016/chinchinbooth/dainty-pink/8/dypp426h7q7ecsb8r11i.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774886020/chinchinbooth/dainty-pink/8/tfcddsf1l2bp5xd5hh84.png",
+      },
+    ],
+    isNew: true,
+  },
+  {
     id: "love-song",
     name: "Love Song",
     layouts: [
@@ -18,13 +87,17 @@ export const FRAMES: Frame[] = [
         count: 4,
         // overlayUrl: "/love-song/4/overlay.png",
         // backgroundUrl: "/love-song/4/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774584207/chinchinbooth/love-song/4/hfdysyk15cnqctmrgjjv.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774584173/chinchinbooth/love-song/4/os08lqz9xkwjumt7huu2.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774584207/chinchinbooth/love-song/4/hfdysyk15cnqctmrgjjv.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774584173/chinchinbooth/love-song/4/os08lqz9xkwjumt7huu2.png",
       },
       {
         count: 8,
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774584248/chinchinbooth/love-song/8/ehog9bzm4y1bshamg4wv.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774584234/chinchinbooth/love-song/8/wibxluuvckfaxlhai3ac.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774584248/chinchinbooth/love-song/8/ehog9bzm4y1bshamg4wv.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774584234/chinchinbooth/love-song/8/wibxluuvckfaxlhai3ac.png",
       },
     ],
     isNew: true,
@@ -37,15 +110,19 @@ export const FRAMES: Frame[] = [
         count: 4,
         // overlayUrl: "/arirang/4/overlay.png",
         // backgroundUrl: "/arirang/4/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774583772/chinchinbooth/arirang/4/sdrrnsxcwxlexlj84vzg.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774583768/chinchinbooth/arirang/4/kuknvxluw0yvyp1r4pmy.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774583772/chinchinbooth/arirang/4/sdrrnsxcwxlexlj84vzg.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774583768/chinchinbooth/arirang/4/kuknvxluw0yvyp1r4pmy.png",
       },
       {
         count: 8,
         // overlayUrl: "/arirang/8/overlay.png",
         // backgroundUrl: "/arirang/8/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774583819/chinchinbooth/arirang/8/x7ffoxloo0duf72wcfcl.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774583816/chinchinbooth/arirang/8/v0jz3bkyadqh787vtzsh.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774583819/chinchinbooth/arirang/8/x7ffoxloo0duf72wcfcl.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774583816/chinchinbooth/arirang/8/v0jz3bkyadqh787vtzsh.png",
       },
     ],
     isNew: true,
@@ -75,15 +152,19 @@ export const FRAMES: Frame[] = [
         count: 4,
         // overlayUrl: "/sweet-air/4/overlay.png",
         // backgroundUrl: "/sweet-air/4/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774597246/chinchinbooth/sweet-air/4/j1q1iqi6dhochd6tjdn9.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774597239/chinchinbooth/sweet-air/4/cj5icanj9yzzcuan9jlz.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774597246/chinchinbooth/sweet-air/4/j1q1iqi6dhochd6tjdn9.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774597239/chinchinbooth/sweet-air/4/cj5icanj9yzzcuan9jlz.png",
       },
       {
         count: 8,
         // overlayUrl: "/sweet-air/8/overlay.png",
         // backgroundUrl: "/sweet-air/8/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774597261/chinchinbooth/sweet-air/8/xla8nqqi9alf4lhot0xp.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774597255/chinchinbooth/sweet-air/8/jeg7scinwknspujoapif.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774597261/chinchinbooth/sweet-air/8/xla8nqqi9alf4lhot0xp.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774597255/chinchinbooth/sweet-air/8/jeg7scinwknspujoapif.png",
       },
     ],
     isNew: true,
@@ -95,13 +176,15 @@ export const FRAMES: Frame[] = [
       {
         count: 4,
         // overlayUrl: "/love-ticket/4/overlay.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774597346/chinchinbooth/love-ticket/4/mkvlglh9vhpzygqxfct9.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774597346/chinchinbooth/love-ticket/4/mkvlglh9vhpzygqxfct9.png",
         backgroundUrl: null,
       },
       {
         count: 8,
         // overlayUrl: "/love-ticket/8/overlay.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774597354/chinchinbooth/love-ticket/8/zmyreav6izqgzyrn6fgh.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774597354/chinchinbooth/love-ticket/8/zmyreav6izqgzyrn6fgh.png",
         backgroundUrl: null,
       },
     ],
@@ -115,15 +198,19 @@ export const FRAMES: Frame[] = [
         count: 4,
         // overlayUrl: "/february-love/4/overlay.png",
         // backgroundUrl: "/february-love/4/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774597421/chinchinbooth/february-love/4/r1kei84mhvm4ky2blse3.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774597417/chinchinbooth/february-love/4/dqfuycl5ekj4n8f8auhz.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774597421/chinchinbooth/february-love/4/r1kei84mhvm4ky2blse3.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774597417/chinchinbooth/february-love/4/dqfuycl5ekj4n8f8auhz.png",
       },
       {
         count: 8,
         // overlayUrl: "/february-love/8/overlay.png",
         // backgroundUrl: "/february-love/8/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774597433/chinchinbooth/february-love/8/uisjuuf5elcln3ch5q9a.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774597428/chinchinbooth/february-love/8/yoejiemv5kyu1n7ukmbv.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774597433/chinchinbooth/february-love/8/uisjuuf5elcln3ch5q9a.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774597428/chinchinbooth/february-love/8/yoejiemv5kyu1n7ukmbv.png",
       },
     ],
     isNew: true,
@@ -136,15 +223,19 @@ export const FRAMES: Frame[] = [
         count: 4,
         // overlayUrl: "/pixel-chic/4/overlay.png",
         // backgroundUrl: "/pixel-chic/4/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774597570/chinchinbooth/pixel-chic/4/mroa8jhqcf3jct4svbxv.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774597566/chinchinbooth/pixel-chic/4/xq7hl7tpquohkz0tsicl.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774597570/chinchinbooth/pixel-chic/4/mroa8jhqcf3jct4svbxv.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774597566/chinchinbooth/pixel-chic/4/xq7hl7tpquohkz0tsicl.png",
       },
       {
         count: 8,
         // overlayUrl: "/pixel-chic/8/overlay.png",
         // backgroundUrl: "/pixel-chic/8/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774597587/chinchinbooth/pixel-chic/8/qsf14v8su6vmftvwztwy.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774597582/chinchinbooth/pixel-chic/8/pl9kaiyokjuvfxzpcoli.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774597587/chinchinbooth/pixel-chic/8/qsf14v8su6vmftvwztwy.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774597582/chinchinbooth/pixel-chic/8/pl9kaiyokjuvfxzpcoli.png",
       },
     ],
     isNew: true,
@@ -157,15 +248,19 @@ export const FRAMES: Frame[] = [
         count: 4,
         // overlayUrl: "/true-love/4/overlay.png",
         // backgroundUrl: "/true-love/4/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774597698/chinchinbooth/true-love/4/sui4feee6ajnvyiukna1.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774597692/chinchinbooth/true-love/4/s0fhsocdjecyrxtjobuk.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774597698/chinchinbooth/true-love/4/sui4feee6ajnvyiukna1.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774597692/chinchinbooth/true-love/4/s0fhsocdjecyrxtjobuk.png",
       },
       {
         count: 8,
         // overlayUrl: "/true-love/8/overlay.png",
         // backgroundUrl: "/true-love/8/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774597710/chinchinbooth/true-love/8/b0c1lnwtvgeep0ljtwoy.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774597704/chinchinbooth/true-love/8/ryoqzllc1l9gqfktaesp.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774597710/chinchinbooth/true-love/8/b0c1lnwtvgeep0ljtwoy.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774597704/chinchinbooth/true-love/8/ryoqzllc1l9gqfktaesp.png",
       },
     ],
   },
@@ -177,15 +272,19 @@ export const FRAMES: Frame[] = [
         count: 4,
         // overlayUrl: "/sweet-heart/4/overlay.png",
         // backgroundUrl: "/sweet-heart/4/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774597830/chinchinbooth/sweet-heart/4/swg5sg1gwxrcgorjbesc.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774597825/chinchinbooth/sweet-heart/4/afwehphcs4vkedbvdvzj.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774597830/chinchinbooth/sweet-heart/4/swg5sg1gwxrcgorjbesc.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774597825/chinchinbooth/sweet-heart/4/afwehphcs4vkedbvdvzj.png",
       },
       {
         count: 8,
         // overlayUrl: "/sweet-heart/8/overlay.png",
         // backgroundUrl: "/sweet-heart/8/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774597846/chinchinbooth/sweet-heart/8/f5zkvaqbdipzy1ro712g.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774597839/chinchinbooth/sweet-heart/8/jb5st14xrmgx5wkvbk0m.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774597846/chinchinbooth/sweet-heart/8/f5zkvaqbdipzy1ro712g.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774597839/chinchinbooth/sweet-heart/8/jb5st14xrmgx5wkvbk0m.png",
       },
     ],
   },
@@ -197,15 +296,19 @@ export const FRAMES: Frame[] = [
         count: 4,
         // overlayUrl: "/zootopia/4/overlay.png",
         // backgroundUrl: "/zootopia/4/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774601213/chinchinbooth/zootopia/4/tuskw4utbjkszquj8yjk.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774601208/chinchinbooth/zootopia/4/yvfpjprxxoyvirp3rdp8.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774601213/chinchinbooth/zootopia/4/tuskw4utbjkszquj8yjk.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774601208/chinchinbooth/zootopia/4/yvfpjprxxoyvirp3rdp8.png",
       },
       {
         count: 8,
         // overlayUrl: "/zootopia/8/overlay.png",
         // backgroundUrl: "/zootopia/8/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774601223/chinchinbooth/zootopia/8/mhczy2os8lvx6xf3kye1.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774601217/chinchinbooth/zootopia/8/tmd8flmjcuvghoj5cmpi.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774601223/chinchinbooth/zootopia/8/mhczy2os8lvx6xf3kye1.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774601217/chinchinbooth/zootopia/8/tmd8flmjcuvghoj5cmpi.png",
       },
     ],
     isNew: true,
@@ -218,15 +321,19 @@ export const FRAMES: Frame[] = [
         count: 4,
         // overlayUrl: "/twinkle-twinkle/4/overlay.png",
         // backgroundUrl: "/twinkle-twinkle/4/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774601380/chinchinbooth/twinkle-twinkle/4/fwsgre1ahv4ylmapj1y4.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774601359/chinchinbooth/twinkle-twinkle/4/kgdtstox8ktljx017wfr.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774601380/chinchinbooth/twinkle-twinkle/4/fwsgre1ahv4ylmapj1y4.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774601359/chinchinbooth/twinkle-twinkle/4/kgdtstox8ktljx017wfr.png",
       },
       {
         count: 8,
         // overlayUrl: "/twinkle-twinkle/8/overlay.png",
         // backgroundUrl: "/twinkle-twinkle/8/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774601391/chinchinbooth/twinkle-twinkle/8/uyrj5wx8f7ogaco3vwbw.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774601388/chinchinbooth/twinkle-twinkle/8/ek2hjanszuwgtfaxgkw2.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774601391/chinchinbooth/twinkle-twinkle/8/uyrj5wx8f7ogaco3vwbw.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774601388/chinchinbooth/twinkle-twinkle/8/ek2hjanszuwgtfaxgkw2.png",
       },
     ],
     isNew: true,
@@ -272,13 +379,15 @@ export const FRAMES: Frame[] = [
       {
         count: 4,
         // overlayUrl: "/evergreen-bliss/4/overlay.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774601739/chinchinbooth/evergreen-bliss/4/mlhprwbs8oocm9f0ysal.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774601739/chinchinbooth/evergreen-bliss/4/mlhprwbs8oocm9f0ysal.png",
         backgroundUrl: null,
       },
       {
         count: 8,
         // overlayUrl: "/evergreen-bliss/8/overlay.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774601745/chinchinbooth/evergreen-bliss/8/ni8jkphwwtanxlppxwat.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774601745/chinchinbooth/evergreen-bliss/8/ni8jkphwwtanxlppxwat.png",
         backgroundUrl: null,
       },
     ],
@@ -292,15 +401,19 @@ export const FRAMES: Frame[] = [
         count: 4,
         // overlayUrl: "/snowy-scarlet/4/overlay.png",
         // backgroundUrl: "/snowy-scarlet/4/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774601819/chinchinbooth/snowy-scarlet/4/kdaoezghse2a2mgwbbsu.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774601816/chinchinbooth/snowy-scarlet/4/h7w4paq2ukaiuk3afgex.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774601819/chinchinbooth/snowy-scarlet/4/kdaoezghse2a2mgwbbsu.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774601816/chinchinbooth/snowy-scarlet/4/h7w4paq2ukaiuk3afgex.png",
       },
       {
         count: 8,
         // overlayUrl: "/snowy-scarlet/8/overlay.png",
         // backgroundUrl: "/snowy-scarlet/8/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774601834/chinchinbooth/snowy-scarlet/8/fvpuctkpthffc2zgzw3f.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774601829/chinchinbooth/snowy-scarlet/8/caneway0ctfdoetpiw9d.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774601834/chinchinbooth/snowy-scarlet/8/fvpuctkpthffc2zgzw3f.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774601829/chinchinbooth/snowy-scarlet/8/caneway0ctfdoetpiw9d.png",
       },
     ],
     isNew: true,
@@ -313,15 +426,19 @@ export const FRAMES: Frame[] = [
         count: 4,
         // overlayUrl: "/trick-or-treat/4/overlay.png",
         // backgroundUrl: "/trick-or-treat/4/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774674203/chinchinbooth/trick-or-treat/4/zegcksviiulio88fgkoa.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774674202/chinchinbooth/trick-or-treat/4/ps2pmg9iwepnfxeofj1n.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774674203/chinchinbooth/trick-or-treat/4/zegcksviiulio88fgkoa.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774674202/chinchinbooth/trick-or-treat/4/ps2pmg9iwepnfxeofj1n.png",
       },
       {
         count: 8,
         // overlayUrl: "/trick-or-treat/8/overlay.png",
         // backgroundUrl: "/trick-or-treat/8/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774674212/chinchinbooth/trick-or-treat/8/h3tllbumrxtiyqjqnigj.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774674211/chinchinbooth/trick-or-treat/8/dpojhumdue4tinujs4q5.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774674212/chinchinbooth/trick-or-treat/8/h3tllbumrxtiyqjqnigj.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774674211/chinchinbooth/trick-or-treat/8/dpojhumdue4tinujs4q5.png",
       },
     ],
     isNew: true,
@@ -334,15 +451,19 @@ export const FRAMES: Frame[] = [
         count: 4,
         // overlayUrl: "/halloween/4/overlay.png",
         // backgroundUrl: "/halloween/4/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774674286/chinchinbooth/halloween/4/s2ao26horhkvhdqdw0na.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774674284/chinchinbooth/halloween/4/nweujsfyvrnxhzdvmsxf.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774674286/chinchinbooth/halloween/4/s2ao26horhkvhdqdw0na.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774674284/chinchinbooth/halloween/4/nweujsfyvrnxhzdvmsxf.png",
       },
       {
         count: 8,
         // overlayUrl: "/halloween/8/overlay.png",
         // backgroundUrl: "/halloween/8/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774674294/chinchinbooth/halloween/8/ssvsrwpov7brfbty7wor.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774674292/chinchinbooth/halloween/8/twdpcbt3smrtoqv4gnkx.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774674294/chinchinbooth/halloween/8/ssvsrwpov7brfbty7wor.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774674292/chinchinbooth/halloween/8/twdpcbt3smrtoqv4gnkx.png",
       },
     ],
     isNew: true,
@@ -355,15 +476,19 @@ export const FRAMES: Frame[] = [
         count: 4,
         // overlayUrl: "/lanterns/4/overlay.png",
         // backgroundUrl: "/lanterns/4/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774674393/chinchinbooth/lanterns/4/r2kh6fkampkgz4n8t55t.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774674394/chinchinbooth/lanterns/4/jhs3i1svesmc8vo31bks.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774674393/chinchinbooth/lanterns/4/r2kh6fkampkgz4n8t55t.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774674394/chinchinbooth/lanterns/4/jhs3i1svesmc8vo31bks.png",
       },
       {
         count: 8,
         // overlayUrl: "/lanterns/8/overlay.png",
         // backgroundUrl: "/lanterns/8/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774674405/chinchinbooth/lanterns/8/bs7ppdk58s6btiulejwi.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774674408/chinchinbooth/lanterns/8/jueyb7jp33hhddgkga56.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774674405/chinchinbooth/lanterns/8/bs7ppdk58s6btiulejwi.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774674408/chinchinbooth/lanterns/8/jueyb7jp33hhddgkga56.png",
       },
     ],
     isNew: true,
@@ -376,15 +501,19 @@ export const FRAMES: Frame[] = [
         count: 4,
         // overlayUrl: "/moon-feast/4/overlay.png",
         // backgroundUrl: "/moon-feast/4/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774674499/chinchinbooth/moon-feast/4/yqocc8xg96c9aiuyooys.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774674500/chinchinbooth/moon-feast/4/gs7ohu1uecpsqqvjt3sk.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774674499/chinchinbooth/moon-feast/4/yqocc8xg96c9aiuyooys.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774674500/chinchinbooth/moon-feast/4/gs7ohu1uecpsqqvjt3sk.png",
       },
       {
         count: 8,
         // overlayUrl: "/moon-feast/8/overlay.png",
         // backgroundUrl: "/moon-feast/8/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774674509/chinchinbooth/moon-feast/8/zeeuhyr90v2qrdjknyud.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774674516/chinchinbooth/moon-feast/8/mcxdfidxxkoujmq3lfq5.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774674509/chinchinbooth/moon-feast/8/zeeuhyr90v2qrdjknyud.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774674516/chinchinbooth/moon-feast/8/mcxdfidxxkoujmq3lfq5.png",
       },
     ],
     isNew: true,
@@ -397,13 +526,15 @@ export const FRAMES: Frame[] = [
         count: 4,
         overlayUrl: null,
         // backgroundUrl: "/rouge-étoile/4/bg.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774674719/chinchinbooth/rouge-%C3%A9toile/4/cp9zsxk4nbvgmqc6cdkp.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774674719/chinchinbooth/rouge-%C3%A9toile/4/cp9zsxk4nbvgmqc6cdkp.png",
       },
       {
         count: 8,
         overlayUrl: null,
         // backgroundUrl: "/rouge-étoile/8/bg.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774674739/chinchinbooth/rouge-%C3%A9toile/8/g4mjuq4cgelqjvqlzavk.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774674739/chinchinbooth/rouge-%C3%A9toile/8/g4mjuq4cgelqjvqlzavk.png",
       },
     ],
     isNew: true,
@@ -416,15 +547,19 @@ export const FRAMES: Frame[] = [
         count: 4,
         // overlayUrl: "/amethyst-dream/4/overlay.png",
         // backgroundUrl: "/amethyst-dream/4/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774674807/chinchinbooth/amethyst-dream/4/yo193xejyfghmcistabg.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774674806/chinchinbooth/amethyst-dream/4/myowpten3xylpuhvqol2.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774674807/chinchinbooth/amethyst-dream/4/yo193xejyfghmcistabg.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774674806/chinchinbooth/amethyst-dream/4/myowpten3xylpuhvqol2.png",
       },
       {
         count: 8,
         // overlayUrl: "/amethyst-dream/8/overlay.png",
         // backgroundUrl: "/amethyst-dream/8/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774674827/chinchinbooth/amethyst-dream/8/suyqxcv4ctvbn9jitl0f.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774674819/chinchinbooth/amethyst-dream/8/zpejmufq6hqkuwemfemj.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774674827/chinchinbooth/amethyst-dream/8/suyqxcv4ctvbn9jitl0f.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774674819/chinchinbooth/amethyst-dream/8/zpejmufq6hqkuwemfemj.png",
       },
     ],
     isNew: true,
@@ -437,15 +572,19 @@ export const FRAMES: Frame[] = [
         count: 4,
         // overlayUrl: "/green-pop/4/overlay.png",
         // backgroundUrl: "/green-pop/4/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774675775/chinchinbooth/green-pop/4/e5dxnoiom7cvbblq6zhd.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774675776/chinchinbooth/green-pop/4/isycgqaajupgxvoqp9st.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774675775/chinchinbooth/green-pop/4/e5dxnoiom7cvbblq6zhd.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774675776/chinchinbooth/green-pop/4/isycgqaajupgxvoqp9st.png",
       },
       {
         count: 8,
         // overlayUrl: "/green-pop/8/overlay.png",
         // backgroundUrl: "/green-pop/8/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774675784/chinchinbooth/green-pop/8/ashf08zfzryfllvnbs6k.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774675787/chinchinbooth/green-pop/8/s5bjerfqbn3lsj6ucfdy.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774675784/chinchinbooth/green-pop/8/ashf08zfzryfllvnbs6k.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774675787/chinchinbooth/green-pop/8/s5bjerfqbn3lsj6ucfdy.png",
       },
     ],
     isNew: true,
@@ -458,15 +597,19 @@ export const FRAMES: Frame[] = [
         count: 4,
         // overlayUrl: "/opal-glow/4/overlay.png",
         // backgroundUrl: "/opal-glow/4/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774675914/chinchinbooth/opal-glow/4/vdjakcqihg71z0lwxvql.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774675920/chinchinbooth/opal-glow/4/fhrbdnbkb6zkzwcdcs4h.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774675914/chinchinbooth/opal-glow/4/vdjakcqihg71z0lwxvql.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774675920/chinchinbooth/opal-glow/4/fhrbdnbkb6zkzwcdcs4h.png",
       },
       {
         count: 8,
         // overlayUrl: "/opal-glow/8/overlay.png",
         // backgroundUrl: "/opal-glow/8/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774675923/chinchinbooth/opal-glow/8/ki2obgdrbamuv1y8sayz.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774675933/chinchinbooth/opal-glow/8/eiytsouznysne4a0hc67.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774675923/chinchinbooth/opal-glow/8/ki2obgdrbamuv1y8sayz.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774675933/chinchinbooth/opal-glow/8/eiytsouznysne4a0hc67.png",
       },
     ],
     isNew: true,
@@ -480,15 +623,19 @@ export const FRAMES: Frame[] = [
         count: 4,
         // overlayUrl: "/meow-cha/4/overlay.png",
         // backgroundUrl: "/meow-cha/4/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774676014/chinchinbooth/meow-cha/4/nwg4snqep8tl4qpnr7ct.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774676013/chinchinbooth/meow-cha/4/k4c74i9oxlw8s1ojq1dy.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774676014/chinchinbooth/meow-cha/4/nwg4snqep8tl4qpnr7ct.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774676013/chinchinbooth/meow-cha/4/k4c74i9oxlw8s1ojq1dy.png",
       },
       {
         count: 8,
         // overlayUrl: "/meow-cha/8/overlay.png",
         // backgroundUrl: "/meow-cha/8/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774676028/chinchinbooth/meow-cha/8/b2ec7swfs1s9un7tcvfu.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774676023/chinchinbooth/meow-cha/8/ttpqwfcqw8hcag2p3r4n.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774676028/chinchinbooth/meow-cha/8/b2ec7swfs1s9un7tcvfu.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774676023/chinchinbooth/meow-cha/8/ttpqwfcqw8hcag2p3r4n.png",
       },
     ],
     isNew: true,
@@ -501,15 +648,19 @@ export const FRAMES: Frame[] = [
         count: 4,
         // overlayUrl: "/retro-spark/4/overlay.png",
         // backgroundUrl: "/retro-spark/4/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774676114/chinchinbooth/retro-spark/4/d94howu44r2w3qgrkfdd.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774676114/chinchinbooth/retro-spark/4/rtnbcylr3jq1ijx3yocr.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774676114/chinchinbooth/retro-spark/4/d94howu44r2w3qgrkfdd.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774676114/chinchinbooth/retro-spark/4/rtnbcylr3jq1ijx3yocr.png",
       },
       {
         count: 8,
         // overlayUrl: "/retro-spark/8/overlay.png",
         // backgroundUrl: "/retro-spark/8/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774676125/chinchinbooth/retro-spark/8/r38087aqozlnrq2lg3i9.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774676124/chinchinbooth/retro-spark/8/o2epbonw49qvo7h3gb4x.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774676125/chinchinbooth/retro-spark/8/r38087aqozlnrq2lg3i9.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774676124/chinchinbooth/retro-spark/8/o2epbonw49qvo7h3gb4x.png",
       },
     ],
   },
@@ -521,15 +672,19 @@ export const FRAMES: Frame[] = [
         count: 4,
         // overlayUrl: "/bunny/4/overlay.png",
         // backgroundUrl: "/bunny/4/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774767596/chinchinbooth/bunny/4/qtm32mctwaqb7ywtbs2q.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774767596/chinchinbooth/bunny/4/wa3uwlmn8u5e91zirgr2.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774767596/chinchinbooth/bunny/4/qtm32mctwaqb7ywtbs2q.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774767596/chinchinbooth/bunny/4/wa3uwlmn8u5e91zirgr2.png",
       },
       {
         count: 8,
         // overlayUrl: "/bunny/8/overlay.png",
         // backgroundUrl: "/bunny/8/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774767605/chinchinbooth/bunny/8/ghob1ah4y2rzbhulhpwr.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774767603/chinchinbooth/bunny/8/hfpxexkhrcms5iey2hu2.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774767605/chinchinbooth/bunny/8/ghob1ah4y2rzbhulhpwr.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774767603/chinchinbooth/bunny/8/hfpxexkhrcms5iey2hu2.png",
       },
     ],
   },
@@ -541,15 +696,19 @@ export const FRAMES: Frame[] = [
         count: 4,
         // overlayUrl: "/mario/4/overlay.png",
         // backgroundUrl: "/mario/4/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774767690/chinchinbooth/mario/4/zduxbq2qmmje8bbe84ac.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774767691/chinchinbooth/mario/4/mo63lvvnimell5kaqbul.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774767690/chinchinbooth/mario/4/zduxbq2qmmje8bbe84ac.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774767691/chinchinbooth/mario/4/mo63lvvnimell5kaqbul.png",
       },
       {
         count: 8,
         // overlayUrl: "/mario/8/overlay.png",
         // backgroundUrl: "/mario/8/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774767697/chinchinbooth/mario/8/s3ckxifgib85irzgwayc.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774767701/chinchinbooth/mario/8/doywx1raak81z69jllbr.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774767697/chinchinbooth/mario/8/s3ckxifgib85irzgwayc.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774767701/chinchinbooth/mario/8/doywx1raak81z69jllbr.png",
       },
     ],
   },
@@ -561,15 +720,19 @@ export const FRAMES: Frame[] = [
         count: 4,
         // overlayUrl: "/bloomy/4/overlay.png",
         // backgroundUrl: "/bloomy/4/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774767804/chinchinbooth/bloomy/4/epcjly4zlqblv3gum9uj.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774767801/chinchinbooth/bloomy/4/omzxxrxoyww6vpk45kvh.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774767804/chinchinbooth/bloomy/4/epcjly4zlqblv3gum9uj.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774767801/chinchinbooth/bloomy/4/omzxxrxoyww6vpk45kvh.png",
       },
       {
         count: 8,
         // overlayUrl: "/bloomy/8/overlay.png",
         // backgroundUrl: "/bloomy/8/bg.png",
-        overlayUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774767814/chinchinbooth/bloomy/8/zw3unj3aivyzxhslqx3q.png",
-        backgroundUrl: "https://res.cloudinary.com/chnirt/image/upload/v1774767812/chinchinbooth/bloomy/8/irq1ehdvgifgya8tb5ku.png",
+        overlayUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774767814/chinchinbooth/bloomy/8/zw3unj3aivyzxhslqx3q.png",
+        backgroundUrl:
+          "https://res.cloudinary.com/chnirt/image/upload/v1774767812/chinchinbooth/bloomy/8/irq1ehdvgifgya8tb5ku.png",
       },
     ],
   },
