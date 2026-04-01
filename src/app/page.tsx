@@ -93,7 +93,7 @@ export default function PhotoBoothApp() {
       const html2canvas = (await import("html2canvas-pro")).default;
 
       const canvas = await html2canvas(previewRef.current, {
-        allowTaint: true,
+        allowTaint: false, // Changed to false for Safari compatibility
         useCORS: true,
         backgroundColor: null,
         width: rect.width,
@@ -138,7 +138,7 @@ export default function PhotoBoothApp() {
       const scaleValue = 2;
 
       const canvas = await html2canvas(previewRef.current, {
-        allowTaint: true,
+        allowTaint: false, // Changed to false for Safari compatibility
         useCORS: true,
         backgroundColor: null,
         scale: scaleValue,
