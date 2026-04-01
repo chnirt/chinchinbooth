@@ -175,60 +175,60 @@ export function LayoutSelection({
   }, [copyToClipboard, imageUrl]);
 
   const handleGenerateImage = useCallback(async () => {
-    // if (isPWA) {
-    //   const newTab = window.open("", "_blank");
-    //   if (!newTab) {
-    //     alert("Popup blocked 😢");
-    //     return;
-    //   }
+    if (isPWA) {
+      const newTab = window.open("", "_blank");
+      if (!newTab) {
+        alert("Popup blocked 😢");
+        return;
+      }
 
-    //   // Show loading screen
-    //   const loadingHTML = `
-    //     <!DOCTYPE html>
-    //     <html>
-    //       <head><title>Loading...</title></head>
-    //       <body style="background:#000; color:#fff; margin:0; display:flex; align-items:center; justify-content:center; height:100vh;">
-    //         <h1>Preparing image...</h1>
-    //       </body>
-    //     </html>
-    //   `;
-    //   const loadingBlob = new Blob([loadingHTML], { type: "text/html" });
-    //   newTab.location.href = URL.createObjectURL(loadingBlob);
+      // Show loading screen
+      const loadingHTML = `
+        <!DOCTYPE html>
+        <html>
+          <head><title>Loading...</title></head>
+          <body style="background:#000; color:#fff; margin:0; display:flex; align-items:center; justify-content:center; height:100vh;">
+            <h1>Preparing image...</h1>
+          </body>
+        </html>
+      `;
+      const loadingBlob = new Blob([loadingHTML], { type: "text/html" });
+      newTab.location.href = URL.createObjectURL(loadingBlob);
 
-    //   // Wait for canvas/image generation
-    //   const dataUrl = await generateImage(layoutType); // Should return data:image/jpeg;base64,...
+      // Wait for canvas/image generation
+      const dataUrl = await generateImage(layoutType); // Should return data:image/jpeg;base64,...
 
-    //   // Final image page
-    //   const imageHTML = `
-    //     <!DOCTYPE html>
-    //     <html>
-    //       <head>
-    //         <title>Your Image</title>
-    //         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    //         <style>
-    //           body {
-    //             margin: 0;
-    //             background: #000;
-    //             display: flex;
-    //             justify-content: center;
-    //             align-items: center;
-    //             height: 100vh;
-    //           }
-    //           img {
-    //             max-width: 100%;
-    //             max-height: 100%;
-    //           }
-    //         </style>
-    //       </head>
-    //       <body>
-    //         <img src="${dataUrl}" alt="Generated Image" />
-    //       </body>
-    //     </html>
-    //   `;
-    //   const imageBlob = new Blob([imageHTML], { type: "text/html" });
-    //   newTab.location.href = URL.createObjectURL(imageBlob);
-    //   return;
-    // }
+      // Final image page
+      const imageHTML = `
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <title>Your Image</title>
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <style>
+              body {
+                margin: 0;
+                background: #000;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                height: 100vh;
+              }
+              img {
+                max-width: 100%;
+                max-height: 100%;
+              }
+            </style>
+          </head>
+          <body>
+            <img src="${dataUrl}" alt="Generated Image" />
+          </body>
+        </html>
+      `;
+      const imageBlob = new Blob([imageHTML], { type: "text/html" });
+      newTab.location.href = URL.createObjectURL(imageBlob);
+      return;
+    }
 
     const dataUrl = await generateImage(layoutType); // gọi hàm xử lý canvas
 
