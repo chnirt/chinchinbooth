@@ -68,6 +68,7 @@ export default function DownloadDialog({
                 "mx-auto overflow-hidden rounded-md border border-gray-200 shadow-md",
                 layoutType === 4 ? "aspect-[1/3] w-1/2" : "aspect-[2/3] w-full",
               )}
+              crossOrigin="anonymous"
             />
             <div className="mt-6 rounded-lg border border-amber-100 bg-amber-50 p-4 text-center">
               <h4 className="mb-2 font-medium text-amber-800">

@@ -275,6 +275,7 @@ export function LayoutSelection({
                 src={img || "/placeholder.svg"}
                 alt={`Photo ${index}`}
                 className="h-full w-full object-cover"
+                crossOrigin="anonymous"
               />
               {isSelected && (
                 <div className="bg-primary text-primary-foreground absolute top-1 right-1 flex h-5 w-5 items-center justify-center rounded-full text-xs font-bold">
@@ -485,6 +486,7 @@ export function LayoutSelection({
           src={capturedImages[selectedIndices[idx]] || "/placeholder.svg"}
           alt={`Slot ${idx}`}
           className="h-full w-full object-cover"
+          crossOrigin="anonymous"
         />
       ) : (
         <div className="flex h-full w-full flex-col items-center justify-center text-gray-400">
@@ -536,6 +538,7 @@ export function LayoutSelection({
             }
             alt="Frame Background"
             className="h-full w-full object-contain"
+            crossOrigin="anonymous"
           />
         </div>
       ) : null;
@@ -555,6 +558,7 @@ export function LayoutSelection({
             }
             alt="Frame Overlay"
             className="h-full w-full object-contain"
+            crossOrigin="anonymous"
           />
         </div>
       ) : null;

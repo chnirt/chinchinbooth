@@ -900,6 +900,7 @@ export function PhotoShoot({
               loading="eager"
               width={24}
               height={24}
+              crossOrigin="anonymous"
             />
             <span className="sr-only">Toggle filters</span>
           </Button>

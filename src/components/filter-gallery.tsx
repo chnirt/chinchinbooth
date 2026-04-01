@@ -229,6 +229,7 @@ export function FilterGallery({
                             style={{
                               filter: generateFilterStyle(filter.filter),
                             }}
+                            crossOrigin="anonymous"
                           />
                         </div>
 

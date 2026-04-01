@@ -104,6 +104,7 @@ export function FrameSelector({
                 loading="eager"
                 // fill
                 sizes="(max-width: 600px) 100vw, 50vw"
+                crossOrigin="anonymous"
               />
             </div>
           ) : null;
@@ -117,6 +118,7 @@ export function FrameSelector({
                 loading="eager"
                 // fill
                 sizes="(max-width: 600px) 100vw, 50vw"
+                crossOrigin="anonymous"
               />
             </div>
           ) : null;
@@ -149,6 +151,7 @@ export function FrameSelector({
                   loading="eager"
                   width={20}
                   height={20}
+                  crossOrigin="anonymous"
                 />
               )}
 
