@@ -223,7 +223,7 @@ export function FilterGallery({
                           <img
                             src={sampleImageUrl}
                             alt="Preview"
-                            loading="lazy"
+                            loading="eager"
                             // fill
                             className="object-cover"
                             style={{

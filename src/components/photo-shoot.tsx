@@ -897,7 +897,7 @@ export function PhotoShoot({
               // src="/color-filters.png"
               src="https://res.cloudinary.com/chnirt/image/upload/v1774600978/chinchinbooth/vnknm16hm07w1yn7cmgs.png"
               alt="Filter"
-              loading="lazy"
+              loading="eager"
               width={24}
               height={24}
             />

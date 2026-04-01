@@ -101,7 +101,7 @@ export function FrameSelector({
               <img
                 src={layout.backgroundUrl}
                 alt="Frame Background"
-                loading="lazy"
+                loading="eager"
                 // fill
                 sizes="(max-width: 600px) 100vw, 50vw"
               />
@@ -114,7 +114,7 @@ export function FrameSelector({
               <img
                 src={layout.overlayUrl}
                 alt="Frame Overlay"
-                loading="lazy"
+                loading="eager"
                 // fill
                 sizes="(max-width: 600px) 100vw, 50vw"
               />
@@ -146,7 +146,7 @@ export function FrameSelector({
                   // src="/new.png"
                   src="https://res.cloudinary.com/chnirt/image/upload/v1774600750/chinchinbooth/eabjvvktzoaj3eeiro5q.png"
                   alt="Filter"
-                  loading="lazy"
+                  loading="eager"
                   width={20}
                   height={20}
                 />
