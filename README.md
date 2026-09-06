@@ -10,7 +10,7 @@ Live: [https://chinchinbooth.vercel.app](https://chinchinbooth.vercel.app)
 
 | Lớp | Công nghệ |
 | --- | --- |
-| Framework | Next.js 15.2 (App Router) + React 19 + TypeScript |
+| Framework | Next.js 15.5 (App Router) + React 19 + TypeScript |
 | Styling | Tailwind CSS 4, shadcn/ui (New York), Framer Motion |
 | i18n | next-intl 4, cookie `NEXT_LOCALE` |
 | Ảnh / QR | html2canvas-pro, Cloudinary unsigned upload, qrcode.react |
@@ -251,6 +251,39 @@ pnpm docker:run      # :3000
 pnpm docker:logs
 pnpm docker:stop
 ```
+
+---
+
+## Deploy Cloudflare Workers
+
+Dùng [@opennextjs/cloudflare](https://opennext.js.org/cloudflare/get-started) (cần Next ≥ 15.5). `NEXT_PUBLIC_*` phải có lúc **build** (file `.env.local`).
+
+Lần đầu:
+
+```bash
+pnpm install
+pnpm cf:login
+# đảm bảo .env.local có Cloudinary
+pnpm cf:deploy
+```
+
+Hoặc một lệnh: `sh scripts/cf-deploy.sh` (tự login nếu chưa).
+
+Sau đó preview runtime Workers local:
+
+```bash
+pnpm cf:preview
+```
+
+URL mặc định: `https://chinchinbooth.<subdomain>.workers.dev`. Gắn domain: Cloudflare Dashboard → Workers → chinchinbooth → Custom Domains.
+
+CI (Workers Builds): build command `pnpm cf:deploy` **không** dùng — dùng `npx opennextjs-cloudflare build` rồi deploy step, hoặc connect repo và set:
+
+| Setting | Value |
+| --- | --- |
+| Build command | `npx opennextjs-cloudflare build` |
+| Deploy command | `npx opennextjs-cloudflare deploy` |
+| Env | `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`, `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET`, `NEXT_PUBLIC_APP_VERSION` |
 
 ---
 

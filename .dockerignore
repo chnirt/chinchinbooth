@@ -9,3 +9,6 @@ README.md
 .vscode
 *.log
 *.env
+.open-next
+.wrangler
+.dev.vars
