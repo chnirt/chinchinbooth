@@ -144,14 +144,12 @@ export function FrameSelector({
 
               {isNew && (
                 <img
-                  className="absolute inset-0 top-1 left-1 z-20 dark:invert"
-                  // src="/new.png"
-                  src="https://res.cloudinary.com/chnirt/image/upload/v1774600750/chinchinbooth/eabjvvktzoaj3eeiro5q.png"
-                  alt="Filter"
+                  className="absolute top-1 left-1 z-20 dark:invert"
+                  src="/new.png"
+                  alt="New"
                   loading="eager"
                   width={20}
                   height={20}
-                  crossOrigin="anonymous"
                 />
               )}
 

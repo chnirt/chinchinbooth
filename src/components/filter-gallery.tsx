@@ -22,7 +22,7 @@ interface FilterGalleryProps {
 export function FilterGallery({
   onFilterChange,
   currentFilter,
-  sampleImageUrl = "/placeholder.svg?height=150&width=150",
+  sampleImageUrl = "/placeholder.jpg",
   className,
 }: FilterGalleryProps) {
   const [activeCategory, setActiveCategory] = useState<string>("normal");

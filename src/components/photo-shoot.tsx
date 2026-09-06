@@ -828,8 +828,7 @@ export function PhotoShoot({
                   <FilterGallery
                     onFilterChange={handleFilterChange}
                     currentFilter={currentFilter}
-                    // sampleImageUrl="/placeholder.jpg"
-                    sampleImageUrl="https://res.cloudinary.com/chnirt/image/upload/v1774601550/chinchinbooth/yvcvkzo0ihf0j402v5yo.jpg"
+                    sampleImageUrl="/placeholder.jpg"
                   />
                 </motion.div>
               )}
@@ -894,13 +893,11 @@ export function PhotoShoot({
             {/* <Blend className="h-4 w-4" /> */}
             <img
               className="dark:invert"
-              // src="/color-filters.png"
-              src="https://res.cloudinary.com/chnirt/image/upload/v1774600978/chinchinbooth/vnknm16hm07w1yn7cmgs.png"
+              src="/color-filters.png"
               alt="Filter"
               loading="eager"
               width={24}
               height={24}
-              crossOrigin="anonymous"
             />
             <span className="sr-only">Toggle filters</span>
           </Button>
