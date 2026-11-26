@@ -28,23 +28,28 @@ export default function DownloadDialog({
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    requestAnimationFrame(() => {
-      const scrollDownTimer = setTimeout(() => {
+    if (!open) return;
+
+    let scrollDownTimer: ReturnType<typeof setTimeout> | undefined;
+    let scrollUpTimer: ReturnType<typeof setTimeout> | undefined;
+    const frame = requestAnimationFrame(() => {
+      scrollDownTimer = setTimeout(() => {
         if (scrollAreaRef.current) {
           scrollAreaRef.current.scrollTo({ top: 100, behavior: "smooth" });
         }
       }, 500);
-      const scrollUpTimer = setTimeout(() => {
+      scrollUpTimer = setTimeout(() => {
         if (scrollAreaRef.current) {
           scrollAreaRef.current.scrollTo({ top: 0, behavior: "smooth" });
         }
       }, 2000);
-
-      return () => {
-        clearTimeout(scrollDownTimer);
-        clearTimeout(scrollUpTimer);
-      };
     });
+
+    return () => {
+      cancelAnimationFrame(frame);
+      clearTimeout(scrollDownTimer);
+      clearTimeout(scrollUpTimer);
+    };
   }, [open]);
 
   return (

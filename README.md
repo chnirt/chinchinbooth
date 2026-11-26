@@ -4,6 +4,8 @@ Photo booth web: chụp hoặc tải ảnh, gắn filter, chọn strip 1×4 / 2�
 
 Live: [https://chinchinbooth.vercel.app](https://chinchinbooth.vercel.app)
 
+[Hướng dẫn vận hành và kiểm tra](docs/van-hanh-va-kiem-tra.md) có checklist cho camera, JPEG, QR và cách xử lý lỗi thường gặp.
+
 ---
 
 ## Tech stack
@@ -130,7 +132,7 @@ Giữ toàn bộ session:
 
 `uploadAndGenerateQR()`: html2canvas scale 2 → JPEG 0.8 → `uploadToCloudinary` → set `imageUrl` → `updateQRGenerationCount()`.
 
-### 2. Camera — `src/components/photo-shoot.tsx`
+### 2. Camera — `src/components/photo-shoot.tsx` và `src/hooks/use-booth-camera.ts`
 
 - Xin quyền, `enumerateDevices`, phân loại camera theo label + heuristic mobile
 - Mobile ưu tiên camera trước; desktop lấy device đầu
@@ -141,7 +143,7 @@ Giữ toàn bộ session:
 - Auto mode bật sẵn: chụp xong chờ 1s rồi countdown tiếp đến đủ 8
 - Capture: canvas + `generateFilterStyle` + mirror transform → PNG data URL
 - Flash đen ~80ms khi chụp
-- Upload file: `FileReader` data URL, tối đa số slot còn lại
+- Upload file: `FileReader` data URL, tối đa số slot còn lại. Nút upload yêu cầu camera đã khởi động và phiên chụp đang rảnh.
 - Phím tắt (không dùng khi focus input): Space/Enter chụp hoặc next, Delete undo, T timer, M mirror, F filter
 
 ### 3. Filter — `src/constants/filters.ts` + `filter-gallery.tsx`
@@ -318,7 +320,7 @@ CI (Workers Builds): build command `pnpm cf:deploy` **không** dùng — dùng `
 13. **`DEFAULT_FILTERS` lệch type** — có `blur` (không dùng), thiếu `hueRotate` so với `FilterValues`.
 14. **i18n cứng** — tiếng Anh hardcode ở camera label, ô Empty, bottom nav, frame-selector, filter category, PWA `alert("Popup blocked")`.
 15. **Auto mode không tắt được** — `isAutoModeEnabled` mặc định `true`, UI/phím tắt toggle đã comment.
-16. **Bug nhỏ** — `UploadPhotoButton` đọc file song song, thứ tự không ổn định; `DownloadDialog` cleanup timer nằm trong `requestAnimationFrame` nên có thể leak; `ResizeObserver` trong layout là no-op; class `filter-transition` được gắn lên video nhưng không có trong CSS.
+16. **Bug nhỏ** — `UploadPhotoButton` đọc file song song, thứ tự không ổn định; class `filter-transition` được gắn lên video nhưng không có trong CSS.
 
 ---
 
@@ -339,7 +341,7 @@ CI (Workers Builds): build command `pnpm cf:deploy` **không** dùng — dùng `
 }
 ```
 
-`overlayUrl` / `backgroundUrl` có thể `null`. `handleFrameSelection` preload cả hai trước khi chọn.
+`overlayUrl` / `backgroundUrl` có thể `null`. `preloadFrameLayout` tải trước nền và overlay của layout hiện tại. `StripPreview` là DOM dùng chung cho xem trước và xuất ảnh.
 
 ---
 

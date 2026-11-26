@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect, useCallback, useMemo } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Undo2,
@@ -30,25 +30,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useMobile } from "@/hooks/use-mobile";
+import {
+  CameraType,
+  type CameraInfo,
+  useBoothCamera,
+} from "@/hooks/use-booth-camera";
 import "context-filter-polyfill";
 import UploadPhotoButton from "./upload-photo-button";
-
-// Camera type enum
-enum CameraType {
-  FRONT = "front",
-  BACK = "back",
-  BACK_ULTRA_WIDE = "back_ultra_wide",
-  BACK_TELEPHOTO = "back_telephoto",
-  EXTERNAL = "external",
-  UNKNOWN = "unknown",
-}
-
-// Camera info interface
-interface CameraInfo {
-  device: MediaDeviceInfo;
-  type: CameraType;
-  label: string;
-}
 
 export function PhotoShoot({
   capturedImages,
@@ -56,8 +44,6 @@ export function PhotoShoot({
   canProceedToLayout,
   goToLayoutScreen,
 }: PhotoShootProps) {
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const streamRef = useRef<MediaStream | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const capturedImagesRef = useRef<HTMLDivElement>(null);
   const cameraContainerRef = useRef<HTMLDivElement>(null);
@@ -68,8 +54,15 @@ export function PhotoShoot({
     FILTER_COLLECTIONS.normal[0].filter,
   );
   const [isMirrored, setIsMirrored] = useState(isMobile);
-  const [isCameraStarted, setIsCameraStarted] = useState(false);
-  const [cameraError, setCameraError] = useState<string | null>(null);
+  const {
+    videoRef,
+    attachVideo,
+    cameras,
+    currentCameraIndex,
+    selectCamera,
+    isCameraStarted,
+    cameraError,
+  } = useBoothCamera(setIsMirrored);
   const [isCapturing, setIsCapturing] = useState(false);
 
   // Mode toggles and auto sequence state
@@ -80,9 +73,6 @@ export function PhotoShoot({
   const [selectedTimerIndex, setSelectedTimerIndex] =
     useState<number>(DEFAULT_TIMER_INDEX);
   const [countdown, setCountdown] = useState<number | null>(null);
-
-  const [cameras, setCameras] = useState<CameraInfo[]>([]);
-  const [currentCameraIndex, setCurrentCameraIndex] = useState(0);
 
   // Add a new state variable for filter gallery visibility after the other state declarations
   const [showFilters, setShowFilters] = useState(true);
@@ -109,75 +99,6 @@ export function PhotoShoot({
     setShowFilters((prev) => !prev);
   }, []);
 
-  // Detect camera type based on label and capabilities
-  const detectCameraType = useCallback(
-    (
-      device: MediaDeviceInfo,
-      index: number,
-      totalCameras: number,
-    ): CameraType => {
-      const label = device.label.toLowerCase();
-
-      // Check for explicit keywords in the label
-      if (label.includes("ultra") || label.includes("wide")) {
-        return CameraType.BACK_ULTRA_WIDE;
-      }
-
-      if (label.includes("tele") || label.includes("zoom")) {
-        return CameraType.BACK_TELEPHOTO;
-      }
-
-      if (
-        label.includes("back") ||
-        label.includes("rear") ||
-        label.includes("environment")
-      ) {
-        return CameraType.BACK;
-      }
-
-      if (
-        label.includes("front") ||
-        label.includes("face") ||
-        label.includes("user") ||
-        label.includes("selfie")
-      ) {
-        return CameraType.FRONT;
-      }
-
-      // Heuristics for mobile devices
-      if (isMobile) {
-        // On mobile with multiple cameras
-        if (totalCameras >= 3) {
-          // First is usually main back, second is ultra-wide or telephoto, last is front
-          if (index === 0) return CameraType.BACK;
-          if (index === totalCameras - 1) return CameraType.FRONT;
-          return index === 1
-            ? CameraType.BACK_ULTRA_WIDE
-            : CameraType.BACK_TELEPHOTO;
-        } else if (totalCameras === 2) {
-          // With 2 cameras, first is usually back, second is front
-          return index === 0 ? CameraType.BACK : CameraType.FRONT;
-        }
-        // Single camera on mobile is usually front
-        return CameraType.FRONT;
-      }
-
-      // For desktop/laptop
-      if (index === 0 && totalCameras === 1) {
-        // Built-in webcam
-        return CameraType.FRONT;
-      }
-
-      // External cameras or additional cameras
-      if (index > 0 || totalCameras > 1) {
-        return CameraType.EXTERNAL;
-      }
-
-      return CameraType.UNKNOWN;
-    },
-    [isMobile],
-  );
-
   // Format camera label for display
   const formatCameraLabel = useCallback(
     (cameraInfo: CameraInfo): string => {
@@ -202,155 +123,6 @@ export function PhotoShoot({
     },
     [cameras, isMobile],
   );
-
-  // Initialize camera
-  useEffect(() => {
-    const initializeCameras = async () => {
-      try {
-        // Request permission first
-        await navigator.mediaDevices.getUserMedia({ video: true });
-
-        const devices = await navigator.mediaDevices.enumerateDevices();
-
-        const videoDevices = devices.filter(
-          (device) => device.kind === "videoinput",
-        );
-
-        if (videoDevices.length === 0) {
-          setCameraError("No cameras detected on your device");
-          return;
-        }
-
-        // Process camera information
-        const cameraInfos: CameraInfo[] = videoDevices.map((device, index) => {
-          const type = detectCameraType(device, index, videoDevices.length);
-          return {
-            device,
-            type,
-            label: device.label || `Camera ${index + 1}`,
-          };
-        });
-
-        setCameras(cameraInfos);
-
-        // If we haven't started a camera yet, select the preferred one
-        if (!isCameraStarted) {
-          let preferredCameraIndex = 0; // Default: select the first camera
-
-          if (isMobile) {
-            // For mobile devices, prefer the front camera if available
-            const frontCameraIndex = cameraInfos.findIndex(
-              (c) => c.type === CameraType.FRONT,
-            );
-
-            if (frontCameraIndex !== -1) {
-              preferredCameraIndex = frontCameraIndex;
-            } else {
-              // If no front camera exists, fall back to a back camera
-              const backCameraIndex = cameraInfos.findIndex(
-                (c) =>
-                  c.type === CameraType.BACK ||
-                  c.type === CameraType.BACK_ULTRA_WIDE ||
-                  c.type === CameraType.BACK_TELEPHOTO,
-              );
-              if (backCameraIndex !== -1) {
-                preferredCameraIndex = backCameraIndex;
-              }
-            }
-          }
-
-          setCurrentCameraIndex(preferredCameraIndex);
-        }
-      } catch (error) {
-        console.error("Camera initialization error:", error);
-        setCameraError(t("errors.camera_access_required"));
-      }
-    };
-
-    initializeCameras();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [detectCameraType, isMobile, t]);
-
-  const selectedCamera = useMemo(
-    () => cameras[currentCameraIndex],
-    [cameras, currentCameraIndex],
-  );
-
-  const startCamera = useCallback(async () => {
-    if (cameras.length === 0 || currentCameraIndex >= cameras.length) return;
-
-    try {
-      // Set mirroring based on camera type
-      const shouldMirror =
-        selectedCamera.type === CameraType.FRONT ||
-        selectedCamera.type === CameraType.UNKNOWN;
-      setIsMirrored(shouldMirror);
-
-      // Camera constraints
-      const constraints = {
-        video: {
-          deviceId: { exact: selectedCamera.device.deviceId },
-          width: { ideal: 1280 },
-          height: { ideal: 960 },
-        },
-      };
-
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
-      streamRef.current = stream;
-
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        setIsCameraStarted(true);
-        setCameraError(null);
-      }
-    } catch (error) {
-      console.error("Camera start error:", error);
-      setCameraError(t("errors.camera_access_required"));
-    }
-  }, [cameras.length, currentCameraIndex, selectedCamera, t]);
-
-  const stopCamera = useCallback(() => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach((track) => track.stop());
-      streamRef.current = null;
-      setIsCameraStarted(false);
-    }
-
-    if (videoRef.current) {
-      videoRef.current.srcObject = null;
-    }
-  }, []);
-
-  // Start the selected camera
-  useEffect(() => {
-    if (!navigator.mediaDevices) {
-      console.warn("Camera is not supported");
-      return;
-    }
-
-    startCamera();
-
-    const handleVisibility = () => {
-      if (document.visibilityState === "visible") {
-        startCamera();
-      } else {
-        stopCamera();
-      }
-    };
-
-    const handleBeforeUnload = () => {
-      stopCamera();
-    };
-
-    document.addEventListener("visibilitychange", handleVisibility);
-    window.addEventListener("beforeunload", handleBeforeUnload);
-
-    return () => {
-      stopCamera();
-      document.removeEventListener("visibilitychange", handleVisibility);
-      window.removeEventListener("beforeunload", handleBeforeUnload);
-    };
-  }, [startCamera, stopCamera]);
 
   const stopAutoSequence = useCallback(() => {
     setIsAutoSequenceActive(false);
@@ -427,6 +199,7 @@ export function PhotoShoot({
     setIsCapturing(false);
     scheduleNextAutoCapture();
   }, [
+    videoRef,
     currentFilter,
     isCameraStarted,
     isCapturing,
@@ -615,24 +388,6 @@ export function PhotoShoot({
     toggleFilters,
   ]);
 
-  const selectCamera = useCallback(
-    (index: number) => {
-      if (index === currentCameraIndex) return;
-
-      // Stop current stream
-      if (videoRef.current && videoRef.current.srcObject) {
-        const stream = videoRef.current.srcObject as MediaStream;
-        stream.getTracks().forEach((track) => track.stop());
-        videoRef.current.srcObject = null;
-      }
-
-      // Switch to selected camera
-      setCurrentCameraIndex(index);
-      setIsCameraStarted(false);
-    },
-    [currentCameraIndex],
-  );
-
   // Get camera icon based on type
   const getCameraIcon = useCallback((type: CameraType) => {
     switch (type) {
@@ -693,7 +448,9 @@ export function PhotoShoot({
       {/* Camera view with standard border */}
       {cameraError ? (
         <div className="rounded-lg bg-red-50 p-4 text-center font-bold text-red-500">
-          {cameraError}
+          {cameraError === "no-devices"
+            ? "No cameras detected on your device"
+            : t("errors.camera_access_required")}
         </div>
       ) : (
         <div className="flex w-full flex-col gap-2">
@@ -706,7 +463,7 @@ export function PhotoShoot({
           >
             <div className="relative h-full w-full overflow-hidden rounded-xl">
               <video
-                ref={videoRef}
+                ref={attachVideo}
                 autoPlay
                 playsInline
                 className={cn(

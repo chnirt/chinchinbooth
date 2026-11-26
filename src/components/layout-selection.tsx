@@ -6,19 +6,15 @@ import {
   ArrowLeft,
   Download,
   RefreshCw,
-  Check,
   GripHorizontal,
   Smartphone,
-  ImagePlus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import type { LayoutSelectionProps } from "@/types";
-import { COLOR_PALETTE, GRADIENT_PRESETS } from "@/constants/styles";
-import { FRAMES } from "@/constants/assets";
-import { FrameSelector } from "./frame-selector";
-import { SparklesText } from "./magicui/sparkles-text";
+import { FrameCustomization, type FrameTab } from "./frame-customization";
+import { StripPreview } from "./strip-preview";
 import { useMobile } from "@/hooks/use-mobile";
 import { usePWA } from "@/hooks/use-pwa";
 import ShareDialog from "./share-dialog";
@@ -49,9 +45,7 @@ export function LayoutSelection({
   const isPWA = usePWA();
   const [frameColor, setFrameColor] = useState<string | null>("#FFFFFF");
   const [selectedGradient, setSelectedGradient] = useState<string | null>(null);
-  const [activeTab, setActiveTab] = useState<"solid" | "gradient" | "frames">(
-    "frames",
-  );
+  const [activeTab, setActiveTab] = useState<FrameTab>("frames");
   const [copied, setCopied] = useState(false);
   const [imageDataUrl, setImageDataUrl] = useState<string | null>(null);
   const [showShareDialog, setShowShareDialog] = useState(false);
@@ -60,26 +54,6 @@ export function LayoutSelection({
   const [showDrawer, setShowDrawer] = useState(false);
 
   const t = useTranslations("HomePage");
-
-  // Update preview dimensions when it changes
-  useEffect(() => {
-    const previewElement = previewRef.current;
-    if (!previewElement) return;
-
-    const updateDimensions = () => {
-      // Implementation for dimension updates if needed
-    };
-
-    updateDimensions();
-
-    // Use ResizeObserver to detect changes in the preview element size
-    const resizeObserver = new ResizeObserver(updateDimensions);
-    resizeObserver.observe(previewElement);
-
-    return () => {
-      resizeObserver.unobserve(previewElement);
-    };
-  }, [layoutType, previewRef]); // Don't include `previewRef`
 
   // Show QR section when imageUrl is available
   useEffect(() => {
@@ -289,10 +263,14 @@ export function LayoutSelection({
     );
   };
 
-  const showDrawerWithType = (newDrawerType: string) => {
+  const showDrawerWithType = useCallback((newDrawerType: string) => {
     setDrawerType(newDrawerType);
     setShowDrawer(true);
-  };
+  }, []);
+
+  const openPhotoDrawer = useCallback(() => {
+    showDrawerWithType("select_photo");
+  }, [showDrawerWithType]);
 
   const renderLayoutType = () => {
     return (
@@ -321,338 +299,69 @@ export function LayoutSelection({
     );
   };
 
-  const renderFrames = () => {
-    return (
-      <>
-        {/* Tabs for different customization options */}
-        <motion.div
-          className="animate-fade-in mb-4"
-          initial={{ height: 0, opacity: 0 }}
-          animate={{ height: "auto", opacity: 1 }}
-          exit={{ height: 0, opacity: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <div className="mb-3 flex border-b border-gray-200">
-            <button
-              onClick={() => setActiveTab("frames")}
-              className={cn(
-                "px-4 py-2 text-sm font-medium transition-colors",
-                activeTab === "frames"
-                  ? "border-primary text-primary border-b-2"
-                  : "hover:text-primary text-gray-500",
-              )}
-            >
-              <SparklesText
-                text={t("frames")}
-                className="text-sm font-medium"
-                colors={{ first: "#FFAAAA", second: "#FF7777" }}
-              />
-            </button>
-            <button
-              onClick={() => setActiveTab("solid")}
-              className={cn(
-                "px-4 py-2 text-sm font-medium transition-colors",
-                activeTab === "solid"
-                  ? "border-primary text-primary border-b-2"
-                  : "hover:text-primary text-gray-500",
-              )}
-            >
-              {t("solid_colors")}
-            </button>
-            <button
-              onClick={() => setActiveTab("gradient")}
-              className={cn(
-                "px-4 py-2 text-sm font-medium transition-colors",
-                activeTab === "gradient"
-                  ? "border-primary text-primary border-b-2"
-                  : "hover:text-primary text-gray-500",
-              )}
-            >
-              {t("gradients")}
-            </button>
-          </div>
-        </motion.div>
-
-        {/* Content based on active tab */}
-        <div className="mb-4">
-          {activeTab === "solid" && (
-            <div className="mb-3 grid grid-cols-6 gap-2">
-              {COLOR_PALETTE.map((color) => {
-                const isSelected = frameColor === color && !selectedGradient;
-                return (
-                  <motion.button
-                    key={color}
-                    onClick={() => handleColorChange(color)}
-                    style={{ backgroundColor: color }}
-                    className={cn(
-                      "relative h-8 w-full rounded-md border-2 transition-all hover:shadow-sm",
-                      isSelected
-                        ? "border-primary shadow-sm"
-                        : "border-gray-200",
-                    )}
-                    aria-label={`Select ${color}`}
-                  >
-                    {isSelected && (
-                      <div className="absolute top-1 right-1 flex h-3 w-3 items-center justify-center rounded-full border border-gray-200 bg-white">
-                        <Check className="text-primary h-2 w-2" />
-                      </div>
-                    )}
-                    <span className="sr-only">{color}</span>
-                  </motion.button>
-                );
-              })}
-            </div>
-          )}
-
-          {activeTab === "gradient" && (
-            <div className="grid grid-cols-2 gap-2">
-              {GRADIENT_PRESETS.map((gradient) => {
-                const isSelected = selectedGradient === gradient.value;
-                return (
-                  <motion.button
-                    key={gradient.name}
-                    onClick={() => handleGradientChange(gradient.value)}
-                    style={{ background: gradient.value }}
-                    className={cn(
-                      "relative h-10 w-full rounded-md border-2 transition-all hover:shadow-sm",
-                      isSelected
-                        ? "border-primary shadow-sm"
-                        : "border-gray-200",
-                    )}
-                    aria-label={`Select ${gradient.name} gradient`}
-                  >
-                    {isSelected && (
-                      <div className="absolute top-1 right-1 flex h-3 w-3 items-center justify-center rounded-full border border-gray-200 bg-white">
-                        <Check className="text-primary h-2 w-2" />
-                      </div>
-                    )}
-                    <span className="text-xs font-medium text-gray-800 drop-shadow-sm">
-                      {gradient.name}
-                    </span>
-                  </motion.button>
-                );
-              })}
-            </div>
-          )}
-
-          {activeTab === "frames" && (
-            <FrameSelector
-              selectedFrame={selectedFrame}
-              setSelectedFrame={handleFrameChange}
-              setImageUrl={setImageUrl || (() => {})}
-              layoutType={layoutType}
-            />
-          )}
-        </div>
-
-        {/* Current Selection Preview for colors */}
-        {activeTab === "solid" && (
-          <div className="mt-3 flex items-center gap-3 rounded-md bg-gray-50 p-2">
-            {/* Color Picker */}
-            <input
-              type="color"
-              value={frameColor ?? "#FFFFFF"}
-              onChange={(e) => handleColorChange(e.target.value)}
-              className="h-6 w-6 cursor-pointer"
-              title="Pick a color"
-            />
-
-            <div
-              className="pointer-events-none absolute h-6 w-6 rounded-md border border-gray-200"
-              style={
-                selectedGradient
-                  ? { background: selectedGradient }
-                  : { backgroundColor: frameColor || "#FFFFFF" }
-              }
-            ></div>
-
-            <span className="text-xs text-gray-700">
-              {selectedGradient
-                ? `Gradient: ${GRADIENT_PRESETS.find((g) => g.value === selectedGradient)?.name || "Custom"}`
-                : frameColor
-                  ? `Color: ${frameColor}`
-                  : null}
-            </span>
-          </div>
-        )}
-      </>
-    );
-  };
-
-  const renderCell = (idx: number) => {
-    const cellContent =
-      selectedIndices[idx] !== undefined ? (
-        <img
-          src={capturedImages[selectedIndices[idx]] || "/placeholder.svg"}
-          alt={`Slot ${idx}`}
-          className="h-full w-full object-cover"
-          crossOrigin="anonymous"
-        />
-      ) : (
-        <div className="flex h-full w-full flex-col items-center justify-center text-gray-400">
-          {!isMobile ? (
-            <span className="text-xs">Empty</span>
-          ) : (
-            <ImagePlus className="h-4 w-4" />
-          )}
-        </div>
-      );
-
-    const baseClass =
-      "w-full aspect-[4/3] flex items-center justify-center transition-all duration-200 overflow-hidden border border-transparent";
-    const emptyClass = "border-dashed border-gray-200 bg-gray-50/50";
-
-    return (
-      <button
-        key={idx}
-        className={cn(
-          baseClass,
-          selectedIndices[idx] === undefined && emptyClass,
-        )}
-        onClick={() => {
-          showDrawerWithType("select_photo");
-        }}
-        disabled={!isMobile}
-      >
-        {cellContent}
-      </button>
-    );
-  };
-
-  const renderPreview = () => {
-    const commonClasses =
-      "mx-auto overflow-hidden rounded-md border border-gray-200 shadow-md";
-
-    // Frame background
-    const frameBackground =
-      selectedFrame &&
-      FRAMES.find((f) => f.id === selectedFrame)?.layouts?.find(
-        (p) => p.count === layoutType,
-      )?.backgroundUrl ? (
-        <div className="pointer-events-none absolute inset-0 z-0">
-          <img
-            src={
-              FRAMES.find((f) => f.id === selectedFrame)?.layouts?.find(
-                (p) => p.count === layoutType,
-              )?.backgroundUrl || ""
-            }
-            alt="Frame Background"
-            className="h-full w-full object-contain"
-            crossOrigin="anonymous"
-          />
-        </div>
-      ) : null;
-
-    // Frame overlay
-    const frameOverlay =
-      selectedFrame &&
-      FRAMES.find((f) => f.id === selectedFrame)?.layouts?.find(
-        (p) => p.count === layoutType,
-      )?.overlayUrl ? (
-        <div className="pointer-events-none absolute inset-0 z-20">
-          <img
-            src={
-              FRAMES.find((f) => f.id === selectedFrame)?.layouts?.find(
-                (p) => p.count === layoutType,
-              )?.overlayUrl || ""
-            }
-            alt="Frame Overlay"
-            className="h-full w-full object-contain"
-            crossOrigin="anonymous"
-          />
-        </div>
-      ) : null;
-
-    const backgroundStyle = selectedGradient
-      ? { background: selectedGradient }
-      : { backgroundColor: frameColor || "#FFFFFF" };
-
-    if (layoutType === 4) {
-      return (
-        <div className={cn("relative max-w-1/2", commonClasses)}>
-          <div
-            ref={previewRef}
-            className="flex aspect-[1/3] flex-col gap-[5%] p-[10%]"
-            style={backgroundStyle}
-          >
-            {frameBackground}
-            <div className="relative z-10 grid grid-cols-1 gap-[5%]">
-              {Array.from({ length: 4 }, (_, idx) => renderCell(idx))}
-            </div>
-            {frameOverlay}
-          </div>
-        </div>
-      );
-    }
-
-    return (
-      <div className={cn("relative", commonClasses)}>
-        <div
-          ref={previewRef}
-          className="flex aspect-[2/3] flex-col gap-[calc(2.5%*3/2)] p-[5%]"
-          style={backgroundStyle}
-        >
-          {frameBackground}
-          <div className="relative z-10 grid grid-cols-2 gap-[calc(2.5%*3/2)]">
-            <div className="flex flex-col gap-[2.5%]">
-              {Array.from({ length: 4 }, (_, idx) => renderCell(idx))}
-            </div>
-            <div className="flex flex-col gap-[2.5%]">
-              {Array.from({ length: 4 }, (_, idx) => renderCell(idx + 4))}
-            </div>
-          </div>
-          {frameOverlay}
-        </div>
-      </div>
-    );
-  };
+  const frameCustomization = (
+    <FrameCustomization
+      activeTab={activeTab}
+      setActiveTab={setActiveTab}
+      frameColor={frameColor}
+      selectedGradient={selectedGradient}
+      selectedFrame={selectedFrame}
+      layoutType={layoutType}
+      handleColorChange={handleColorChange}
+      handleGradientChange={handleGradientChange}
+      handleFrameChange={handleFrameChange}
+      setImageUrl={setImageUrl}
+    />
+  );
 
   return (
     <div className="mx-auto flex max-w-4xl flex-col gap-6 p-3">
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-        <div className="hidden flex-col gap-6 md:flex">
-          {/* Photo Selection Gallery */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="rounded-lg border border-gray-200 bg-white p-4"
-          >
-            <h2 className="mb-2 text-lg font-semibold text-gray-800">
-              {t("select_photos")}
-            </h2>
-            <div className="mb-3">{renderLayoutType()}</div>
-
-            <div className="flex flex-col">
-              <p className="mb-2 text-xs text-gray-600">
-                {t("select_prompt", {
-                  count: layoutType,
-                  selectedCount: selectedIndices.length,
-                })}
-              </p>
-
-              <div className="rounded-lg border border-gray-200">
-                {renderCapturedImages()}
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Enhanced Frame Customization Section */}
-          <motion.div
-            className="rounded-lg border border-gray-200 bg-white p-4"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
-          >
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-800">
-                {t("frame_customization")}
+        {!isMobile && (
+          <div className="hidden flex-col gap-6 md:flex">
+            {/* Photo Selection Gallery */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="rounded-lg border border-gray-200 bg-white p-4"
+            >
+              <h2 className="mb-2 text-lg font-semibold text-gray-800">
+                {t("select_photos")}
               </h2>
-            </div>
+              <div className="mb-3">{renderLayoutType()}</div>
 
-            {renderFrames()}
-          </motion.div>
-        </div>
+              <div className="flex flex-col">
+                <p className="mb-2 text-xs text-gray-600">
+                  {t("select_prompt", {
+                    count: layoutType,
+                    selectedCount: selectedIndices.length,
+                  })}
+                </p>
+
+                <div className="rounded-lg border border-gray-200">
+                  {renderCapturedImages()}
+                </div>
+              </div>
+            </motion.div>
+
+            {/* Enhanced Frame Customization Section */}
+            <motion.div
+              className="rounded-lg border border-gray-200 bg-white p-4"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              <div className="mb-3 flex items-center justify-between">
+                <h2 className="text-lg font-semibold text-gray-800">
+                  {t("frame_customization")}
+                </h2>
+              </div>
+
+              {frameCustomization}
+            </motion.div>
+          </div>
+        )}
 
         {/* Layout Preview */}
         <motion.div
@@ -677,7 +386,19 @@ export function LayoutSelection({
           </div>
 
           <div className="flex items-center justify-center rounded-lg border border-gray-200 bg-white p-4">
-            <div className="w-full max-w-md">{renderPreview()}</div>
+            <div className="w-full max-w-md">
+              <StripPreview
+                capturedImages={capturedImages}
+                selectedIndices={selectedIndices}
+                layoutType={layoutType}
+                selectedFrame={selectedFrame}
+                frameColor={frameColor}
+                selectedGradient={selectedGradient}
+                previewRef={previewRef}
+                isMobile={isMobile}
+                onSelectPhotos={openPhotoDrawer}
+              />
+            </div>
           </div>
 
           <div className="mt-3 md:hidden">
@@ -805,7 +526,7 @@ export function LayoutSelection({
         }
       >
         {drawerType === "frames" ? (
-          <div className="overflow-y-auto p-4">{renderFrames()}</div>
+          <div className="overflow-y-auto p-4">{frameCustomization}</div>
         ) : null}
         {drawerType === "layouts" ? (
           <div className="flex justify-center p-4">{renderLayoutType()}</div>

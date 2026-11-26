@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Check, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FRAMES } from "@/constants/assets";
-import { handleFrameSelection } from "@/lib/frame-utils";
+import { preloadFrameLayout } from "@/lib/frame-utils";
 
 interface FrameSelectorProps {
   selectedFrame: string | null;
@@ -37,7 +37,8 @@ export function FrameSelector({
 
       setIsLoading(true);
       try {
-        await handleFrameSelection(frameId, setSelectedFrame);
+        await preloadFrameLayout(frameId, layoutType);
+        setSelectedFrame(frameId);
       } catch (err) {
         setError("Failed to select frame. Please try again.");
         console.error("Frame selection error:", err);
@@ -45,7 +46,7 @@ export function FrameSelector({
         setIsLoading(false);
       }
     },
-    [selectedFrame, setSelectedFrame, setImageUrl],
+    [layoutType, selectedFrame, setSelectedFrame, setImageUrl],
   );
 
   return (
@@ -58,35 +59,6 @@ export function FrameSelector({
           <span>{error}</span>
         </div>
       )}
-
-      {/* <div className="grid grid-cols-2 gap-2 sm:grid-cols-3">
-        {FRAMES.map(({ id, name }) => {
-          const isSelected = selectedFrame === id;
-
-          return (
-            <motion.button
-              key={id}
-              onClick={() => selectFrame(id)}
-              disabled={isLoading}
-              whileTap={{ scale: 0.95 }}
-              className={cn(
-                "relative flex h-10 w-full flex-col items-center justify-center rounded-md border-2 transition-all",
-                isSelected ? "border-primary shadow-sm" : "border-gray-200",
-                isLoading && "opacity-50",
-              )}
-            >
-              {isSelected && (
-                <div className="absolute top-1 right-1 rounded-full border border-gray-200 bg-white p-0.5">
-                  <Check className="text-primary h-2 w-2" />
-                </div>
-              )}
-              <span className="mt-1 text-xs font-medium text-gray-800">
-                {name}
-              </span>
-            </motion.button>
-          );
-        })}
-      </div> */}
 
       <div className="flex gap-2 overflow-x-auto px-1 py-2">
         {FRAMES.map(({ id, name, layouts, isNew }) => {
@@ -101,9 +73,8 @@ export function FrameSelector({
               <img
                 src={layout.backgroundUrl}
                 alt="Frame Background"
-                loading="eager"
-                // fill
-                sizes="(max-width: 600px) 100vw, 50vw"
+                loading="lazy"
+                decoding="async"
                 crossOrigin="anonymous"
               />
             </div>
@@ -115,9 +86,8 @@ export function FrameSelector({
               <img
                 src={layout.overlayUrl}
                 alt="Frame Overlay"
-                loading="eager"
-                // fill
-                sizes="(max-width: 600px) 100vw, 50vw"
+                loading="lazy"
+                decoding="async"
                 crossOrigin="anonymous"
               />
             </div>
@@ -147,7 +117,7 @@ export function FrameSelector({
                   className="absolute top-1 left-1 z-20 dark:invert"
                   src="/new.png"
                   alt="New"
-                  loading="eager"
+                  loading="lazy"
                   width={20}
                   height={20}
                 />
