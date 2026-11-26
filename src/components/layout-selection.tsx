@@ -240,8 +240,8 @@ export function LayoutSelection({
               key={index}
               onClick={() => toggleSelect(index)}
               className={cn(
-                "relative aspect-[4/3] flex-1 cursor-pointer overflow-hidden rounded-xl border-2 transition-all duration-200",
-                isSelected ? "border-primary z-10" : "border-white/85",
+                "relative aspect-[4/3] flex-1 cursor-pointer overflow-hidden rounded-lg border-2 transition-all duration-200",
+                isSelected ? "border-primary z-10" : "border-gray-200",
               )}
               // whileTap={{ scale: 0.98 }}
             >
@@ -315,31 +315,31 @@ export function LayoutSelection({
   );
 
   return (
-    <div className="mx-auto flex max-w-6xl flex-col gap-4 px-3 py-4 sm:px-6 sm:py-6">
-      <div className="grid grid-cols-1 items-start gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)]">
+    <div className="mx-auto flex max-w-4xl flex-col gap-6 p-3">
+      <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
         {!isMobile && (
-          <div className="hidden min-w-0 flex-col gap-4 md:flex">
+          <div className="hidden flex-col gap-6 md:flex">
             {/* Photo Selection Gallery */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
-              className="booth-glass min-w-0 rounded-[1.6rem] p-4 sm:p-5"
+              className="rounded-lg border border-gray-200 bg-white p-4"
             >
-              <h2 className="mb-2 text-lg font-semibold tracking-tight text-violet-950">
+              <h2 className="mb-2 text-lg font-semibold text-gray-800">
                 {t("select_photos")}
               </h2>
               <div className="mb-3">{renderLayoutType()}</div>
 
               <div className="flex flex-col">
-                <p className="mb-2 text-xs text-violet-950/75">
+                <p className="mb-2 text-xs text-gray-600">
                   {t("select_prompt", {
                     count: layoutType,
                     selectedCount: selectedIndices.length,
                   })}
                 </p>
 
-                <div className="overflow-hidden rounded-2xl border border-white/90">
+                <div className="rounded-lg border border-gray-200">
                   {renderCapturedImages()}
                 </div>
               </div>
@@ -347,13 +347,13 @@ export function LayoutSelection({
 
             {/* Enhanced Frame Customization Section */}
             <motion.div
-              className="booth-glass min-w-0 rounded-[1.6rem] p-4 sm:p-5"
+              className="rounded-lg border border-gray-200 bg-white p-4"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.1 }}
             >
               <div className="mb-3 flex items-center justify-between">
-                <h2 className="text-lg font-semibold tracking-tight text-violet-950">
+                <h2 className="text-lg font-semibold text-gray-800">
                   {t("frame_customization")}
                 </h2>
               </div>
@@ -365,12 +365,11 @@ export function LayoutSelection({
 
         {/* Layout Preview */}
         <motion.div
-          className="booth-glass min-w-0 rounded-[1.6rem] p-3 sm:p-4"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
         >
-          <h2 className="mb-3 hidden text-lg font-semibold tracking-tight text-violet-950 md:flex">
+          <h2 className="mb-3 hidden text-lg font-semibold text-gray-800 md:flex">
             {t("layout_preview")}
           </h2>
 
@@ -386,67 +385,7 @@ export function LayoutSelection({
             />
           </div>
 
-          <div className="mb-3 hidden flex-wrap gap-2 md:flex">
-            <Button
-              onClick={retakePhotos}
-              variant="outline"
-              className="booth-control h-10 rounded-full px-4"
-              size="sm"
-            >
-              <ArrowLeft className="mr-1 h-4 w-4" />
-              {t("retake")}
-            </Button>
-            <Button
-              onClick={handleGenerateImage}
-              disabled={!canDownload || isDownloading}
-              className={cn(
-                "h-10 rounded-full px-4 font-medium",
-                !canDownload && "cursor-not-allowed",
-              )}
-              variant={canDownload && !isDownloading ? "default" : "secondary"}
-              size="sm"
-            >
-              {isDownloading ? (
-                <>
-                  <RefreshCw className="mr-1 h-4 w-4 animate-spin" />
-                  {t("processing")}...
-                </>
-              ) : (
-                <>
-                  <Download className="mr-1 h-4 w-4" />
-                  {canDownload
-                    ? t("download")
-                    : t("select_more", {
-                        count: layoutType - selectedIndices.length,
-                      })}
-                </>
-              )}
-            </Button>
-            <Button
-              onClick={uploadAndGenerateQR}
-              disabled={!canDownload || isUploading}
-              className={cn(
-                "h-10 rounded-full px-4 font-medium",
-                !canDownload && "cursor-not-allowed",
-              )}
-              variant={canDownload && !isUploading ? "default" : "secondary"}
-              size="sm"
-            >
-              {isUploading ? (
-                <>
-                  <RefreshCw className="mr-1 h-4 w-4 animate-spin" />
-                  {t("uploading")}...
-                </>
-              ) : (
-                <>
-                  <Smartphone className="mr-1 h-4 w-4" />
-                  {t("send_to_phone")}
-                </>
-              )}
-            </Button>
-          </div>
-
-          <div className="booth-preview-stage flex min-h-56 items-center justify-center rounded-[1.25rem] border border-white/85 p-3 sm:p-5">
+          <div className="flex items-center justify-center rounded-lg border border-gray-200 bg-white p-4">
             <div className="w-full max-w-md">
               <StripPreview
                 capturedImages={capturedImages}
@@ -467,20 +406,80 @@ export function LayoutSelection({
           </div>
 
           {/* Preview tips */}
-          <div className="mt-3 hidden rounded-xl border border-white/75 bg-white/35 p-3 md:flex">
+          <div className="mt-3 hidden rounded-md bg-gray-50 p-3 md:flex">
             <div className="flex items-start gap-2">
               <GripHorizontal className="mt-0.5 h-4 w-4 text-gray-500" />
               <div>
                 <h3 className="text-sm font-medium text-gray-700">
                   {t("layout_tips")}
                 </h3>
-                <p className="mt-1 text-xs text-violet-950/75">
+                <p className="mt-1 text-xs text-gray-600">
                   {t("layout_tips_content")}
                 </p>
               </div>
             </div>
           </div>
         </motion.div>
+      </div>
+
+      <div className="hidden flex-wrap justify-center gap-3 md:flex">
+        <Button
+          onClick={retakePhotos}
+          variant="outline"
+          className="flex items-center justify-center rounded-full px-4 py-2"
+          size="sm"
+        >
+          <ArrowLeft className="mr-1 h-4 w-4" />
+          {t("retake")}
+        </Button>
+        <Button
+          onClick={handleGenerateImage}
+          disabled={!canDownload || isDownloading}
+          className={cn(
+            "flex items-center justify-center rounded-full px-4 py-2 font-medium",
+            !canDownload && "cursor-not-allowed",
+          )}
+          variant={canDownload && !isDownloading ? "default" : "secondary"}
+          size="sm"
+        >
+          {isDownloading ? (
+            <>
+              <RefreshCw className="mr-1 h-4 w-4 animate-spin" />
+              {t("processing")}...
+            </>
+          ) : (
+            <>
+              <Download className="mr-1 h-4 w-4" />
+              {canDownload
+                ? t("download")
+                : t("select_more", {
+                    count: layoutType - selectedIndices.length,
+                  })}
+            </>
+          )}
+        </Button>
+        <Button
+          onClick={uploadAndGenerateQR}
+          disabled={!canDownload || isUploading}
+          className={cn(
+            "flex items-center justify-center rounded-full px-4 py-2 font-medium",
+            !canDownload && "cursor-not-allowed",
+          )}
+          variant={canDownload && !isUploading ? "default" : "secondary"}
+          size="sm"
+        >
+          {isUploading ? (
+            <>
+              <RefreshCw className="mr-1 h-4 w-4 animate-spin" />
+              {t("uploading")}...
+            </>
+          ) : (
+            <>
+              <Smartphone className="mr-1 h-4 w-4" />
+              {t("send_to_phone")}
+            </>
+          )}
+        </Button>
       </div>
 
       {/* Download Dialog for iOS users */}

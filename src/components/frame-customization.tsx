@@ -7,7 +7,9 @@ import { useTranslations } from "next-intl";
 import { COLOR_PALETTE, GRADIENT_PRESETS } from "@/constants/styles";
 import { cn } from "@/lib/utils";
 import { FrameSelector } from "./frame-selector";
+import { SparklesText } from "./magicui/sparkles-text";
 
+const frameTabColors = { first: "#FFAAAA", second: "#FF7777" };
 export type FrameTab = "solid" | "gradient" | "frames";
 
 interface FrameCustomizationProps {
@@ -47,39 +49,40 @@ export const FrameCustomization = memo(function FrameCustomization({
         exit={{ height: 0, opacity: 0 }}
         transition={{ duration: 0.3 }}
       >
-        <div className="flex flex-wrap gap-1 rounded-2xl border border-white/85 bg-white/35 p-1">
+        <div className="mb-3 flex border-b border-gray-200">
           <button
             onClick={() => setActiveTab("frames")}
-            aria-pressed={activeTab === "frames"}
             className={cn(
-              "rounded-xl px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-violet-600",
+              "px-4 py-2 text-sm font-medium transition-colors",
               activeTab === "frames"
-                ? "text-primary bg-white/90 shadow-sm"
-                : "text-violet-950/75 hover:bg-white/60",
+                ? "border-primary text-primary border-b-2"
+                : "hover:text-primary text-gray-500",
             )}
           >
-            {t("frames")}
+            <SparklesText
+              text={t("frames")}
+              className="text-sm font-medium"
+              colors={frameTabColors}
+            />
           </button>
           <button
             onClick={() => setActiveTab("solid")}
-            aria-pressed={activeTab === "solid"}
             className={cn(
-              "rounded-xl px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-violet-600",
+              "px-4 py-2 text-sm font-medium transition-colors",
               activeTab === "solid"
-                ? "text-primary bg-white/90 shadow-sm"
-                : "text-violet-950/75 hover:bg-white/60",
+                ? "border-primary text-primary border-b-2"
+                : "hover:text-primary text-gray-500",
             )}
           >
             {t("solid_colors")}
           </button>
           <button
             onClick={() => setActiveTab("gradient")}
-            aria-pressed={activeTab === "gradient"}
             className={cn(
-              "rounded-xl px-3 py-2 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-violet-600",
+              "px-4 py-2 text-sm font-medium transition-colors",
               activeTab === "gradient"
-                ? "text-primary bg-white/90 shadow-sm"
-                : "text-violet-950/75 hover:bg-white/60",
+                ? "border-primary text-primary border-b-2"
+                : "hover:text-primary text-gray-500",
             )}
           >
             {t("gradients")}

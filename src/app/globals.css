@@ -316,12 +316,6 @@ body {
   }
 }
 
-.booth-preview-stage {
-  background:
-    radial-gradient(ellipse at 25% 15%, #fff6f2af, transparent 68%),
-    radial-gradient(ellipse at 84% 78%, #c5b8f789, transparent 74%), #f4eff9;
-}
-
 @media (prefers-reduced-motion: reduce) {
   .booth-shell *,
   .booth-modal * {
