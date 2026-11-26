@@ -75,7 +75,7 @@ export default function UploadPhotoButton({
     <>
       <Button
         onClick={handleButtonClick}
-        className="flex h-10 w-10 items-center justify-center rounded-full p-0"
+        className="size-10 rounded-full"
         variant="outline"
         size="icon"
         disabled={disabled}

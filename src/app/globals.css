@@ -1,4 +1,4 @@
-@import 'tailwindcss';
+@import "tailwindcss";
 
 @plugin "tailwindcss-animate";
 
@@ -50,7 +50,6 @@
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
   --popover-foreground: oklch(0.145 0 0);
-  /* --primary: oklch(0.205 0 0); */
   --primary: oklch(27.81% 0.0296 256.85);
   --primary-foreground: oklch(0.985 0 0);
   --secondary: oklch(0.97 0 0);
@@ -140,8 +139,6 @@
 }
 
 body {
-  color: rgb(var(--foreground-rgb));
-  background: rgb(var(--background-rgb));
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
@@ -185,4 +182,149 @@ body {
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   background: #999;
+}
+
+/* Booth surfaces live outside the DOM that is rendered to JPEG. */
+.booth-shell {
+  color: var(--foreground);
+  background: var(--background);
+  isolation: isolate;
+}
+
+.booth-glass,
+.booth-modal {
+  border: 1px solid rgb(255 255 255 / 76%);
+  background: linear-gradient(
+    148deg,
+    rgb(255 255 255 / 76%),
+    rgb(255 255 255 / 40%)
+  );
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 88%),
+    inset 0 -1px 0 rgb(255 255 255 / 35%),
+    0 16px 48px -26px rgb(64 44 104 / 48%);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  backdrop-filter: blur(20px) saturate(140%);
+}
+
+.booth-modal {
+  background: linear-gradient(150deg, #fff8fbf7, #f0ebfff5);
+}
+
+.booth-control {
+  background: linear-gradient(
+    160deg,
+    rgb(255 255 255 / 90%),
+    rgb(255 255 255 / 48%)
+  );
+  border: 1px solid rgb(255 255 255 / 88%);
+  color: #302646;
+  box-shadow:
+    inset 0 1px 0 white,
+    0 3px 10px -4px rgb(67 45 115 / 32%);
+}
+
+.booth-control:hover:not(:disabled) {
+  background: rgb(255 255 255 / 94%);
+}
+
+.booth-control[aria-pressed="true"] {
+  color: #43317e;
+  background: #e5dafa;
+  border-color: #bdabe7;
+}
+
+.booth-navbar {
+  isolation: isolate;
+}
+
+.booth-navbar::before {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  content: "";
+  pointer-events: none;
+  border-bottom: 1px solid rgb(43 32 64 / 8%);
+  background: linear-gradient(
+    to right,
+    color-mix(in srgb, var(--color-rose-100) 72%, transparent),
+    color-mix(in srgb, var(--color-teal-100) 72%, transparent)
+  );
+  -webkit-backdrop-filter: blur(12px) saturate(125%);
+  backdrop-filter: blur(12px) saturate(125%);
+}
+
+.booth-wordmark-at {
+  color: #be185d;
+  background: linear-gradient(150deg, #a21caf, #db2777 58%, #e85d38);
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transform: rotate(-8deg);
+}
+
+.booth-wordmark {
+  position: relative;
+  isolation: isolate;
+}
+
+.booth-wordmark::before,
+.booth-wordmark::after {
+  position: absolute;
+  right: 0;
+  bottom: 0.08em;
+  left: 0;
+  height: 2px;
+  content: "";
+  border-radius: 55% 20% 45% 30%;
+  background: #ff9800;
+  pointer-events: none;
+  transform: rotate(var(--stroke-angle));
+}
+
+.booth-wordmark::before {
+  --stroke-angle: -1.4deg;
+  transform-origin: left center;
+}
+
+.booth-wordmark::after {
+  --stroke-angle: 1deg;
+  right: 3%;
+  bottom: 0.15em;
+  left: 2%;
+  transform-origin: right center;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .booth-wordmark::before {
+    animation: booth-underline-draw 780ms cubic-bezier(0.35, 0.1, 0.3, 1) 180ms
+      both;
+  }
+
+  .booth-wordmark::after {
+    animation: booth-underline-draw 660ms cubic-bezier(0.28, 0.1, 0.4, 1) 960ms
+      both;
+  }
+}
+
+@keyframes booth-underline-draw {
+  from {
+    transform: rotate(var(--stroke-angle)) scaleX(0);
+  }
+
+  to {
+    transform: rotate(var(--stroke-angle)) scaleX(1);
+  }
+}
+
+.booth-preview-stage {
+  background:
+    radial-gradient(ellipse at 25% 15%, #fff6f2af, transparent 68%),
+    radial-gradient(ellipse at 84% 78%, #c5b8f789, transparent 74%), #f4eff9;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .booth-shell *,
+  .booth-modal * {
+    scroll-behavior: auto !important;
+  }
 }

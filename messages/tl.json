@@ -2,7 +2,9 @@
   "HomePage": {
     "title": "Kumusta!",
     "errors": {
-      "camera_access_required": "Kailangan mong bigyan ng access ang camera. Pakibuksan ang pahintulot sa browser settings at i-reload ang pahina."
+      "camera_access_required": "Payagan ang paggamit ng camera sa mga setting ng browser, pagkatapos ay subukan muli.",
+      "camera_still_blocked": "Naka-block pa rin ang camera. Payagan ang Camera sa mga setting ng site sa tabi ng address bar, pagkatapos ay subukan muli. Kung pinayagan na ito, tingnan ang mga setting ng privacy ng camera sa iyong device.",
+      "camera_unavailable": "Walang nakitang camera. Ikonekta ang camera at subukan muli."
     },
     "undo": "I-undo",
     "capture": "Kuhanan",
@@ -22,6 +24,8 @@
     "layout_tips": "Mga tip sa layout",
     "layout_tips_content": "Pumili ng mga paboritong larawan at i-customize ang frame gamit ang solid na kulay o gradient para makagawa ng perpektong photo strip. Gamitin ang color picker para sa eksaktong pag-adjust. Kapag nasiyahan ka na sa disenyo, pindutin ang Download button sa ibaba.",
     "retake": "Ulitin ang kuha",
+    "retry_camera": "Buksan muli ang camera",
+    "opening_camera": "Binubuksan ang camera…",
     "processing": "Pinoproseso",
     "download": "I-download",
     "select_more": "Pumili pa ng {count} larawan",
@@ -35,6 +39,8 @@
     "upload_&_generate_qr": "I-upload & Gumawa ng QR",
     "scan_qr_to_download_image": "I-scan ang QR para i-download ang larawan",
     "open_link": "Buksan ang link",
+    "copy_email": "Kopyahin ang email",
+    "copy_email_failed": "Hindi nakopya. Maaari mong piliin at kopyahin ang email address.",
     "copy_link": "Kopyahin ang link",
     "copied": "Nakopya na",
     "share": "Ibahagi",

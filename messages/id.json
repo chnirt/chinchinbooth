@@ -2,7 +2,9 @@
   "HomePage": {
     "title": "Halo!",
     "errors": {
-      "camera_access_required": "Anda perlu memberikan izin akses kamera. Silakan aktifkan izin di pengaturan browser dan muat ulang halaman."
+      "camera_access_required": "Izinkan akses kamera di pengaturan browser, lalu coba lagi.",
+      "camera_still_blocked": "Akses kamera masih diblokir. Izinkan Kamera melalui pengaturan situs di sebelah bilah alamat, lalu coba lagi. Jika sudah diizinkan, periksa pengaturan privasi kamera pada perangkat.",
+      "camera_unavailable": "Kamera tidak ditemukan. Hubungkan kamera, lalu coba lagi."
     },
     "undo": "Batalkan",
     "capture": "Ambil Foto",
@@ -22,6 +24,8 @@
     "layout_tips": "Tips Tata Letak",
     "layout_tips_content": "Pilih foto favorit Anda dan sesuaikan bingkai dengan memilih warna polos atau gradasi untuk membuat strip foto yang sempurna. Gunakan pemilih warna untuk penyesuaian yang tepat. Saat Anda puas dengan desainnya, tekan tombol Unduh di bawah.",
     "retake": "Ambil Ulang",
+    "retry_camera": "Buka kembali kamera",
+    "opening_camera": "Membuka kamera…",
     "processing": "Memproses",
     "download": "Unduh",
     "select_more": "Pilih {count} foto lagi",
@@ -35,6 +39,8 @@
     "upload_&_generate_qr": "Unggah & Buat QR",
     "scan_qr_to_download_image": "Pindai QR untuk mengunduh foto",
     "open_link": "Buka Tautan",
+    "copy_email": "Salin email",
+    "copy_email_failed": "Gagal menyalin. Anda bisa memilih dan menyalin alamat email.",
     "copy_link": "Salin Tautan",
     "copied": "Tersalin",
     "share": "Bagikan",

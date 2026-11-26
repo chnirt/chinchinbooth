@@ -24,17 +24,17 @@ export default function BottomNavigation({
 }: BottomNavigationProps) {
   return (
     <div>
-      <div className="flex items-center justify-around">
+      <div className="grid grid-cols-2 gap-2">
         {navItems.map((item, index) => {
           const Icon = item.icon;
           return (
             <Button
               key={`nav-item-${index}`}
               variant="ghost"
-              className="h-auto"
+              className="booth-control h-11 rounded-full"
               onClick={() => showDrawerWithType(item.drawerType)}
             >
-              <div className="flex flex-col items-center justify-center gap-1">
+              <div className="flex items-center justify-center gap-2">
                 <Icon />
                 {item.label}
               </div>

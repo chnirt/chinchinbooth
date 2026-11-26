@@ -2,7 +2,9 @@
   "HomePage": {
     "title": "Xin chào!",
     "errors": {
-      "camera_access_required": "Bạn cần cấp quyền truy cập camera. Vui lòng bật quyền trong cài đặt trình duyệt và tải lại trang."
+      "camera_access_required": "Hãy cấp quyền truy cập camera trong cài đặt trình duyệt rồi thử lại.",
+      "camera_still_blocked": "Camera vẫn bị chặn. Mở phần cài đặt trang web cạnh thanh địa chỉ, cho phép Camera rồi thử lại. Nếu đã cho phép, hãy kiểm tra quyền camera trong cài đặt thiết bị.",
+      "camera_unavailable": "Không tìm thấy camera. Hãy kết nối camera rồi thử lại."
     },
     "undo": "Hoàn tác",
     "capture": "Chụp",
@@ -22,6 +24,8 @@
     "layout_tips": "Mẹo bố cục",
     "layout_tips_content": "Chọn những ảnh yêu thích của bạn và tùy chỉnh khung ảnh bằng cách chọn một màu đơn hoặc gradient để tạo ra dải ảnh hoàn hảo. Sử dụng bộ chọn màu để điều chỉnh chính xác. Khi bạn hài lòng với thiết kế, nhấn nút Tải xuống bên dưới.",
     "retake": "Chụp lại",
+    "retry_camera": "Mở lại camera",
+    "opening_camera": "Đang mở camera…",
     "processing": "Đang xử lý",
     "download": "Tải xuống",
     "select_more": "Chọn thêm {count} ảnh",
@@ -35,6 +39,8 @@
     "upload_&_generate_qr": "Tải lên & Tạo QR",
     "scan_qr_to_download_image": "Quét QR để tải ảnh",
     "open_link": "Mở liên kết",
+    "copy_email": "Sao chép email",
+    "copy_email_failed": "Không sao chép được. Bạn có thể chọn và sao chép địa chỉ.",
     "copy_link": "Sao chép liên kết",
     "copied": "Đã sao chép",
     "share": "Chia sẻ",

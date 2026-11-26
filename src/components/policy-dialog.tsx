@@ -1,26 +1,53 @@
 "use client";
 
-import { Shield } from "lucide-react";
+import { Check, Copy, Mail, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
+  DialogDescription,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
+
+const contactEmail = "trinhchinchin@gmail.com";
 
 export default function PolicyDialog() {
   const t = useTranslations("HomePage");
 
   const [open, setOpen] = useState(false);
+  const [copyStatus, setCopyStatus] = useState<
+    "copied" | "copy_email_failed" | null
+  >(null);
+
+  useEffect(() => {
+    if (!open || copyStatus !== "copied") return;
+
+    const timer = setTimeout(() => setCopyStatus(null), 2000);
+    return () => clearTimeout(timer);
+  }, [copyStatus, open]);
+
+  function handleOpenChange(nextOpen: boolean) {
+    setOpen(nextOpen);
+    if (nextOpen) setCopyStatus(null);
+  }
+
+  async function copyEmail() {
+    try {
+      await navigator.clipboard.writeText(contactEmail);
+      setCopyStatus("copied");
+    } catch {
+      setCopyStatus("copy_email_failed");
+    }
+  }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button
           variant="ghost"
@@ -31,30 +58,29 @@ export default function PolicyDialog() {
           <span className="sr-only">Privacy Policy</span>
         </Button>
       </DialogTrigger>
-      <DialogContent className="rounded-xl border-0 p-0 shadow-xl sm:max-w-[550px] md:max-w-[650px] lg:max-w-[750px]">
+      <DialogContent
+        appearance="plain"
+        className="max-h-[calc(100dvh-2rem)] grid-rows-[auto_minmax(0,1fr)_auto] gap-0 overflow-hidden rounded-xl border-0 p-0 shadow-xl sm:max-w-[550px] md:max-w-[650px] lg:max-w-[750px]"
+      >
         {/* Header with gradient matching the app's style */}
         <div className="border-b">
-          <DialogHeader className="px-6 pt-6 pb-4">
+          <DialogHeader className="px-5 pt-5 pr-12 pb-4 text-left sm:pl-6">
             <DialogTitle className="text-primary flex items-center text-xl font-bold">
               <Shield className="text-primary mr-2 h-5 w-5" />
               {t("privacyPolicyTitle")}
             </DialogTitle>
-            <p className="mt-1 text-sm text-gray-600">
+            <DialogDescription className="mt-1 text-sm text-gray-600">
               {t("yourPrivacyPriority")}
-            </p>
+            </DialogDescription>
           </DialogHeader>
         </div>
 
-        <ScrollArea className="max-h-[60vh] md:max-h-[70vh]">
-          <div className="space-y-6 px-6 py-5">
+        <ScrollArea className="max-h-[70dvh] min-h-0">
+          <div className="space-y-6 px-5 py-5 sm:px-6">
             {/* Main commitment statement */}
             <div className="rounded-lg border border-rose-100 bg-gradient-to-r from-rose-50 to-teal-50 p-4">
               <p className="text-primary text-base font-medium">
                 {t("commitmentStatement")}
-                <span className="font-semibold">
-                  {" "}
-                  {t("noDataCollectionPolicy")}
-                </span>
               </p>
             </div>
 
@@ -147,16 +173,45 @@ export default function PolicyDialog() {
               <p className="text-sm text-gray-600">
                 {t("contactUsDescription")}
               </p>
-              <p className="mt-2 text-sm text-gray-600">
-                <span className="text-primary">Email:</span>{" "}
-                trinhchinchin@gmail.com
-                <br />
+              <div className="mt-3 flex flex-wrap items-center gap-2">
+                <a
+                  href={`mailto:${contactEmail}`}
+                  className="text-primary inline-flex min-w-0 items-center gap-2 rounded-sm text-sm font-medium underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2"
+                >
+                  <Mail aria-hidden="true" className="size-4 shrink-0" />
+                  <span className="break-all">{contactEmail}</span>
+                </a>
+                <Button
+                  type="button"
+                  variant="outline"
+                  size="icon"
+                  className="size-8"
+                  aria-label={t("copy_email")}
+                  title={t("copy_email")}
+                  onClick={copyEmail}
+                >
+                  {copyStatus === "copied" ? (
+                    <Check aria-hidden="true" className="text-emerald-700" />
+                  ) : (
+                    <Copy aria-hidden="true" />
+                  )}
+                </Button>
+              </div>
+              <p
+                role="status"
+                className={
+                  copyStatus === "copy_email_failed"
+                    ? "mt-1 text-sm text-gray-600"
+                    : "sr-only"
+                }
+              >
+                {copyStatus && t(copyStatus)}
               </p>
             </div>
           </div>
         </ScrollArea>
 
-        <DialogFooter className="border-t bg-gray-50 px-6 py-4 rounded-b-xl">
+        <DialogFooter className="rounded-b-xl border-t bg-gray-50 px-6 py-4">
           <Button onClick={() => setOpen(false)}>{t("closeButton")}</Button>
         </DialogFooter>
       </DialogContent>

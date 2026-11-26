@@ -16,6 +16,8 @@
 ## Nguyên tắc sửa
 
 - Giữ state phiên ở component cha khi cả hai bước dùng chung. Giữ state giao diện gần component sử dụng. Tính giá trị suy ra từ state hiện có.
+- Dùng các lớp `booth-glass`, `booth-control` và `booth-modal` trong `src/app/globals.css` cho bề mặt và điều khiển. Đặt blur và hiệu ứng nền bên ngoài DOM xuất JPEG.
+- Giữ logo chữ `@chinchinbooth`, navbar toàn chiều rộng và bố cục dọc của màn hình chụp. Giữ kiểu nút chụp gốc cho cụm điều khiển bên dưới camera.
 - Preview và ảnh xuất dùng cùng DOM `StripPreview`. Khi sửa padding, tỷ lệ hay thứ tự lớp, kiểm tra cả JPEG 1×4 và 2×4.
 - Hook camera sở hữu stream và listener. Dừng mọi track khi đổi thiết bị, rời bước chụp hoặc ẩn tab. Dừng cả stream trả về trễ sau khi request đã lỗi thời.
 - Khi thêm effect, dọn timer, listener hoặc async callback trong cleanup. Tránh effect quan sát DOM khi kết quả của phép đo chưa được dùng.

@@ -2,7 +2,9 @@
   "HomePage": {
     "title": "Hello!",
     "errors": {
-      "camera_access_required": "You need to grant camera access. Please enable permissions in browser settings and reload the page."
+      "camera_access_required": "Allow camera access in your browser settings, then try again.",
+      "camera_still_blocked": "Camera access is still blocked. Use the site controls next to the address bar to allow Camera, then try again. If it is already allowed, check your device’s camera privacy settings.",
+      "camera_unavailable": "No camera detected. Connect a camera and try again."
     },
     "undo": "Undo",
     "capture": "Capture",
@@ -22,6 +24,8 @@
     "layout_tips": "Layout Tips",
     "layout_tips_content": "Choose your favorite photos and customize the frame by selecting a solid color or gradient to create the perfect photo strip. Use the color picker to fine-tune. When satisfied, press the Download button below.",
     "retake": "Retake",
+    "retry_camera": "Reopen camera",
+    "opening_camera": "Opening camera…",
     "processing": "Processing",
     "download": "Download",
     "select_more": "Select {count} more photos",
@@ -35,6 +39,8 @@
     "upload_&_generate_qr": "Upload & Generate QR",
     "scan_qr_to_download_image": "Scan QR to download image",
     "open_link": "Open Link",
+    "copy_email": "Copy email",
+    "copy_email_failed": "Could not copy. You can select and copy the address.",
     "copy_link": "Copy Link",
     "copied": "Copied",
     "share": "Share",

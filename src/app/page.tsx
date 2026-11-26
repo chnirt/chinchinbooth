@@ -13,8 +13,8 @@ import {
 import { toast } from "sonner";
 import Footer from "@/components/footer";
 import confetti from "canvas-confetti";
-import { Analytics } from '@vercel/analytics/next';
-import { SpeedInsights } from '@vercel/speed-insights/next';
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const PhotoShoot = dynamic(() =>
   import("../components/photo-shoot").then((mod) => mod.PhotoShoot),
@@ -163,11 +163,10 @@ export default function PhotoBoothApp() {
   };
 
   return (
-    <div className="flex min-h-[100dvh] flex-col overflow-hidden">
+    <div className="booth-shell flex min-h-[100dvh] flex-col overflow-x-clip">
       <Navbar />
-      {/* <StepProgress currentStep={step === "shoot" ? 1 : 2} /> */}
       <AnimatePresence custom={step === "shoot" ? -1 : 1} mode="wait">
-        <motion.div
+        <motion.main
           key={step}
           className="flex-1 overflow-hidden"
           custom={step === "shoot" ? -1 : 1}
@@ -204,7 +203,7 @@ export default function PhotoBoothApp() {
               setImageUrl={setImageUrl}
             />
           )}
-        </motion.div>
+        </motion.main>
       </AnimatePresence>
       <Footer />
       <Analytics />

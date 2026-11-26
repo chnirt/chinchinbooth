@@ -23,10 +23,10 @@ export default function Header({
   isUploading = false,
 }: HeaderProps) {
   return (
-    <div className="flex items-center justify-between">
+    <div className="flex items-center justify-between gap-2">
       <div className="flex items-center gap-4">
         <Button
-          className="flex h-8 w-8 items-center justify-center rounded-full p-0 font-bold"
+          className="booth-control size-11 rounded-full"
           variant="ghost"
           size="icon"
           onClick={retake}
@@ -38,7 +38,7 @@ export default function Header({
 
       <div className="flex items-center gap-4">
         <Button
-          className="flex h-8 w-8 items-center justify-center rounded-full p-0 font-bold"
+          className="size-11 rounded-full"
           size="icon"
           onClick={download}
           disabled={downloadDisabled}
@@ -51,7 +51,7 @@ export default function Header({
           <span className="sr-only">Download</span>
         </Button>
         <Button
-          className="flex h-8 w-8 items-center justify-center rounded-full p-0 font-bold"
+          className="booth-control size-11 rounded-full"
           variant="ghost"
           size="icon"
           onClick={share}

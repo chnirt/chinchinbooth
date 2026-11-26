@@ -114,6 +114,18 @@ function preferredCameraIndex(cameras: CameraInfo[], isMobile: boolean) {
   return Math.max(0, rear);
 }
 
+function getCameraError(error: unknown, isRetry: boolean) {
+  if (error instanceof DOMException) {
+    if (error.name === "NotFoundError") return "no-devices";
+    if (error.name === "NotAllowedError") {
+      return isRetry ? "blocked" : "access";
+    }
+  }
+
+  console.warn("Unable to open camera:", error);
+  return "access";
+}
+
 export function useBoothCamera(setMirrored: (mirrored: boolean) => void) {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
@@ -122,8 +134,20 @@ export function useBoothCamera(setMirrored: (mirrored: boolean) => void) {
   const [currentCameraIndex, selectCamera] = useState(0);
   const [isCameraStarted, setIsCameraStarted] = useState(false);
   const [cameraError, setCameraError] = useState<
-    "no-devices" | "access" | null
+    "no-devices" | "access" | "blocked" | null
   >(null);
+  const [retryCount, setRetryCount] = useState(0);
+  const [isRetrying, setIsRetrying] = useState(false);
+
+  function retryCamera() {
+    if (!cameraError || isRetrying) return;
+
+    discoveryRef.current = null;
+    setIsRetrying(true);
+    setCameras([]);
+    setRetryCount((count) => count + 1);
+  }
+
   const selectedCamera = cameras[currentCameraIndex];
 
   // The error view can unmount the video while a camera retry is in progress.
@@ -142,6 +166,7 @@ export function useBoothCamera(setMirrored: (mirrored: boolean) => void) {
         if (!active || !devices) return;
         if (devices.length === 0) {
           setCameraError("no-devices");
+          setIsRetrying(false);
           return;
         }
 
@@ -154,8 +179,8 @@ export function useBoothCamera(setMirrored: (mirrored: boolean) => void) {
         selectCamera(preferredCameraIndex(detected, isMobile));
       } catch (error) {
         if (!active) return;
-        console.error("Camera initialization error:", error);
-        setCameraError("access");
+        setCameraError(getCameraError(error, retryCount > 0));
+        setIsRetrying(false);
       }
     }
 
@@ -163,7 +188,7 @@ export function useBoothCamera(setMirrored: (mirrored: boolean) => void) {
     return () => {
       active = false;
     };
-  }, []);
+  }, [retryCount]);
 
   useEffect(() => {
     if (!selectedCamera) return;
@@ -206,10 +231,12 @@ export function useBoothCamera(setMirrored: (mirrored: boolean) => void) {
         setIsCameraStarted(true);
       } catch (error) {
         if (id !== requestId) return;
-        console.error("Camera start error:", error);
-        setCameraError("access");
+        setCameraError(getCameraError(error, retryCount > 0));
       } finally {
-        if (id === requestId) isStarting = false;
+        if (id === requestId) {
+          isStarting = false;
+          setIsRetrying(false);
+        }
       }
     }
 
@@ -229,7 +256,7 @@ export function useBoothCamera(setMirrored: (mirrored: boolean) => void) {
       window.removeEventListener("beforeunload", stopCamera);
       stopCamera();
     };
-  }, [selectedCamera, setMirrored]);
+  }, [retryCount, selectedCamera, setMirrored]);
 
   return {
     videoRef,
@@ -239,5 +266,7 @@ export function useBoothCamera(setMirrored: (mirrored: boolean) => void) {
     selectCamera,
     isCameraStarted,
     cameraError,
+    retryCamera,
+    isRetrying,
   };
 }

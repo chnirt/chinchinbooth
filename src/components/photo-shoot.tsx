@@ -8,12 +8,14 @@ import {
   X,
   ImageIcon,
   ChevronDown,
+  Check,
   Smartphone,
   Monitor,
   CameraOff,
   Clock,
   ArrowRight,
   FlipHorizontal,
+  RotateCcw,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -30,13 +32,12 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useMobile } from "@/hooks/use-mobile";
-import {
-  CameraType,
-  type CameraInfo,
-  useBoothCamera,
-} from "@/hooks/use-booth-camera";
+import { CameraType, useBoothCamera } from "@/hooks/use-booth-camera";
 import "context-filter-polyfill";
 import UploadPhotoButton from "./upload-photo-button";
+
+const cameraFrameClass =
+  "aspect-[4/3] w-full overflow-hidden rounded-xl border";
 
 export function PhotoShoot({
   capturedImages,
@@ -47,7 +48,11 @@ export function PhotoShoot({
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const capturedImagesRef = useRef<HTMLDivElement>(null);
   const cameraContainerRef = useRef<HTMLDivElement>(null);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const nextCaptureTimerRef = useRef<ReturnType<typeof setTimeout> | null>(
+    null,
+  );
+  const captureRequestedRef = useRef(false);
 
   const isMobile = useMobile();
   const [currentFilter, setCurrentFilter] = useState<FilterValues>(
@@ -62,6 +67,8 @@ export function PhotoShoot({
     selectCamera,
     isCameraStarted,
     cameraError,
+    retryCamera,
+    isRetrying,
   } = useBoothCamera(setIsMirrored);
   const [isCapturing, setIsCapturing] = useState(false);
 
@@ -99,35 +106,63 @@ export function PhotoShoot({
     setShowFilters((prev) => !prev);
   }, []);
 
-  // Format camera label for display
-  const formatCameraLabel = useCallback(
-    (cameraInfo: CameraInfo): string => {
-      const { type, device } = cameraInfo;
-      const baseLabel =
-        device.label || `Camera ${cameras.indexOf(cameraInfo) + 1}`;
+  const cameraNames = cameras.map(({ device, type }, index) => {
+    if (device.label.trim()) return device.label.trim();
 
-      switch (type) {
-        case CameraType.FRONT:
-          return isMobile ? "Front Camera" : "Main Camera";
-        case CameraType.BACK:
-          return "Rear Camera";
-        case CameraType.BACK_ULTRA_WIDE:
-          return "Ultra-Wide Camera";
-        case CameraType.BACK_TELEPHOTO:
-          return "Telephoto Camera";
-        case CameraType.EXTERNAL:
-          return `External Camera ${cameras.filter((c) => c.type === CameraType.EXTERNAL).indexOf(cameraInfo) + 1}`;
-        default:
-          return baseLabel;
-      }
-    },
-    [cameras, isMobile],
-  );
+    switch (type) {
+      case CameraType.FRONT:
+        return isMobile ? "Front Camera" : "Main Camera";
+      case CameraType.BACK:
+        return "Rear Camera";
+      case CameraType.BACK_ULTRA_WIDE:
+        return "Ultra-Wide Camera";
+      case CameraType.BACK_TELEPHOTO:
+        return "Telephoto Camera";
+      case CameraType.EXTERNAL:
+        return "External Camera";
+      default:
+        return `Camera ${index + 1}`;
+    }
+  });
+
+  const cameraNameKeys = cameraNames.map((name) => name.toLowerCase());
+  const cameraLabels = cameraNames.map((name, index) => {
+    const key = cameraNameKeys[index];
+    if (cameraNameKeys.indexOf(key) === cameraNameKeys.lastIndexOf(key))
+      return name;
+
+    const number = cameraNameKeys
+      .slice(0, index + 1)
+      .filter((label) => label === key).length;
+    return `${name} (${number})`;
+  });
+
+  const selectedCameraLabel =
+    cameraLabels[currentCameraIndex] ?? "Select Camera";
+  const shortCameraLabel = selectedCameraLabel
+    .replace(/\s+\([\da-f]+:[\da-f]+\)$/i, "")
+    .replace(/\s+Camera(?=\s+\(\d+\)$|$)/i, "");
+
+  const clearCaptureTimers = useCallback(() => {
+    captureRequestedRef.current = false;
+    if (timerRef.current !== null) clearTimeout(timerRef.current);
+    if (nextCaptureTimerRef.current !== null)
+      clearTimeout(nextCaptureTimerRef.current);
+    timerRef.current = null;
+    nextCaptureTimerRef.current = null;
+  }, []);
 
   const stopAutoSequence = useCallback(() => {
+    clearCaptureTimers();
     setIsAutoSequenceActive(false);
     setCountdown(null);
-  }, []);
+  }, [clearCaptureTimers]);
+
+  useEffect(() => clearCaptureTimers, [clearCaptureTimers]);
+
+  useEffect(() => {
+    if (!isCameraStarted) stopAutoSequence();
+  }, [isCameraStarted, stopAutoSequence]);
 
   // Auto-scroll when new capture is added and stop auto sequence if max capture reached
   useEffect(() => {
@@ -148,15 +183,21 @@ export function PhotoShoot({
   // After captureImage completes, schedule the next auto capture if in auto mode
   const scheduleNextAutoCapture = useCallback(() => {
     if (isAutoModeEnabled && capturedImages.length < MAX_CAPTURE - 1) {
-      setTimeout(() => {
+      nextCaptureTimerRef.current = setTimeout(() => {
+        nextCaptureTimerRef.current = null;
+        if (!captureRequestedRef.current) return;
         hasCapturedRef.current = false;
         setCountdown(selectedTimer);
       }, 1000);
     } else {
-      setIsAutoSequenceActive(false);
-      setCountdown(null);
+      stopAutoSequence();
     }
-  }, [capturedImages.length, isAutoModeEnabled, selectedTimer]);
+  }, [
+    capturedImages.length,
+    isAutoModeEnabled,
+    selectedTimer,
+    stopAutoSequence,
+  ]);
 
   // Modify the captureImage function to remove the flash effect
   const captureImage = useCallback(() => {
@@ -253,13 +294,14 @@ export function PhotoShoot({
 
   // Start capture (single-shot or auto-capture)
   const startCapture = useCallback(() => {
-    if (isMaxCaptureReached) return;
+    if (!isCameraStarted || isMaxCaptureReached) return;
+    captureRequestedRef.current = true;
     // Start countdown with the selected timer
     setCountdown(selectedTimer);
     if (isAutoModeEnabled) {
       setIsAutoSequenceActive(true);
     }
-  }, [isAutoModeEnabled, isMaxCaptureReached, selectedTimer]);
+  }, [isAutoModeEnabled, isCameraStarted, isMaxCaptureReached, selectedTimer]);
 
   const toggleAutoMode = useCallback(() => {
     setIsAutoModeEnabled((prev) => !prev);
@@ -292,7 +334,11 @@ export function PhotoShoot({
       timerRef.current = setTimeout(() => {
         setCountdown((prev) => (prev !== null ? prev - 1 : null));
       }, 1000);
-    } else if (countdown === 0 && !hasCapturedRef.current) {
+    } else if (
+      countdown === 0 &&
+      captureRequestedRef.current &&
+      !hasCapturedRef.current
+    ) {
       hasCapturedRef.current = true;
       captureImage();
     }
@@ -333,18 +379,22 @@ export function PhotoShoot({
       switch (e.key) {
         case " ":
         case "Enter": {
+          if (
+            e.repeat ||
+            (e.target instanceof HTMLElement &&
+              e.target.closest(
+                "button, a, select, [role=button], [role=menuitem]",
+              ))
+          )
+            return;
+
+          e.preventDefault();
           if (canProceedToLayout) {
             goToLayoutScreen();
+          } else if (isAutoSequenceActive || countdown !== null) {
+            stopAutoSequence();
           } else {
-            if (isAutoSequenceActive) {
-              stopAutoSequence();
-            } else {
-              if (countdown === null) {
-                startCapture();
-              } else {
-                setCountdown(null);
-              }
-            }
+            startCapture();
           }
           break;
         }
@@ -429,15 +479,6 @@ export function PhotoShoot({
     }
   };
 
-  const cancelCountdown = useCallback(() => {
-    setCountdown(null);
-    if (timerRef.current) {
-      clearTimeout(timerRef.current);
-      timerRef.current = null;
-    }
-    hasCapturedRef.current = false;
-  }, []);
-
   useEffect(() => {
     setShowFilters(!isMobile);
   }, [isMobile]);
@@ -447,27 +488,54 @@ export function PhotoShoot({
     <div className="mx-auto flex max-w-xl flex-col items-center space-y-4 p-3 select-none">
       {/* Camera view with standard border */}
       {cameraError ? (
-        <div className="rounded-lg bg-red-50 p-4 text-center font-bold text-red-500">
-          {cameraError === "no-devices"
-            ? "No cameras detected on your device"
-            : t("errors.camera_access_required")}
+        <div
+          className={cn(
+            cameraFrameClass,
+            "grid place-items-center border-red-100 bg-red-50 p-4 text-center font-bold text-red-600",
+          )}
+        >
+          <div className="flex max-w-sm flex-col items-center gap-3 sm:gap-4">
+            <p role="alert" className="text-sm sm:text-base">
+              {cameraError === "no-devices"
+                ? t("errors.camera_unavailable")
+                : cameraError === "blocked"
+                  ? t("errors.camera_still_blocked")
+                  : t("errors.camera_access_required")}
+            </p>
+            <Button
+              type="button"
+              onClick={retryCamera}
+              disabled={isRetrying}
+              aria-busy={isRetrying}
+              className="rounded-full"
+            >
+              <RotateCcw
+                aria-hidden="true"
+                className={isRetrying ? "motion-safe:animate-spin" : undefined}
+              />
+              {t(isRetrying ? "opening_camera" : "retry_camera")}
+            </Button>
+          </div>
         </div>
       ) : (
         <div className="flex w-full flex-col gap-2">
           <motion.div
             ref={cameraContainerRef}
-            className="relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-gray-200 bg-black"
+            className={cn(
+              cameraFrameClass,
+              "bg-muted relative border-gray-200",
+            )}
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            <div className="relative h-full w-full overflow-hidden rounded-xl">
+            <div className="relative h-full w-full">
               <video
                 ref={attachVideo}
                 autoPlay
                 playsInline
                 className={cn(
-                  "h-full w-full object-cover",
+                  "block h-full w-full object-cover",
                   isMirrored ? "-scale-x-100" : "",
                 )}
                 style={{ filter: generateFilterStyle(currentFilter) }}
@@ -496,42 +564,52 @@ export function PhotoShoot({
                       disabled={selectCameraDisabled}
                     >
                       <Button
-                        aria-label={
-                          cameras[currentCameraIndex]
-                            ? formatCameraLabel(cameras[currentCameraIndex])
-                            : "Select Camera"
-                        }
+                        aria-label={selectedCameraLabel}
+                        title={selectedCameraLabel}
                         className="flex items-center gap-1 rounded-lg bg-black/50 p-2 text-white hover:bg-black/70"
                       >
                         {cameras[currentCameraIndex] &&
                           getCameraIcon(cameras[currentCameraIndex].type)}
-                        <span className="hidden text-xs font-medium sm:inline">
-                          {cameras[currentCameraIndex]
-                            ? formatCameraLabel(cameras[currentCameraIndex])
-                            : "Select Camera"}
+                        <span
+                          aria-hidden="true"
+                          className="max-w-[min(10rem,35vw)] min-w-0 truncate text-xs font-medium"
+                        >
+                          {shortCameraLabel}
                         </span>
                         <ChevronDown className="h-3 w-3 opacity-70" />
                       </Button>
                     </DropdownMenuTrigger>
-                    <DropdownMenuContent align="start" className="w-56">
+                    <DropdownMenuContent
+                      align="start"
+                      collisionPadding={12}
+                      className="w-72 max-w-[calc(100vw-1.5rem)]"
+                    >
                       {cameras.map((camera, index) => (
                         <DropdownMenuItem
                           key={camera.device.deviceId}
                           className={cn(
                             "flex items-center gap-2 text-sm",
                             currentCameraIndex === index &&
-                              "bg-muted font-medium",
+                              "bg-accent font-medium",
                           )}
-                          onClick={() => selectCamera(index)}
+                          aria-current={
+                            currentCameraIndex === index ? "true" : undefined
+                          }
+                          textValue={cameraLabels[index]}
+                          onSelect={() => selectCamera(index)}
                         >
                           {getCameraIcon(camera.type)}
-                          <span className="truncate">
-                            {formatCameraLabel(camera)}
+                          <span
+                            className="min-w-0 flex-1 truncate"
+                            title={cameraLabels[index]}
+                          >
+                            {cameraLabels[index]}
                           </span>
                           {currentCameraIndex === index && (
-                            <span className="text-muted-foreground ml-auto text-xs">
-                              {t("active")}
-                            </span>
+                            <Check
+                              aria-hidden="true"
+                              className="text-primary size-4 shrink-0"
+                            />
                           )}
                         </DropdownMenuItem>
                       ))}
@@ -617,11 +695,9 @@ export function PhotoShoot({
               onClick={
                 canProceedToLayout
                   ? goToLayoutScreen
-                  : isAutoSequenceActive
+                  : isAutoSequenceActive || countdown !== null
                     ? stopAutoSequence
-                    : countdown === null
-                      ? startCapture
-                      : cancelCountdown
+                    : startCapture
               }
               disabled={captureDisabled}
               className={cn(
@@ -642,19 +718,18 @@ export function PhotoShoot({
           <Button
             onClick={toggleFilters}
             disabled={filtersDisabled}
-            className="flex h-10 w-10 items-center justify-center rounded-full p-0 font-bold"
-            // variant={showFilters ? "default" : "outline"}
-            variant="ghost"
+            className="aria-pressed:border-primary/50 aria-pressed:bg-accent size-10 rounded-full"
+            aria-pressed={showFilters}
+            variant="outline"
             size="icon"
           >
-            {/* <Blend className="h-4 w-4" /> */}
             <img
               className="dark:invert"
               src="/color-filters.png"
-              alt="Filter"
+              alt=""
               loading="eager"
-              width={24}
-              height={24}
+              width={22}
+              height={22}
             />
             <span className="sr-only">Toggle filters</span>
           </Button>
@@ -664,11 +739,11 @@ export function PhotoShoot({
           <Button
             onClick={undoCapture}
             disabled={undoDisabled}
-            className="flex h-8 w-8 items-center justify-center rounded-full bg-transparent p-0"
+            className="rounded-full"
             variant="outline"
             size="icon"
           >
-            <Undo2 className="h-3 w-3" />
+            <Undo2 aria-hidden="true" />
             <span className="sr-only">Undo capture</span>
           </Button>
 
@@ -676,11 +751,11 @@ export function PhotoShoot({
             <Button
               variant="outline"
               size="icon"
-              className="h-8 w-8 rounded-full bg-transparent"
+              className="rounded-full"
               onClick={changeTimer}
               disabled={timerDisabled}
             >
-              <Clock className="h-3 w-3" />
+              <Clock aria-hidden="true" />
               <span className="sr-only">Next timer</span>
             </Button>
             <div
@@ -696,11 +771,12 @@ export function PhotoShoot({
           <Button
             onClick={toggleMirroring}
             disabled={mirrorDisabled}
-            className="flex h-8 w-8 items-center justify-center rounded-full p-0"
+            className="rounded-full"
+            aria-pressed={isMirrored}
             variant={isMirrored ? "default" : "outline"}
             size="icon"
           >
-            <FlipHorizontal className="h-3 w-3" />
+            <FlipHorizontal aria-hidden="true" />
             <span className="sr-only">Mirror image</span>
           </Button>
         </div>
