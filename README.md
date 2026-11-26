@@ -258,7 +258,7 @@ pnpm docker:stop
 
 ## Deploy Cloudflare Workers
 
-Dùng [@opennextjs/cloudflare](https://opennext.js.org/cloudflare/get-started) (cần Next ≥ 15.5). `NEXT_PUBLIC_*` phải có lúc **build** (file `.env.local`).
+Dùng [@opennextjs/cloudflare](https://opennext.js.org/cloudflare/get-started) (dùng Next.js 16). `NEXT_PUBLIC_*` phải có lúc **build** (file `.env.local`).
 
 Lần đầu:
 
@@ -279,12 +279,12 @@ pnpm cf:preview
 
 URL mặc định: `https://chinchinbooth.<subdomain>.workers.dev`. Gắn domain: Cloudflare Dashboard → Workers → chinchinbooth → Custom Domains.
 
-CI (Workers Builds): build command `pnpm cf:deploy` **không** dùng — dùng `npx opennextjs-cloudflare build` rồi deploy step, hoặc connect repo và set:
+Trong Workers Builds, cấu hình các lệnh sau khi kết nối repo.
 
 | Setting | Value |
 | --- | --- |
-| Build command | `npx opennextjs-cloudflare build` |
-| Deploy command | `npx opennextjs-cloudflare deploy` |
+| Build command | `pnpm cf:build` |
+| Deploy command | `pnpm exec opennextjs-cloudflare deploy` |
 | Env | `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`, `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET`, `NEXT_PUBLIC_APP_VERSION` |
 
 ---

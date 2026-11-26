@@ -2,10 +2,6 @@ import type { NextConfig } from "next";
 import createNextIntlPlugin from "next-intl/plugin";
 import withBundleAnalyzer from "@next/bundle-analyzer";
 
-const bundleAnalyzer = withBundleAnalyzer({
-  enabled: process.env.ANALYZE === "true",
-});
-
 const nextConfig: NextConfig = {
   /* your existing config options */
   images: {
@@ -22,7 +18,11 @@ const nextConfig: NextConfig = {
 
 const withNextIntl = createNextIntlPlugin();
 
-export default bundleAnalyzer(withNextIntl(nextConfig));
+const config = withNextIntl(nextConfig);
+
+export default process.env.ANALYZE === "true"
+  ? withBundleAnalyzer({ enabled: true })(config)
+  : config;
 
 import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
 initOpenNextCloudflareForDev();

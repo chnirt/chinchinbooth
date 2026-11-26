@@ -1,5 +1,5 @@
 # Use the stable version of Node.js as the base image for building the application
-FROM node:18-alpine AS builder
+FROM node:22-alpine AS builder
 
 # Set the working directory inside the container
 WORKDIR /app
@@ -18,7 +18,7 @@ COPY . .
 RUN pnpm run build
 
 # Create a new image for the production environment
-FROM node:18-alpine AS runner
+FROM node:22-alpine AS runner
 
 # Set the working directory for the production environment
 WORKDIR /app
