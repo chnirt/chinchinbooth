@@ -17,7 +17,7 @@ Live: [https://chinchinbooth.vercel.app](https://chinchinbooth.vercel.app)
 | i18n | next-intl 4, cookie `NEXT_LOCALE` |
 | Ảnh / QR | html2canvas-pro, Cloudinary unsigned upload, qrcode.react |
 | Camera | `getUserMedia` + canvas 2D, `context-filter-polyfill` |
-| Analytics | Vercel Analytics, Speed Insights |
+| Analytics | Google Analytics 4 |
 | PWA | `src/app/manifest.json` (standalone), không có service worker / offline |
 | Tooling | pnpm, Husky (`pnpm build` trước mỗi commit), Prettier, Docker |
 
@@ -287,6 +287,8 @@ Trong Workers Builds, cấu hình các lệnh sau khi kết nối repo.
 | Deploy command | `pnpm exec opennextjs-cloudflare deploy` |
 | Env | `NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME`, `NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET`, `NEXT_PUBLIC_APP_VERSION` |
 
+Google Analytics 4 được gắn trong root layout ở bản production.
+
 ---
 
 ## Phím tắt (desktop, bước shoot)
@@ -305,7 +307,7 @@ Trong Workers Builds, cấu hình các lệnh sau khi kết nối repo.
 
 Đã rà toàn bộ `src/`, `messages/`, config, Docker, script. Các lệch nên biết khi maintain:
 
-1. **Privacy copy vs thực tế** — `policy-dialog` nói không thu thập, không cookie, không cloud, xử lý local. Thực tế: cookie locale, Cloudinary khi share, Vercel Analytics/Speed Insights, `localStorage` đếm QR.
+1. **Privacy copy vs thực tế** — `policy-dialog` nói không thu thập, không cookie, không cloud, xử lý local. Thực tế: cookie locale, Cloudinary khi share, Google Analytics 4, `localStorage` đếm QR.
 2. **Sitemap 404** — `/photo-booth`, `/stickers` không tồn tại.
 3. **Locale không đồng bộ** — UI 6 ngôn ngữ, `i18n/config.ts` chỉ 4.
 4. **QR limit chết** — `checkDailyQRLimit` không được gọi.

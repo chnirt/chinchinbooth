@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { NextIntlClientProvider } from "next-intl";
@@ -52,6 +53,8 @@ export const metadata: Metadata = {
   },
 };
 
+const analyticsMeasurementId = "G-4SP5EBGDEW";
+
 export default async function RootLayout({
   children,
 }: Readonly<{
@@ -64,6 +67,22 @@ export default async function RootLayout({
       >
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
         <Toaster />
+        {process.env.NODE_ENV === "production" && (
+          <>
+            <Script
+              src={`https://www.googletagmanager.com/gtag/js?id=${analyticsMeasurementId}`}
+            />
+            <Script id="google-analytics">
+              {`window.dataLayer = window.dataLayer || [];
+                function gtag() { window.dataLayer.push(arguments); }
+                gtag('js', new Date());
+                gtag('config', ${JSON.stringify(analyticsMeasurementId)}, {
+                  allow_google_signals: false,
+                  allow_ad_personalization_signals: false
+                });`}
+            </Script>
+          </>
+        )}
       </body>
     </html>
   );
