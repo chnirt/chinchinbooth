@@ -25,6 +25,7 @@
     { "name": "QR_UPLOAD_RATE", "namespace_id": "1001", "simple": { "limit": 5, "period": 60 } },
     { "name": "QR_READ_RATE", "namespace_id": "1002", "simple": { "limit": 60, "period": 60 } },
   ],
+  "routes": [{ "pattern": "chinchinbooth.online", "custom_domain": true }],
   "preview_urls": false,
   "workers_dev": true,
 }

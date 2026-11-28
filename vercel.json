@@ -2,7 +2,7 @@
   "redirects": [
     {
       "source": "/(.*)",
-      "destination": "https://chinchinbooth.trinhchinchin.workers.dev/$1",
+      "destination": "https://chinchinbooth.online/$1",
       "permanent": true
     }
   ]

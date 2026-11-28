@@ -2,7 +2,7 @@
 
 Photo booth web: chụp hoặc tải ảnh, gắn filter, chọn strip 1×4 / 2×4, tùy chỉnh frame, rồi tải xuống hoặc gửi QR lên điện thoại.
 
-Live: [https://chinchinbooth.trinhchinchin.workers.dev](https://chinchinbooth.trinhchinchin.workers.dev)
+Live: [https://chinchinbooth.online](https://chinchinbooth.online)
 
 [Hướng dẫn vận hành và kiểm tra](docs/van-hanh-va-kiem-tra.md) có checklist cho camera, JPEG, QR và cách xử lý lỗi thường gặp.
 
@@ -276,7 +276,7 @@ Hoặc một lệnh: `sh scripts/cf-deploy.sh` (tự login nếu chưa).
 pnpm cf:preview
 ```
 
-URL mặc định: `https://chinchinbooth.<subdomain>.workers.dev`. Gắn domain: Cloudflare Dashboard → Workers → chinchinbooth → Custom Domains.
+Domain chính là `https://chinchinbooth.online`, khai báo Custom Domain trong `wrangler.jsonc`. Cloudflare phải kích hoạt zone và quản lý DNS trước khi deploy. URL `workers.dev` vẫn phục vụ các link QR đã phát hành.
 
 Trong Workers Builds, cấu hình các lệnh sau khi kết nối repo.
 
