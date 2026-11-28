@@ -23,6 +23,3 @@ const config = withNextIntl(nextConfig);
 export default process.env.ANALYZE === "true"
   ? withBundleAnalyzer({ enabled: true })(config)
   : config;
-
-import { initOpenNextCloudflareForDev } from "@opennextjs/cloudflare";
-initOpenNextCloudflareForDev();

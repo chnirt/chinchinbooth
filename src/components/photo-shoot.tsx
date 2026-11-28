@@ -467,16 +467,10 @@ export function PhotoShoot({
     }
   }, [canProceedToLayout, countdown, isAutoSequenceActive, isCameraStarted]);
 
-  const handleImageUpload = (
-    imageDataArray: (string | ArrayBuffer | null)[],
-  ) => {
-    // Filter to include only strings (base64 data)
-    const validImages = imageDataArray.filter(
-      (data): data is string => typeof data === "string",
+  const handleImageUpload = (images: string[]) => {
+    setCapturedImages((prev) =>
+      prev.length + images.length <= MAX_CAPTURE ? [...prev, ...images] : prev,
     );
-    if (validImages.length > 0) {
-      setCapturedImages((prev) => [...prev, ...validImages]);
-    }
   };
 
   useEffect(() => {

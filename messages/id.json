@@ -66,14 +66,14 @@
     "noDataCollectionPolicy5": "Kami tidak menyimpan data setelah sesi Anda berakhir",
     "photoPrivacy": "Privasi Foto",
     "photoPrivacyDescription": "Saat Anda menggunakan photo booth kami:",
-    "photoPrivacy1": "Foto hanya disimpan sementara selama sesi Anda",
-    "photoPrivacy2": "Semua foto akan otomatis dihapus saat Anda menerima cetakan atau salinan digital",
+    "photoPrivacy1": "Foto sesi tetap berada di browser Anda. Jika Anda memilih Kirim ke ponsel, strip foto yang sudah jadi disimpan sementara.",
+    "photoPrivacy2": "Siapa pun yang memiliki tautan QR dapat membuka strip selama 24 jam. Salinan yang disimpan dijadwalkan untuk dihapus otomatis.",
     "photoPrivacy3": "Kami tidak menyimpan cadangan atau penyimpanan foto Anda",
     "photoPrivacy4": "Kami tidak menggunakan pengenalan wajah atau teknologi pengenalan lainnya",
     "ourTechnology": "Teknologi Kami",
     "ourTechnologyDescription": "Sistem photo booth kami dirancang dengan prioritas privasi:",
     "ourTechnology1": "Semua pemrosesan dilakukan secara lokal di booth",
-    "ourTechnology2": "Tidak menggunakan penyimpanan atau pemrosesan awan",
+    "ourTechnology2": "Strip foto yang sudah jadi diunggah ke Cloudflare R2 hanya saat Anda memilih Kirim ke ponsel.",
     "ourTechnology3": "Tidak memerlukan koneksi internet untuk fungsi dasar",
     "contactUs": "Hubungi Kami",
     "contactUsDescription": "Jika Anda memiliki pertanyaan tentang praktik privasi kami, silakan hubungi kami melalui email:",
@@ -89,5 +89,9 @@
     "uploadMaxFiles": "Anda hanya dapat mengunggah hingga {maxFiles} {fileLabel}.",
     "fileLabel_one": "gambar",
     "fileLabel_other": "gambar"
+  },
+  "PhotoBoothSearch": {
+    "title": "ChinChin Booth | Photo Booth Online Gratis",
+    "description": "Ambil foto dengan webcam atau kamera ponsel. Tambahkan filter dan bingkai, lalu unduh strip 4 atau 8 foto atau kirim ke ponsel dengan kode QR."
   }
 }

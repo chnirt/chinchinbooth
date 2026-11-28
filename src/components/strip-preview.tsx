@@ -12,6 +12,7 @@ interface StripPreviewProps {
   selectedFrame: string | null;
   frameColor: string | null;
   selectedGradient: string | null;
+  stripKey: string;
   previewRef: RefObject<HTMLDivElement | null>;
   isMobile: boolean;
   onSelectPhotos: () => void;
@@ -42,6 +43,7 @@ export const StripPreview = memo(function StripPreview({
   selectedFrame,
   frameColor,
   selectedGradient,
+  stripKey,
   previewRef,
   isMobile,
   onSelectPhotos,
@@ -104,6 +106,7 @@ export const StripPreview = memo(function StripPreview({
       <div className={cn("relative max-w-1/2", commonClasses)}>
         <div
           ref={previewRef}
+          data-strip-key={stripKey}
           className="flex aspect-[1/3] flex-col gap-[5%] p-[10%]"
           style={backgroundStyle}
         >
@@ -121,6 +124,7 @@ export const StripPreview = memo(function StripPreview({
     <div className={cn("relative", commonClasses)}>
       <div
         ref={previewRef}
+        data-strip-key={stripKey}
         className="flex aspect-[2/3] flex-col gap-[calc(2.5%*3/2)] p-[5%]"
         style={backgroundStyle}
       >

@@ -1,7 +1,7 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "chinchinbooth",
-  "main": ".open-next/worker.js",
+  "main": "worker/index.js",
   "compatibility_date": "2026-09-06",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "assets": {
@@ -14,5 +14,17 @@
       "service": "chinchinbooth",
     },
   ],
+  "r2_buckets": [
+    { "binding": "QR_IMAGES", "bucket_name": "chinchinbooth-qr" },
+  ],
+  "durable_objects": {
+    "bindings": [{ "name": "QR_QUOTA", "class_name": "QrQuota" }],
+  },
+  "migrations": [{ "tag": "qr-v1", "new_sqlite_classes": ["QrQuota"] }],
+  "ratelimits": [
+    { "name": "QR_UPLOAD_RATE", "namespace_id": "1001", "simple": { "limit": 5, "period": 60 } },
+    { "name": "QR_READ_RATE", "namespace_id": "1002", "simple": { "limit": 60, "period": 60 } },
+  ],
+  "preview_urls": false,
   "workers_dev": true,
 }

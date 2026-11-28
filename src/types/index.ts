@@ -1,3 +1,5 @@
+import type { QrShare } from "@/lib/upload-utils";
+
 // Types for the photo booth application
 export interface StepProgressProps {
   currentStep: number;
@@ -33,11 +35,9 @@ export interface LayoutSelectionProps {
   selectedFrame: string | null;
   setSelectedFrame: React.Dispatch<React.SetStateAction<string | null>>;
   retakePhotos: () => void;
-  generateImage: (layoutType: number) => Promise<void | string>;
+  generateImage: (stripKey: string) => Promise<Blob | null>;
   canDownload: boolean;
   isDownloading: boolean;
-  uploadAndGenerateQR: () => Promise<void>;
+  uploadAndGenerateQR: (stripKey: string) => Promise<QrShare | null>;
   isUploading: boolean;
-  imageUrl: string | null;
-  setImageUrl: React.Dispatch<React.SetStateAction<string | null>>;
 }

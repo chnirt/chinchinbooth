@@ -6,10 +6,8 @@ import { Navbar } from "@/components/navbar";
 // import { StepProgress } from "@/components/step-progress";
 import dynamic from "next/dynamic";
 import { MAX_CAPTURE } from "@/constants";
-import {
-  uploadToCloudinary,
-  updateQRGenerationCount,
-} from "@/lib/upload-utils";
+import { uploadQrImage, type QrShare } from "@/lib/upload-utils";
+import { maxQrImageBytes } from "@/lib/qr-limits";
 import { toast } from "sonner";
 import Footer from "@/components/footer";
 import confetti from "canvas-confetti";
@@ -35,7 +33,9 @@ export default function PhotoBoothApp() {
   const [selectedFrame, setSelectedFrame] = useState<string | null>("none");
   const [isDownloading, setIsDownloading] = useState(false);
   const previewRef = useRef<HTMLDivElement | null>(null);
-  const [imageUrl, setImageUrl] = useState<string | null>(null);
+  const renderedStrip = useRef<{ key: string; canvas: Promise<HTMLCanvasElement> } | null>(null);
+  const downloadInProgress = useRef(false);
+  const uploadInProgress = useRef(false);
   const [isUploading, setIsUploading] = useState(false);
 
   const canProceedToLayout = capturedImages.length === MAX_CAPTURE;
@@ -46,7 +46,7 @@ export default function PhotoBoothApp() {
   const retakePhotos = () => {
     setCapturedImages([]);
     setSelectedIndices([]);
-    setImageUrl(null);
+    renderedStrip.current = null;
     setStep("shoot");
   };
 
@@ -78,84 +78,96 @@ export default function PhotoBoothApp() {
     frame();
   }, []);
 
-  const generateImage = async (layoutType: number): Promise<void | string> => {
-    if (!previewRef.current || isDownloading) return;
-    setIsDownloading(true);
+  const renderStrip = (key: string) => {
+    if (renderedStrip.current?.key === key) return renderedStrip.current.canvas;
 
-    try {
-      const desiredWidth = layoutType === 4 ? 600 : 1200;
-      const desiredHeight = 1800;
-      const rect = previewRef.current.getBoundingClientRect();
-      const scaleFactor = desiredWidth / rect.width;
-
+    const preview = previewRef.current;
+    if (!preview) throw new Error("Strip preview is unavailable");
+    const width = layoutType === 4 ? 600 : 1200;
+    const height = 1800;
+    const canvas = (async () => {
       const html2canvas = (await import("html2canvas-pro")).default;
-
-      const canvas = await html2canvas(previewRef.current, {
-        allowTaint: true,
+      if (preview.dataset.stripKey !== key) throw new Error("Strip changed before rendering");
+      const rect = preview.getBoundingClientRect();
+      if (!rect.width || !rect.height) throw new Error("Strip preview is empty");
+      const rendered = await html2canvas(preview, {
         useCORS: true,
         backgroundColor: null,
         width: rect.width,
         height: rect.height,
-        scale: scaleFactor,
+        scale: width / rect.width,
       });
 
-      const forcedCanvas = document.createElement("canvas");
-      forcedCanvas.width = desiredWidth;
-      forcedCanvas.height = desiredHeight;
-      const ctx = forcedCanvas.getContext("2d");
+      if (previewRef.current !== preview || preview.dataset.stripKey !== key) {
+        throw new Error("Strip changed during rendering");
+      }
+      if (rendered.width === width && rendered.height === height) return rendered;
+      const output = document.createElement("canvas");
+      output.width = width;
+      output.height = height;
+      const ctx = output.getContext("2d");
       if (!ctx) throw new Error("Unable to get 2D context");
-      ctx.drawImage(
-        canvas,
-        0,
-        0,
-        canvas.width,
-        canvas.height,
-        0,
-        0,
-        desiredWidth,
-        desiredHeight,
-      );
+      ctx.drawImage(rendered, 0, 0, width, height);
+      return output;
+    })();
+    renderedStrip.current = { key, canvas };
+    void canvas.catch(() => {
+      if (renderedStrip.current?.canvas === canvas) renderedStrip.current = null;
+    });
+    return canvas;
+  };
 
+  const encodeStrip = async (key: string, quality: number) => {
+    const canvas = await renderStrip(key);
+    return new Promise<Blob>((resolve, reject) => {
+      canvas.toBlob((blob) => {
+        if (blob) resolve(blob);
+        else reject(new Error("Unable to encode strip as JPEG"));
+      }, "image/jpeg", quality);
+    });
+  };
+
+  const generateImage = async (key: string): Promise<Blob | null> => {
+    if (!canDownload || downloadInProgress.current) return null;
+    downloadInProgress.current = true;
+    setIsDownloading(true);
+
+    try {
+      const jpeg = await encodeStrip(key, 1);
+      if (previewRef.current?.dataset.stripKey !== key) return null;
       triggerConfetti();
-      return forcedCanvas.toDataURL("image/jpeg", 1.0);
+      return jpeg;
     } catch (error) {
       console.error("Error generating the image:", error);
+      return null;
     } finally {
+      downloadInProgress.current = false;
       setIsDownloading(false);
     }
   };
 
-  const uploadAndGenerateQR = async () => {
-    if (!previewRef.current || isUploading) return;
+  const uploadAndGenerateQR = async (key: string): Promise<QrShare | null> => {
+    if (!canDownload || uploadInProgress.current) return null;
+    uploadInProgress.current = true;
     setIsUploading(true);
-    setImageUrl(null);
 
     try {
-      const html2canvas = (await import("html2canvas-pro")).default;
-
-      const scaleValue = 2;
-
-      const canvas = await html2canvas(previewRef.current, {
-        allowTaint: true,
-        useCORS: true,
-        backgroundColor: null,
-        scale: scaleValue,
-      });
-
-      const fileToUpload = await new Promise<Blob>((resolve) => {
-        canvas.toBlob((blob) => resolve(blob!), "image/jpeg", 0.8);
-      });
-
-      if (!fileToUpload) throw new Error("No file to upload");
-
-      const secureUrl = await uploadToCloudinary(fileToUpload);
-      setImageUrl(secureUrl);
-      updateQRGenerationCount();
+      let jpeg = await encodeStrip(key, 0.8);
+      for (const quality of [0.65, 0.5]) {
+        if (jpeg.size <= maxQrImageBytes) break;
+        jpeg = await encodeStrip(key, quality);
+      }
+      if (jpeg.size > maxQrImageBytes) throw new Error("QR image exceeds size limit");
+      if (previewRef.current?.dataset.stripKey !== key) return null;
+      const share = await uploadQrImage(jpeg);
       triggerConfetti();
+      return share;
     } catch (error) {
       console.error("Error uploading image:", error);
       toast("Failed to upload. Please try again.");
+      return null;
     } finally {
+      uploadInProgress.current = false;
       setIsUploading(false);
     }
   };
@@ -197,8 +209,6 @@ export default function PhotoBoothApp() {
               isDownloading={isDownloading}
               uploadAndGenerateQR={uploadAndGenerateQR}
               isUploading={isUploading}
-              imageUrl={imageUrl}
-              setImageUrl={setImageUrl}
             />
           )}
         </motion.main>

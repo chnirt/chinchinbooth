@@ -66,14 +66,14 @@
     "noDataCollectionPolicy5": "Chúng tôi không giữ lại dữ liệu sau khi phiên của bạn kết thúc",
     "photoPrivacy": "Quyền Riêng Tư Ảnh",
     "photoPrivacyDescription": "Khi bạn sử dụng photo booth của chúng tôi:",
-    "photoPrivacy1": "Ảnh chỉ được lưu trữ tạm thời trong suốt phiên của bạn",
-    "photoPrivacy2": "Tất cả ảnh sẽ tự động bị xóa khi bạn nhận bản in hoặc bản sao kỹ thuật số",
+    "photoPrivacy1": "Ảnh trong phiên nằm trong trình duyệt. Khi bạn chọn Gửi đến điện thoại, dải ảnh hoàn chỉnh được lưu tạm.",
+    "photoPrivacy2": "Bất kỳ ai có link QR đều có thể mở dải ảnh trong 24 giờ. Bản lưu sẽ được tự động xóa theo lịch.",
     "photoPrivacy3": "Chúng tôi không duy trì bất kỳ bản sao lưu hoặc lưu trữ nào của ảnh của bạn",
     "photoPrivacy4": "Chúng tôi không sử dụng nhận dạng khuôn mặt hoặc bất kỳ công nghệ nhận dạng nào khác",
     "ourTechnology": "Công Nghệ Của Chúng Tôi",
     "ourTechnologyDescription": "Hệ thống photo booth của chúng tôi được thiết kế với sự riêng tư là ưu tiên:",
     "ourTechnology1": "Tất cả xử lý xảy ra tại chỗ trên booth",
-    "ourTechnology2": "Không sử dụng lưu trữ hoặc xử lý đám mây",
+    "ourTechnology2": "Chỉ thao tác Gửi đến điện thoại mới tải dải ảnh hoàn chỉnh lên Cloudflare R2.",
     "ourTechnology3": "Không cần kết nối internet cho các chức năng cơ bản",
     "contactUs": "Liên Hệ Với Chúng Tôi",
     "contactUsDescription": "Nếu bạn có bất kỳ câu hỏi nào về các thực tiễn quyền riêng tư của chúng tôi, vui lòng liên hệ với chúng tôi qua email:",
@@ -89,5 +89,9 @@
     "uploadMaxFiles": "Bạn chỉ có thể tải lên tối đa {maxFiles} {fileLabel}.",
     "fileLabel_one": "hình ảnh",
     "fileLabel_other": "hình ảnh"
+  },
+  "PhotoBoothSearch": {
+    "title": "ChinChin Booth | Chụp ảnh photobooth online miễn phí",
+    "description": "Chụp ảnh photobooth bằng webcam hoặc camera điện thoại. Thêm bộ lọc và khung, tạo dải 4 hoặc 8 ảnh rồi tải về hoặc gửi qua mã QR."
   }
 }

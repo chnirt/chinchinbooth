@@ -1,7 +1,9 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
+import { getLocale, getTranslations } from "next-intl/server";
+import { siteUrl } from "@/lib/site-url";
 import { NextIntlClientProvider } from "next-intl";
 import { Toaster } from "@/components/ui/sonner";
 
@@ -15,42 +17,50 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export const metadata: Metadata = {
-  title: "ChinChin Booth - Unique Photo Booth",
-  description:
-    "Capture fun moments and create photo strips with ChinChin Booth. Try it now!",
-  openGraph: {
-    title: "ChinChin Booth - Unique Photo Booth",
-    description:
-      "Capture fun moments and create photo strips with ChinChin Booth. Try it now!",
-    url: "https://chinchinbooth.vercel.app",
-    siteName: "ChinChin Booth",
-    images: [
-      {
-        url: "https://chinchinbooth.vercel.app/og-image.jpg",
-        width: 980,
-        height: 980,
-        alt: "ChinChin Booth",
-      },
-    ],
-    type: "website",
-    locale: "en_US",
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: "ChinChin Booth - Unique Photo Booth",
-    description:
-      "Capture fun moments and create photo strips with ChinChin Booth. Try it now!",
-    images: ["https://chinchinbooth.vercel.app/og-image.jpg"],
-  },
-  other: {
-    "apple-mobile-web-app-title": "ChinChin Booth",
-    viewport:
-      "width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes",
-    keywords:
-      "photo booth, online camera, photo strips, selfie booth, fun photo app",
-    "google-site-verification": "CmR9FlhehVglX9dkwNSyFEp4f62ytM9PzxcFwkhfyIU",
-  },
+export async function generateMetadata(): Promise<Metadata> {
+  const t = await getTranslations("PhotoBoothSearch");
+  const title = t("title");
+  const description = t("description");
+
+  return {
+    metadataBase: new URL(siteUrl),
+    alternates: { canonical: "/" },
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      url: "/",
+      siteName: "ChinChin Booth",
+      images: [
+        { url: "/og-image.jpg", width: 980, height: 980, alt: "ChinChin Booth" },
+      ],
+      type: "website",
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
+      description,
+      images: ["/og-image.jpg"],
+    },
+    verification: { google: "CmR9FlhehVglX9dkwNSyFEp4f62ytM9PzxcFwkhfyIU" },
+    other: { "apple-mobile-web-app-title": "ChinChin Booth" },
+  };
+}
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  userScalable: true,
+};
+
+const website = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "ChinChin Booth",
+  alternateName: "chinchinbooth",
+  url: `${siteUrl}/`,
 };
 
 const analyticsMeasurementId = "G-4SP5EBGDEW";
@@ -60,11 +70,17 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const locale = await getLocale();
+
   return (
-    <html>
+    <html lang={locale}>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(website) }}
+        />
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
         <Toaster />
         {process.env.NODE_ENV === "production" && (

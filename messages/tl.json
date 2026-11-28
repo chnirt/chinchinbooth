@@ -66,14 +66,14 @@
     "noDataCollectionPolicy5": "Hindi kami nag-iimbak ng data pagkatapos ng iyong session",
     "photoPrivacy": "Privacy ng Larawan",
     "photoPrivacyDescription": "Kapag ginamit mo ang aming photo booth:",
-    "photoPrivacy1": "Ang mga larawan ay pansamantalang iniimbak lamang habang ang iyong session ay aktibo",
-    "photoPrivacy2": "Awtomatikong binubura ang lahat ng larawan kapag nakuha mo na ang printout o digital copy",
+    "photoPrivacy1": "Nananatili sa browser ang mga larawan ng session. Kapag pinili mong Ipadala sa telepono, pansamantalang iniimbak ang natapos na photo strip.",
+    "photoPrivacy2": "Maaaring buksan ng sinumang may QR link ang photo strip sa loob ng 24 oras. Nakatakdang awtomatikong burahin ang nakaimbak na kopya.",
     "photoPrivacy3": "Hindi kami nag-iingat ng anumang backup o imbakan ng iyong mga larawan",
     "photoPrivacy4": "Hindi kami gumagamit ng facial recognition o anumang iba pang teknolohiya ng pagkilala",
     "ourTechnology": "Ang Aming Teknolohiya",
     "ourTechnologyDescription": "Ang aming photo booth system ay idinisenyo na may prayoridad sa privacy:",
     "ourTechnology1": "Lahat ng proseso ay nagaganap sa booth mismo",
-    "ourTechnology2": "Walang cloud storage o processing na ginagamit",
+    "ourTechnology2": "Ina-upload lang sa Cloudflare R2 ang natapos na photo strip kapag pinili mong Ipadala sa telepono.",
     "ourTechnology3": "Hindi kailangan ng internet connection para sa mga pangunahing function",
     "contactUs": "Makipag-ugnayan sa Amin",
     "contactUsDescription": "Kung mayroon kang mga tanong tungkol sa aming privacy practices, mangyaring makipag-ugnayan sa amin sa pamamagitan ng email:",
@@ -89,5 +89,9 @@
     "uploadMaxFiles": "Maaari ka lamang mag-upload ng hanggang {maxFiles} {fileLabel}.",
     "fileLabel_one": "larawan",
     "fileLabel_other": "mga larawan"
+  },
+  "PhotoBoothSearch": {
+    "title": "ChinChin Booth | Libreng Online Photo Booth",
+    "description": "Kumuha ng litrato gamit ang webcam o camera ng telepono. Magdagdag ng filter at frame, tapos i-download ang strip na may 4 o 8 larawan o ipadala sa telepono gamit ang QR code."
   }
 }

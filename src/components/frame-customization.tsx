@@ -22,7 +22,6 @@ interface FrameCustomizationProps {
   handleColorChange: (color: string) => void;
   handleGradientChange: (gradient: string) => void;
   handleFrameChange: (frameId: string | null) => void;
-  setImageUrl: (url: string | null) => void;
 }
 
 export const FrameCustomization = memo(function FrameCustomization({
@@ -35,7 +34,6 @@ export const FrameCustomization = memo(function FrameCustomization({
   handleColorChange,
   handleGradientChange,
   handleFrameChange,
-  setImageUrl,
 }: FrameCustomizationProps) {
   const t = useTranslations("HomePage");
 
@@ -152,7 +150,6 @@ export const FrameCustomization = memo(function FrameCustomization({
           <FrameSelector
             selectedFrame={selectedFrame}
             setSelectedFrame={handleFrameChange}
-            setImageUrl={setImageUrl}
             layoutType={layoutType}
           />
         )}

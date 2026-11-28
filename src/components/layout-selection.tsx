@@ -12,6 +12,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useTranslations } from "next-intl";
+import type { QrShare } from "@/lib/upload-utils";
 import type { LayoutSelectionProps } from "@/types";
 import { FrameCustomization, type FrameTab } from "./frame-customization";
 import { StripPreview } from "./strip-preview";
@@ -38,8 +39,6 @@ export function LayoutSelection({
   isDownloading,
   uploadAndGenerateQR,
   isUploading,
-  imageUrl,
-  setImageUrl,
 }: LayoutSelectionProps) {
   const isMobile = useMobile();
   const isPWA = usePWA();
@@ -47,33 +46,42 @@ export function LayoutSelection({
   const [selectedGradient, setSelectedGradient] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<FrameTab>("frames");
   const [copied, setCopied] = useState(false);
-  const [imageDataUrl, setImageDataUrl] = useState<string | null>(null);
-  const [showShareDialog, setShowShareDialog] = useState(false);
+  const [downloadUrl, setDownloadUrl] = useState<string | null>(null);
+  const [sharedStrip, setSharedStrip] = useState<(QrShare & { key: string }) | null>(null);
+  const [openShareKey, setOpenShareKey] = useState<string | null>(null);
   const [showDownloadDialog, setShowDownloadDialog] = useState(false);
   const [drawerType, setDrawerType] = useState<string | null>(null);
   const [showDrawer, setShowDrawer] = useState(false);
 
   const t = useTranslations("HomePage");
 
-  // Show QR section when imageUrl is available
-  useEffect(() => {
-    if (imageUrl) {
-      setShowShareDialog(true);
-    }
-  }, [imageUrl]);
+  const stripKey = JSON.stringify([
+    layoutType, selectedIndices, selectedFrame, frameColor, selectedGradient,
+  ]);
+  const imageUrl = sharedStrip?.key === stripKey ? sharedStrip.url : null;
 
-  // Reset copied state when imageUrl changes
   useEffect(() => {
+    return () => {
+      if (downloadUrl) URL.revokeObjectURL(downloadUrl);
+    };
+  }, [downloadUrl]);
+
+  const handleShare = async () => {
+    if (sharedStrip?.key !== stripKey || sharedStrip.expiresAt <= Date.now()) {
+      const share = await uploadAndGenerateQR(stripKey);
+      if (!share) return;
+      setSharedStrip({ key: stripKey, ...share });
+    }
     setCopied(false);
-  }, [imageUrl]);
+    setOpenShareKey(stripKey);
+  };
 
   const selectLayoutType = useCallback(
     (type: number) => {
       setLayoutType(type);
       setSelectedIndices([]);
-      setImageUrl(null);
     },
-    [setImageUrl, setLayoutType, setSelectedIndices],
+    [setLayoutType, setSelectedIndices],
   );
 
   const toggleSelect = useCallback(
@@ -92,30 +100,27 @@ export function LayoutSelection({
     (color: string) => {
       setFrameColor(color);
       setSelectedGradient(null);
-      setImageUrl(null);
       setSelectedFrame(null);
     },
-    [setImageUrl, setSelectedFrame],
+    [setSelectedFrame],
   );
 
   const handleGradientChange = useCallback(
     (gradient: string) => {
       setFrameColor(null);
       setSelectedGradient(gradient);
-      setImageUrl(null);
       setSelectedFrame(null);
     },
-    [setImageUrl, setSelectedFrame],
+    [setSelectedFrame],
   );
 
   const handleFrameChange = useCallback(
     (frameId: string | null) => {
       setFrameColor(null);
       setSelectedGradient(null);
-      setImageUrl(null);
       setSelectedFrame(frameId);
     },
-    [setImageUrl, setSelectedFrame],
+    [setSelectedFrame],
   );
 
   const copyToClipboard = useCallback(async () => {
@@ -149,84 +154,60 @@ export function LayoutSelection({
   }, [copyToClipboard, imageUrl]);
 
   const handleGenerateImage = useCallback(async () => {
-    if (isPWA) {
-      const newTab = window.open("", "_blank");
-      if (!newTab) {
-        alert("Popup blocked 😢");
-        return;
-      }
-
-      // Show loading screen
-      const loadingHTML = `
-        <!DOCTYPE html>
-        <html>
-          <head><title>Loading...</title></head>
-          <body style="background:#000; color:#fff; margin:0; display:flex; align-items:center; justify-content:center; height:100vh;">
-            <h1>Preparing image...</h1>
-          </body>
-        </html>
-      `;
-      const loadingBlob = new Blob([loadingHTML], { type: "text/html" });
-      newTab.location.href = URL.createObjectURL(loadingBlob);
-
-      // Wait for canvas/image generation
-      const dataUrl = await generateImage(layoutType); // Should return data:image/jpeg;base64,...
-
-      // Final image page
-      const imageHTML = `
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <title>Your Image</title>
-            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-            <style>
-              body {
-                margin: 0;
-                background: #000;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
-              }
-              img {
-                max-width: 100%;
-                max-height: 100%;
-              }
-            </style>
-          </head>
-          <body>
-            <img src="${dataUrl}" alt="Generated Image" />
-          </body>
-        </html>
-      `;
-      const imageBlob = new Blob([imageHTML], { type: "text/html" });
-      newTab.location.href = URL.createObjectURL(imageBlob);
+    const newTab = isPWA ? window.open("", "_blank") : null;
+    if (isPWA && !newTab) {
+      alert("Popup blocked 😢");
       return;
     }
 
-    const dataUrl = await generateImage(layoutType); // gọi hàm xử lý canvas
-
-    if (dataUrl) {
-      if (isMobile) {
-        setImageDataUrl(dataUrl);
-        setShowDownloadDialog(true);
-        return;
-      }
-
-      // Set the download file name based on the layout type
-      // Use "1x4" for a 4-panel layout, and "2x4" for an 8-panel layout
-      const fileName =
-        layoutType === 4
-          ? `chinchinbooth_1x4_${Date.now()}.jpeg`
-          : `chinchinbooth_2x4_${Date.now()}.jpeg`;
-
-      // Create a link to download the final image
-      const link = document.createElement("a");
-      link.download = fileName;
-      link.href = dataUrl;
-      link.click();
+    if (newTab) {
+      const doc = newTab.document;
+      doc.title = "Loading...";
+      doc.body.style.cssText =
+        "background:#000;color:#fff;margin:0;display:flex;align-items:center;justify-content:center;height:100vh";
+      const loading = doc.createElement("h1");
+      loading.textContent = "Preparing image...";
+      doc.body.append(loading);
     }
-  }, [generateImage, isMobile, isPWA, layoutType]);
+
+    const jpeg = await generateImage(stripKey);
+    if (!jpeg) {
+      newTab?.close();
+      return;
+    }
+    if (newTab?.closed) return;
+
+    const url = URL.createObjectURL(jpeg);
+    if (newTab) {
+      const doc = newTab.document;
+      doc.title = "Your Image";
+      const viewport = doc.createElement("meta");
+      viewport.name = "viewport";
+      viewport.content = "width=device-width, initial-scale=1.0";
+      doc.head.append(viewport);
+      const image = doc.createElement("img");
+      image.alt = "Generated Image";
+      image.style.cssText = "max-width:100%;max-height:100%";
+      newTab.addEventListener("pagehide", (event) => {
+        if (!event.persisted) URL.revokeObjectURL(url);
+      });
+      image.src = url;
+      doc.body.replaceChildren(image);
+      return;
+    }
+
+    if (isMobile) {
+      setDownloadUrl(url);
+      setShowDownloadDialog(true);
+      return;
+    }
+
+    const link = document.createElement("a");
+    link.download = `chinchinbooth_${layoutType === 4 ? "1x4" : "2x4"}_${Date.now()}.jpeg`;
+    link.href = url;
+    link.click();
+    window.setTimeout(() => URL.revokeObjectURL(url), 30_000);
+  }, [generateImage, isMobile, isPWA, layoutType, stripKey]);
 
   const renderCapturedImages = () => {
     return (
@@ -310,7 +291,6 @@ export function LayoutSelection({
       handleColorChange={handleColorChange}
       handleGradientChange={handleGradientChange}
       handleFrameChange={handleFrameChange}
-      setImageUrl={setImageUrl}
     />
   );
 
@@ -378,7 +358,7 @@ export function LayoutSelection({
               retake={retakePhotos}
               download={handleGenerateImage}
               downloadDisabled={!canDownload || isDownloading}
-              share={uploadAndGenerateQR}
+              share={handleShare}
               shareDisabled={!canDownload || isUploading}
               isDownloading={isDownloading}
               isUploading={isUploading}
@@ -394,6 +374,7 @@ export function LayoutSelection({
                 selectedFrame={selectedFrame}
                 frameColor={frameColor}
                 selectedGradient={selectedGradient}
+                stripKey={stripKey}
                 previewRef={previewRef}
                 isMobile={isMobile}
                 onSelectPhotos={openPhotoDrawer}
@@ -459,7 +440,7 @@ export function LayoutSelection({
           )}
         </Button>
         <Button
-          onClick={uploadAndGenerateQR}
+          onClick={handleShare}
           disabled={!canDownload || isUploading}
           className={cn(
             "flex items-center justify-center rounded-full px-4 py-2 font-medium",
@@ -486,14 +467,14 @@ export function LayoutSelection({
       <DownloadDialog
         open={showDownloadDialog}
         onOpenChange={setShowDownloadDialog}
-        imageDataUrl={imageDataUrl}
+        imageDataUrl={downloadUrl}
         layoutType={layoutType}
       />
 
       {/* Share Dialog with QR Code */}
       <ShareDialog
-        open={showShareDialog}
-        onOpenChange={setShowShareDialog}
+        open={openShareKey === stripKey && Boolean(imageUrl)}
+        onOpenChange={(open) => setOpenShareKey(open ? stripKey : null)}
         imageUrl={imageUrl}
         copied={copied}
         copyToClipboard={copyToClipboard}

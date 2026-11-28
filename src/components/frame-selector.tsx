@@ -10,7 +10,6 @@ import { preloadFrameLayout } from "@/lib/frame-utils";
 interface FrameSelectorProps {
   selectedFrame: string | null;
   setSelectedFrame: (frameId: string | null) => void;
-  setImageUrl: (url: string | null) => void;
   className?: string;
   layoutType: number;
 }
@@ -18,7 +17,6 @@ interface FrameSelectorProps {
 export function FrameSelector({
   selectedFrame,
   setSelectedFrame,
-  setImageUrl,
   className,
   layoutType = 4,
 }: FrameSelectorProps) {
@@ -28,7 +26,6 @@ export function FrameSelector({
   const selectFrame = useCallback(
     async (frameId: string | null) => {
       setError(null);
-      setImageUrl(null);
 
       if (frameId === selectedFrame) {
         setSelectedFrame(null);
@@ -46,7 +43,7 @@ export function FrameSelector({
         setIsLoading(false);
       }
     },
-    [layoutType, selectedFrame, setSelectedFrame, setImageUrl],
+    [layoutType, selectedFrame, setSelectedFrame],
   );
 
   return (

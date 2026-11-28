@@ -1,8 +1,9 @@
-import { MetadataRoute } from "next";
+import { siteUrl } from "@/lib/site-url";
+import type { MetadataRoute } from "next";
 
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [{ userAgent: "*", allow: "/" }],
-    sitemap: "https://chinchinbooth.vercel.app/sitemap.xml",
+    sitemap: `${siteUrl}/sitemap.xml`,
   };
 }

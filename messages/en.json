@@ -66,14 +66,14 @@
     "noDataCollectionPolicy5": "We do not retain any data after your session ends",
     "photoPrivacy": "Photo Privacy",
     "photoPrivacyDescription": "When you use our photo booth:",
-    "photoPrivacy1": "Photos are temporarily stored only for the duration of your session",
-    "photoPrivacy2": "All photos are automatically deleted once you receive your prints or digital copies",
+    "photoPrivacy1": "Session photos stay in your browser. If you choose Send to phone, the finished strip is stored temporarily.",
+    "photoPrivacy2": "Anyone with the QR link can open the strip for 24 hours. The stored copy is scheduled for automatic deletion.",
     "photoPrivacy3": "We do not maintain any backup or archive of your photos",
     "photoPrivacy4": "We do not use facial recognition or any other identification technology",
     "ourTechnology": "Our Technology",
     "ourTechnologyDescription": "Our photo booth system is designed with privacy in mind:",
     "ourTechnology1": "All processing happens locally on the booth",
-    "ourTechnology2": "No cloud storage or processing is used",
+    "ourTechnology2": "Only Send to phone uploads the finished strip to Cloudflare R2.",
     "ourTechnology3": "No internet connection is required for core functionality",
     "contactUs": "Contact Us",
     "contactUsDescription": "If you have any questions about our privacy practices, please contact us at:",
@@ -89,5 +89,9 @@
     "uploadMaxFiles": "You can only upload up to {maxFiles} {fileLabel}.",
     "fileLabel_one": "image",
     "fileLabel_other": "images"
+  },
+  "PhotoBoothSearch": {
+    "title": "ChinChin Booth | Free Online Photo Booth",
+    "description": "Take photos with your webcam or phone camera. Add filters and frames, then download a 4-photo or 8-photo strip or send it to your phone by QR code."
   }
 }
