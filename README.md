@@ -326,7 +326,7 @@ Google Analytics 4 được gắn trong root layout ở bản production.
 
 ## Thêm frame mới
 
-1. Thêm folder `public/{id}/4/` và `8/` (`overlay.png`, `bg.png`) **hoặc** upload Cloudinary.
+1. Thêm folder `public/{id}/4/` và `8/` (`overlay.png`, `bg.png`) **hoặc** upload Cloudinary. Với khung local, sau khi cập nhật catalog, chạy `python3 scripts/optimize-frame-assets.py` (cần `cwebp`) để tạo WebP cho gallery và preview.
 2. Push object vào `FRAMES` trong `src/constants/assets.ts`:
 
 ```ts

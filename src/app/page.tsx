@@ -92,6 +92,8 @@ export default function PhotoBoothApp() {
       if (!rect.width || !rect.height) throw new Error("Strip preview is empty");
       const rendered = await html2canvas(preview, {
         useCORS: true,
+        ignoreElements: (element) =>
+          element.matches("img, video, iframe") && !preview.contains(element),
         backgroundColor: null,
         width: rect.width,
         height: rect.height,

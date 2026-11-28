@@ -5,7 +5,7 @@ import { motion } from "framer-motion";
 import { Check, AlertCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { FRAMES } from "@/constants/assets";
-import { preloadFrameLayout } from "@/lib/frame-utils";
+import { frameAssetUrl, preloadFrameLayout } from "@/lib/frame-utils";
 
 interface FrameSelectorProps {
   selectedFrame: string | null;
@@ -68,7 +68,7 @@ export function FrameSelector({
           const frameBackground = layout?.backgroundUrl ? (
             <div className="pointer-events-none absolute inset-0 z-0">
               <img
-                src={layout.backgroundUrl}
+                src={frameAssetUrl(layout.backgroundUrl, true)}
                 alt="Frame Background"
                 loading="lazy"
                 decoding="async"
@@ -81,7 +81,7 @@ export function FrameSelector({
           const frameOverlay = layout?.overlayUrl ? (
             <div className="pointer-events-none absolute inset-0 z-20">
               <img
-                src={layout.overlayUrl}
+                src={frameAssetUrl(layout.overlayUrl, true)}
                 alt="Frame Overlay"
                 loading="lazy"
                 decoding="async"
